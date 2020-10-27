@@ -11,6 +11,13 @@ Look at the relationship between Banking, Debt, Financial, Inflation and Systemi
 Use number of likes as the dependent variable and see how things like DOB month, DOB year, friends, etc. affect it.
 * 99,903 x 15
 
+[Spotify - All Time Top 2000s Mega Dataset](kaggle.com/iamsumat/spotify-top-2000s-mega-dataset)
+
+See if there is any commonality among the top 2000 tracks on Spotify
+* songs released from 1956-2019
+* 15 columns each describing the track
+* 1995 observations
+
 # Logan Brainstorm: 
 
 [College Football Data](https://github.com/saiemgilani/cfbscrapR)
