@@ -48,3 +48,16 @@ Personally, I am interested in looking at health indicators versus access to hea
 
 What type of phisycal and mental health factors affect quality of sleep?
 
+# Meena Brainstorm :
+
+[Netflix movies and TV Shows](https://www.kaggle.com/shivamb/netflix-shows)
+
+This dataset consists of tv shows and movies available on Netflix as of 2019. Motivating question for this data set would be : Is netflix focusing on TV rather than movies in recent years!? We can integrate this with other external datasets such as IMDB ratings, rotten tomatoes can also provide many interesting findings.
+
+
+[Best Artworks of all time](https://www.kaggle.com/ikarus777/best-artworks-of-all-time)
+
+Collection of best artworks of 50 most popular artists from wikipedia.
+
+
+
