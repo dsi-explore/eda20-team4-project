@@ -54,10 +54,13 @@ What type of phisycal and mental health factors affect quality of sleep?
 
 This dataset consists of tv shows and movies available on Netflix as of 2019. Motivating question for this data set would be : Is netflix focusing on TV rather than movies in recent years!? We can integrate this with other external datasets such as IMDB ratings, rotten tomatoes can also provide many interesting findings.
 
-
 [Best Artworks of all time](https://www.kaggle.com/ikarus777/best-artworks-of-all-time)
 
 Collection of best artworks of 50 most popular artists from wikipedia.
+
+[Glassdoor Job Postings : Data Science](https://www.kaggle.com/atharvap329/glassdoor-data-science-job-data)
+
+There are job lisitng for Data Scientist and related roles. The job listings are scraped from Glassdoor.co.in and lot of analysis hasn't been done in Kaggle with the data set which makes it easier for us to explore the data set.
 
 
 
