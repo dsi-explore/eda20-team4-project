@@ -21,3 +21,20 @@ Research how daily news can affect stock prices.
 [Kepler Exoplanet Search Data](https://www.kaggle.com/nasa/kepler-exoplanet-search-results)
 
 Look at characteristics of exoplanets, see if we can find relationships. 
+
+# Sarah Brainstorm:
+
+[Health Nutrition and Population Statistics](https://www.kaggle.com/theworldbank/health-nutrition-and-population-statistics)
+
+* Includes key health, nutrition and population statistics
+* Contains data from 1960 - 2015
+* 258 countries (would be able to join with other data sets with country as unti of analysis if we wanted to pull in other information)
+
+Personally, I am interested in looking at health indicators versus access to healthcare and physicians.
+
+[Sleep Deprivation](https://www.kaggle.com/feraco/sleep-deprivation?select=demdata_160225_pseudonymized.csv)
+
+* Study of 86 Individuals with sleep and helath related data
+
+What type of phisycal and mental health factors affect quality of sleep?
+
