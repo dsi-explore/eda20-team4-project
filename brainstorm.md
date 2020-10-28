@@ -88,4 +88,12 @@ We met as a group as narrowed down our search to the follow candidates in no spe
 
 **Motivating Questions:**
 
+## 3. [Spotify - All Time Top 2000s Mega Dataset](https://www.kaggle.com/iamsumat/spotify-top-2000s-mega-dataset)
 
+**Description** This dataset contains audio statistics of the top 2000 tracks on Spotify and it contains songs released from 1956 to 2019. This data contains audio features like Danceability, BPM, Liveness, Valence(Positivity) and many more.
+
+* Dimensions - There are 2000 observations with 15 columns.
+
+* Unit of Analysis - features of a song
+
+**Motivating Questions:** I am interested in finding which genres were most popular during this time frame and we could also find a popular genre within decades.
