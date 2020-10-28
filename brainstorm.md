@@ -1,4 +1,6 @@
-# Matt Brainstorm:
+# Individual Brainstorming
+
+## Matt:
 
 [Africa Economic, Banking and Systemic Crisis Data](https://www.kaggle.com/chirin/africa-economic-banking-and-systemic-crisis-data)
 
@@ -18,7 +20,7 @@ See if there is any commonality among the top 2000 tracks on Spotify
 * 15 columns each describing the track
 * 1995 observations
 
-# Logan Brainstorm: 
+## Logan: 
 
 [College Football Data](https://github.com/saiemgilani/cfbscrapR)
 
@@ -32,7 +34,7 @@ Research how daily news can affect stock prices.
 
 Look at characteristics of exoplanets, see if we can find relationships. 
 
-# Sarah Brainstorm:
+## Sarah:
 
 [Health Nutrition and Population Statistics](https://www.kaggle.com/theworldbank/health-nutrition-and-population-statistics)
 
@@ -44,11 +46,11 @@ Personally, I am interested in looking at health indicators versus access to hea
 
 [Sleep Deprivation](https://www.kaggle.com/feraco/sleep-deprivation?select=demdata_160225_pseudonymized.csv)
 
-* Study of 86 Individuals with sleep and helath related data
+* Study of 86 Individuals with sleep and health related data
 
 What type of phisycal and mental health factors affect quality of sleep?
 
-# Meena Brainstorm :
+## Meena:
 
 [Netflix movies and TV Shows](https://www.kaggle.com/shivamb/netflix-shows)
 
@@ -61,6 +63,21 @@ Collection of best artworks of 50 most popular artists from wikipedia.
 [Glassdoor Job Postings : Data Science](https://www.kaggle.com/atharvap329/glassdoor-data-science-job-data)
 
 There are job lisitng for Data Scientist and related roles. The job listings are scraped from Glassdoor.co.in and lot of analysis hasn't been done in Kaggle with the data set which makes it easier for us to explore the data set.
+
+# Group Discussion
+
+We met as a group as narrowed down our search to the follow candidates in no specific order.
+
+## 1. [Sleep Deprivation](https://www.kaggle.com/feraco/sleep-deprivation?select=demdata_160225_pseudonymized.csv)
+
+**Description:** This dataset is from a study done on sleep deprivation. It includes physical and mental health related data points on individuals that participated in the study as well as detailed data on their brain function while sleeping.
+
+* Dimensions - There are two datasets, one with health realted information and answers to survey questions from the participants that is 90 rows with 106 columns    and the other datset is about participants brain function while sleeping which is 86 rows with 80 columns. Each participant was assigned a unique id so these datasets could easily be joined.
+
+* Unit of Analysis - an individual person partaking in the study.
+
+**Motivating Questions:** What physical and mental factors affect an individual's quality of sleep? How much do these factors affect sleep quality?
+
 
 
 
