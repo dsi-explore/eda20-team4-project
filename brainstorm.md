@@ -97,3 +97,14 @@ We met as a group as narrowed down our search to the follow candidates in no spe
 * Unit of Analysis - features of a song
 
 **Motivating Questions:** I am interested in finding which genres were most popular during this time frame and we could also find a popular genre within decades.
+
+
+## 4. [Glassdoor Job Postings : Data Science](https://www.kaggle.com/atharvap329/glassdoor-data-science-job-data)
+
+**Description** This is a scrapeddata set related to the position of 'Data Scientist' from glassdoor.com for selected states of California,Washington,New York as major areas to find the roles. The main motive behind this dataset was to look at which companies were still hiring individuals,where were they located,what kind of salary they were giving and what kind of individuals they are looking to hire.
+
+**Motivating question** What's the minimum and maximum salary offered for various job titles related to data science?
+
+**Dimensions** It has 2000 observations from 12 columns. (There are 4 csv files which can be merged)
+
+**Unit of analysis** The unit of analysis is the the yearly salary in USD.
