@@ -80,13 +80,13 @@ We met as a group as narrowed down our search to the follow candidates in no spe
 
 ## 2. [College Football Data](https://github.com/saiemgilani/cfbscrapR)
 
-**Description:**
+**Description:** This R pcakage contains several college football datasets, collected via ESPN's API: betting lines, coaches, conferences, play-by-play results, game results, team records, win probability data, predicted points data, player information, team ratings and rankings, recruiting data, advanced statistics, roster data, team travel data, team venue data, and more. This provides virtually endless possibilities for research, which will allow for thorough analysis in whichever topic we chose for our project. 
 
-* Dimensions -
+**Motivating Questions:** Which schools excel in recruiting? Are there certain areas of the country that are better to recruit from? Do certain schools perform better in certain areas of the country? Does distance play a factor in recruiting? How does recruiting relate to on-field performance? Do certain coaches/conferences/schools excel in recruiting? 
 
-* Unit of Analysis - 
+* Dimensions - Player recruiting data for year 2020: 3936 observations of 14 columns (data extends back to 2000, so all years would be 20 times the amount of observations). Additionally has the potential to be merged with other datasets depending on motivating questions.
 
-**Motivating Questions:**
+* Unit of Analysis - For 2020 player recruiting data: individual high school recruit. 
 
 ## 3. [Spotify - All Time Top 2000s Mega Dataset](https://www.kaggle.com/iamsumat/spotify-top-2000s-mega-dataset)
 
