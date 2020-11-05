@@ -1,0 +1,94 @@
+---
+title: "Next Steps"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+# Read in Data
+
+```{r}
+NY <- read.csv("glassdoor_data/Data_Job_NY.csv")
+
+SF <- read.csv("glassdoor_data/Data_Job_SF.csv")
+
+TX <- read.csv("glassdoor_data/Data_Job_TX.csv")
+
+WA <- read.csv("glassdoor_data/Data_Job_WA.csv")
+
+#combining data from the 4 regions
+ds_jobs <- rbind(NY, SF, TX, WA)
+```
+
+# Basic Exploration
+
+```{r}
+dim(ds_jobs)
+```
+There are 3,324 rows and 12 variables in the data set.
+
+```{r}
+head(ds_jobs)
+```
+```{r}
+names(ds_jobs)
+```
+
+```{r}
+summary(ds_jobs)
+```
+
+The unit of analysis in the `ds_jobs` data set is a specific job within the field of data science at a company listed on glassdoor.
+
+# Clean Data
+
+## Missing Values
+
+It looks like `Min_salary` and `Max_Salary` have missing values denoted with a `-1` value. We will replace them with NA. 
+
+```{r}
+#Replace -1 with NA
+ds_jobs["Min_Salary"] <- na_if(ds_jobs["Min_Salary"], -1)
+ds_jobs["Max_Salary"] <- na_if(ds_jobs["Max_Salary"], -1)
+```
+
+```{r}
+table(ds_jobs$State)
+```
+
+There are 2 values within `State` that are blank. We will replace them with NA.
+
+```{r}
+#Replace blanks with NA
+ds_jobs["State"] <- na_if(ds_jobs["State"], "")
+```
+
+```{r}
+table(ds_jobs$Industry)
+```
+
+There are 624 values with no industry. We will replace them with NA.
+
+```{r}
+#Replace blanks with NA
+ds_jobs["Industry"] <- na_if(ds_jobs["Industry"], "")
+```
+
+## Data Types
+
+```{r}
+sapply(ds_jobs, class)
+```
+
+It looks like all the data types are correct except for `Date_Posted` and `Valid_until` which should be dates.
+
+```{r}
+ds_jobs$Date_Posted <- as.Date(ds_jobs$Date_Posted, format = "%Y-%m-%d")  
+ds_jobs$Valid_until <- as.Date(ds_jobs$Valid_until, format = "%Y-%m-%d")  
+```
+
+
+
