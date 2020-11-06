@@ -1,0 +1,32 @@
+---
+title: "exploring_industries"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Exploring  around different industries in the data set ad sorting to find out which industry has the highest number of jobs
+
+
+```{r}
+industry <- table(ds_jobs$Industry)
+sorted_industry <- industry[order(-industry)]
+
+```
+
+
+We see that, Information technolody, business services and biotech are the top 3 industries considering all the regions. From the exploration around regions file, we see that NY tops the list. Find out more about industries only in NY region.
+
+```{r}
+NY %>%
+  group_by(Industry) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count))
+```
+
+Even though healthcare is not in the top 3 while considering industries providing more job opportunities, when combining it with regions and analysing for NY, we find that there are more health care jobs!! Now, that seems interesting
+
+Proceeding further, we can see about the salary range.
+
+
