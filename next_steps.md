@@ -42,6 +42,7 @@ When is the best time to look for jobs?
 * How do we handle the regions? by city, by state, metro area? We would need to find a way to group by metro area.
 
 * Can we scale min and max salaries for cost of living in each area?
+[Cost of Living Index](https://www.numbeo.com/cost-of-living/region_rankings.jsp?title=2020-mid&region=019)
 
 * Data was scraped right after the pandemic started so how does this affect our analysis?
 
