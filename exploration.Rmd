@@ -1,0 +1,38 @@
+---
+title: "EDA"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+# Regions
+
+We want to find all of the regions that are incorporated in this data set so we will group the city variable and calculate how many of each city there is.
+
+```{r}
+ds_jobs %>%
+  group_by(City) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count))
+```
+
+Having done this, we see that the larger cities are most often found. We want to incorporate the suburban areas around these big cities to get a better regional report of where the DS jobs are.
+
+```{r}
+NY %>%
+  group_by(City) %>%
+  summarize(count = n()) %>%
+  arrange(desc(count))
+```
+
+NY metro area:
+* New York
+* Brooklyn
+* Rego Park (Queens)
+* Staten Island
+* Bronx
+* Fort Lee (in Jersey but would fit the mold of being a part of NYC)
+* Jersey City (again, same as Fort Lee, just on opposite side of Hudson River)
+* Lynbrook (on Long Island, 1 hour outside of Manhattan)
+* Mamaroneck (~1 hour away from Manahattan)
+* Maspeth (Queens)
