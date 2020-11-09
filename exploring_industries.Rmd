@@ -29,4 +29,36 @@ Even though healthcare is not in the top 3 while considering industries providin
 
 Proceeding further, we can see about the salary range.
 
+# What type of data science jobs are available?
+
+Now that we have seen which industries are hiring for jobs, let's look at how many are data science related. What I want to do here is separate non-data science jobs from data science jobs. From there, I want to separate the data science jobs by where they fall in the data science process (ex. data engineering, data analyst, data science, etc.).
+
+```{r}
+jobs <- ds_jobs %>%
+  group_by(Job_title) %>%
+  summarise(count = n()) 
+
+data <- grep("data", jobs$Job_title, ignore.case = TRUE, value = TRUE)
+
+engineer <- grep("engineer", data, ignore.case = TRUE, value = TRUE)
+analyst <- grep("anal", data, ignore.case = TRUE, value = TRUE)
+ds <- grep("scient", data, ignore.case = TRUE, value = TRUE)
+```
+
+There are 878 jobs (26% of total jobs in ds_jobs data set) that have "data" in their title
+* 293 (33% of the data jobs) have "engineer" in the title
+* 215 (24% of the data jobs) have "analyst" in the title
+* 345 (39% of the data jobs) have "scientist" in the title
+
+This does not add up to be all of the jobs so I want to subtract these jobs from the data jobs. There are 87 jobs without these in their title.
+
+Some jobs fall into multiple categories.
+
+```{r}
+data2 <- data[!data %in% engineer]
+data3 <- data2[!data2 %in% analyst]
+data4 <- data3[!data3 %in% ds]
+
+sum(as.integer((engineer %in% analyst)))
+```
 
