@@ -1,9 +1,9 @@
 ---
-title: "Next Steps"
-output: html_notebook
+title: "Loading and Cleaning the Data"
+output: github_document
 ---
 
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 library(ggplot2)
 ```
@@ -80,7 +80,7 @@ ds_jobs["Industry"] <- na_if(ds_jobs["Industry"], "")
 ```
 
 ```{r}
-table(ds_jobs$City)
+table(ds_jobs$City)[1:10]
 ```
 
 There are 6 observations with no `City`. We will replace them with NA. 
