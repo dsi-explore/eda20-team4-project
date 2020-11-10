@@ -61,7 +61,7 @@ ds_jobs["Max_Salary"] <- na_if(ds_jobs["Max_Salary"], -1)
 table(ds_jobs$State)
 ```
 
-There are 2 values within `State` that are blank. We will replace them with NA.
+There are 2 observations within `State` that are blank. We will replace them with NA.
 
 ```{r}
 #Replace blanks with NA
@@ -72,12 +72,24 @@ ds_jobs["State"] <- na_if(ds_jobs["State"], "")
 table(ds_jobs$Industry)
 ```
 
-There are 624 values with no industry. We will replace them with NA.
+There are 624 observations with no `Industry`. We will replace them with NA.
 
 ```{r}
 #Replace blanks with NA
 ds_jobs["Industry"] <- na_if(ds_jobs["Industry"], "")
 ```
+
+```{r}
+table(ds_jobs$City)
+```
+
+There are 6 observations with no `City`. We will replace them with NA. 
+
+```{r}
+#Replace blanks with NA
+ds_jobs["City"] <- na_if(ds_jobs["City"], "")
+```
+
 
 ## Data Types
 
@@ -92,5 +104,85 @@ ds_jobs$Date_Posted <- as.Date(ds_jobs$Date_Posted, format = "%Y-%m-%d")
 ds_jobs$Valid_until <- as.Date(ds_jobs$Valid_until, format = "%Y-%m-%d")  
 ```
 
+## Incorrect Values
+
+```{r}
+unique(ds_jobs$State)
+```
+
+There are some values in which the state value is `Texas` instead of `TX`.
+
+```{r}
+ds_jobs <- ds_jobs %>% mutate(State = case_when(
+                              State == "Texas" ~ "TX",
+                              T ~ State
+))
+```
+
+There are some misspelled values for `City`.
+
+```{r}
+ds_jobs <- ds_jobs %>% mutate(City = case_when(
+                              City == "Mc Lean" ~ "McLean",
+                              City == "Crystal City, state=Virginia, Virginia" ~ "Crystal City",
+                              T ~ City
+))
+```
+
+## Data Wrangling
+
+To make sense of the location of each job, we are grouping specific cities into metro areas. There are metro areas in our data set. 
+
+```{r}
+#create data frame of cities and their metro areas
+City <- c("College Station", "Washington", "Dallas", "San Antonio","Houston", "Austin","San Francisco","New York", "Brooklyn", "Staten Island", "Bronx", "Maspeth", "Rego Park", "Lynbrook", "Mamaroneck", "Williston Park", "Fort Lee", "Jersey City", "Paramus", "West New York", "West Orange", "Addison", "Allen", "Angleton", "Arlington, TX", "Carrollton", "Denton", "Forney", "Fort Sam Houston", "Fort Worth", "Freeport", "Frisco", "Galveston", "Grapevine", "Harlingen", "Irving", "Kemah", "Kyle", "Leander", "Lewisville", "Pharr", "Plano", "Randolph A F B", "Richardson", "Round Rock", "Spring", "The Woodlands", "University Park", "Webster", "Weslaco", "Westlake", "Alameda", "Belmont","Berkeley", "Brisbane", "Burlingame", "Dublin", "Emeryville", "Fremont", "Hayward", "Hercules", "Menlo Park", "Novato", "Oakland", "Palo Alto", "Redwood City", "San Bruno", "San Carlos", "San Leandro", "San Mateo", "San Rafael", "San Ramon", "Sausalito", "South San Francisco", "Stanford", "Union City", "Woodside", "Annandale", "Arlington, VA", "Burke", "Centreville", "Chantilly", "Crystal City", "Fairfax", "Falls Church", "Fort Belvoir", "Herndon", "McLean", "Reston", "Rosslyn", "Sterling", "Tysons", "Vienna", "Adelphi", "Andrews AFB", "Annapolis Junction", "Beltsville", "Bethesda", "Bowie", "Chevy Chase", "College Park", "Fort Meade", "Fulton", "Gaithersburg", "Germantown", "Greenbelt", "Lanham", "North Bethesda", "Rockville", "Silver Spring", "Suitland", "White Oak", "Foster City", "Concord", "Richmond", "Albany", "Corpus Christi", "Alexandria", "Marshall", "Greenville", "Roanoke", "El Paso", "Lubbock", "Huntsville", "Italy", "Belton", "Comanche Village I", "Bryan", "Burnet", "Germany", "Springfield", "Columbia", "Laurel") 
+
+metro_area <- c("College Station","Washington", "Dallas", "San Antonio", "Houston", "Austin","San Francisco","New York", "New York", "New York","New York", "New York","New York", "New York","New York", "New York","New York", "New York","New York", "New York", "New York", "Dallas", "Dallas", "Houston", "Dallas", "Dallas", "Dallas", "Dallas","San Antonio", "Dallas", "Houston", "Dallas", "Houston", "Dallas", "Brownsville", "Dallas", "Houston", "Austin", "Austin", "Dallas", "Brownsville", "Dallas", "San Antonio", "Dallas", "Austin", "Houston", "Houston", "Dallas", "Houston", "Brownsville", "Dallas", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "San Francisco", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "Washington", "San Francisco", "San Francisco", "San Francisco","San Francisco", "Corpus Christi", "Washington", "Marshall", "Dallas", "Dallas", "El Paso", "Lubbock", "Huntsville", "Dallas", "Killeen", "Killeen", "College Station", "Killeen", "Lufkin", "Washington", "Washington", "Washington")
+
+metro_df <- data.frame(City,metro_area)
+
+#add the metro area to the data set
+ds_jobs <- left_join(ds_jobs, metro_df, by = "City")
+```
+
+There are two Arlington's in the data set so we need to clean up these two metro areas based on state.
+
+```{r}
+ds_jobs <- ds_jobs  %>% mutate(metro_area = case_when(
+                    City == "Arlington" & State == "TX" ~ "Dallas",
+                    City == "Arlington" & State == "VA" ~ "Washington",
+                    T ~ metro_area
+))
+```
+
+There are still a few missing values for metro area.
+
+```{r}
+y <- ds_jobs[is.na(ds_jobs$metro_area),]
+
+y %>% select(City, State, metro_area)
+```
+The following values remain:
+
+* Florence, KY
+* Chennai, TN
+* Paris, TX
+* Raleigh, NC
+* 6 NAs
+
+`KY`, `TN` and `NC` are not close to the other regions of the data and `Paris, TX` was not near any metro areas in the cost of living data set. We might need to remove these values from the data set.
+
+Now we want to add the cost of living index for each obseravtion based on metro area.
+
+[Cost of Living Index](https://advisorsmith.com/data/coli/)
+
+```{r}
+#reading in the COI data
+col_index <- read.csv("advisorsmith_cost_of_living_index.csv")
+
+#adding the COI to the ds_jobs data
+ds_jobs <- left_join(ds_jobs, col_index, by = c("metro_area" = "City"))
+ds_jobs <- ds_jobs %>% select(-State.y) %>% select(COI = Cost.of.Living.Index, State = State.x, everything())
+```
 
 
