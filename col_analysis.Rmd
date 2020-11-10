@@ -1,0 +1,40 @@
+---
+title: "Cost of Living Analysis"
+output: html_document
+---
+
+[Cost of Living Index](https://advisorsmith.com/data/coli/)
+
+The cost of living index (COI) came from AdvisorSmith and is calculated for 509 metropolitan areas in the United States. This gives us an easier way to compare cities against one another and scale the salary ranges to be able to compare across regions. The COI is modeled on national average household budgets and has weights assigned to the follow 6 major categories of household expenses (weights as percentages list below):
+
+* Food: 16.1%
+* Housing: 23.2%
+* Utilities: 10.1%
+* Transportation: 18.6%
+* Healthcare: 9.6%
+* Consumer Discretionary Spending: 22.3%
+
+A COI of 100 is the average cost of living for the United States. If a city's COI is above 100, then it has an above average cost of living and if it has a COI below 100 it has an average cost of living below the average. For example, a city with a 130 COI has a 30% higher cost of living than the national average. 
+
+This data is from June 5, 2020.
+
+```{r}
+dim(col_index)
+
+names(col_index)
+```
+
+
+```{r}
+summary(ds_jobs$COI)
+```
+
+The COI for our data ranges from 88.3 to 183.0. 
+
+```{r}
+area_COI <- ds_jobs %>%  group_by(metro_area, COI) %>% 
+  summarise(count = n()) %>%  arrange(-COI)
+
+area_COI
+```
+

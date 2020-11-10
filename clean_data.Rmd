@@ -129,9 +129,11 @@ ds_jobs <- ds_jobs %>% mutate(City = case_when(
 ))
 ```
 
-## Data Wrangling
+# Data Wrangling
 
-To make sense of the location of each job, we are grouping specific cities into metro areas. There are metro areas in our data set. 
+##Metro Area
+
+To make sense of the location of each job, we are grouping specific cities into metro areas.
 
 ```{r}
 #create data frame of cities and their metro areas
@@ -172,7 +174,9 @@ The following values remain:
 
 `KY`, `TN` and `NC` are not close to the other regions of the data and `Paris, TX` was not near any metro areas in the cost of living data set. We might need to remove these values from the data set.
 
-Now we want to add the cost of living index for each obseravtion based on metro area.
+## Cost of Living Index
+
+Now we want to add the cost of living index for each observation based on metro area.
 
 [Cost of Living Index](https://advisorsmith.com/data/coli/)
 
