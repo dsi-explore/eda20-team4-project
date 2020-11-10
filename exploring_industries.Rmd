@@ -33,6 +33,8 @@ Proceeding further, we can see about the salary range.
 
 Now that we have seen which industries are hiring for jobs, let's look at how many are data science related. What I want to do here is separate non-data science jobs from data science jobs. From there, I want to separate the data science jobs by where they fall in the data science process (ex. data engineering, data analyst, data science, etc.).
 
+## Engineering, analyst, and data scientist
+
 ```{r}
 jobs <- ds_jobs %>%
   group_by(Job_title) %>%
@@ -62,3 +64,16 @@ data4 <- data3[!data3 %in% ds]
 sum(as.integer((engineer %in% analyst)))
 ```
 
+## ML and stats jobs
+
+Now that I have found data engineering, data analyst, and data scientist jobs, I want to see if there are any machine learning or stats jobs in the data set.
+
+```{r}
+ml <- grep("machine", jobs$Job_title, ignore.case = TRUE, value = TRUE)
+
+stats <- grep("stat", jobs$Job_title, ignore.case = TRUE, value = TRUE)
+```
+
+There are 74 ML jobs within the ds_jobs data set. Some of these jobs include 'data scientist' so we can look into that for the bucketing. 
+
+There are 23 stats jobs within the ds_jobs data set. Same problem. Someone of these jobs contain 'data scientist'/'data analyst'.
