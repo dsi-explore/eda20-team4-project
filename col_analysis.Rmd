@@ -1,6 +1,6 @@
 ---
 title: "Cost of Living Analysis"
-output: html_document
+output: github_document
 ---
 
 [Cost of Living Index](https://advisorsmith.com/data/coli/)
@@ -32,9 +32,215 @@ summary(ds_jobs$COI)
 The COI for our data ranges from 88.3 to 183.0. 
 
 ```{r}
-area_COI <- ds_jobs %>%  group_by(metro_area, COI) %>% 
+area_COI <- ds_jobs %>% group_by(metro_area, COI) %>% 
   summarise(count = n()) %>%  arrange(-COI)
 
 area_COI
 ```
+
+# Salary
+
+```{r}
+summary(ds_jobs$Min_Salary)
+```
+
+The minimum salary in the data set ranges from \$19,857 to \$205,735 with a mean of \$82,420.
+
+```{r}
+#checking out the min of Min_Salary
+ds_jobs %>% arrange(Min_Salary) %>% select(Job_Type, Min_Salary, Max_Salary, Industry, metro_area) %>% slice(1)
+```
+
+```{r}
+#checking out the max of Max_Salary
+ds_jobs %>% arrange(-Min_Salary) %>% select(Job_Type, Min_Salary, Max_Salary, Industry, metro_area) %>% slice(1)
+```
+
+```{r}
+ds_jobs %>% ggplot(aes(x = Min_Salary)) +
+  geom_density(alpha = 0.25) +
+  labs(
+    title = "Distribution of the Minimum Salary for Data Science Jobs \nPosted on Glassdoor",
+    x = "Minimum Salary",
+    y = "Density"
+  ) + scale_x_continuous(
+    breaks = seq(15000,210000,30000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+  theme_classic()
+```
+
+The distribution of minimum salaries is slightly skewed right with a few values over $150K. 
+
+```{r}
+summary(ds_jobs$Max_Salary)
+```
+
+The maximum salary in the data set ranges from \$35,000 to \$383,416 with a mean of \$120,607.
+
+```{r}
+#checking out the min of Max_Salary
+ds_jobs %>% arrange(Max_Salary) %>% select(Job_Type, Min_Salary, Max_Salary, Industry, metro_area) %>% slice(1)
+```
+
+```{r}
+#checking out the max of Max_Salary
+ds_jobs %>% arrange(-Max_Salary) %>% select(Job_Type, Min_Salary, Max_Salary, Industry, metro_area) %>% slice(1)
+```
+
+```{r}
+ds_jobs %>% ggplot(aes(x = Max_Salary)) +
+  geom_density(alpha = 0.25) +
+  labs(
+    title = "Distribution of the Maximum Salary for Data Science Jobs \nPosted on Glassdoor",
+    x = "Maximum Salary",
+    y = "Density"
+  ) + scale_x_continuous(
+    breaks = seq(30000,390000,50000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+  theme_classic()
+```
+
+The distribution of Maximum salaries is very right skewed with a long tail with only a few salaries between \$250K and $380K. We  might want to consider some of these values as outliers.
+
+```{r}
+salary_range <- ds_jobs$Max_Salary - ds_jobs$Min_Salary
+
+summary(salary_range)
+```
+
+The range between the minimum and maximum salary for data science jobs ranges from \$0 to \$237,382. 
+
+```{r}
+salary_range <- data.frame(salary_range)
+
+ggplot(data = salary_range, aes(x = salary_range)) +
+  geom_density(alpha = 0.25) +
+  labs(
+    title = "Range of Salaries for Data Science Jobs \n Posted on Glassdoor",
+    x = "Salary Range",
+    y = "Density"
+  ) + scale_x_continuous(
+    breaks = seq(0,240000,50000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+  theme_classic()
+```
+
+The distribution of the range in salaries between the minimum and maximum salary for each job is extremely skewed right with a few values even above $200K difference for the same job. 
+
+```{r}
+#wrangling the data to fit both salaries on the same graph
+salary_data <- ds_jobs %>% select(Min_Salary, Max_Salary) %>% pivot_longer(
+                cols = c(Min_Salary, Max_Salary),
+                names_to = "type",
+                values_to = "salary",
+                values_drop_na = TRUE
+)
+
+#calculating the means
+mean_salary <- salary_data %>% group_by(type) %>% 
+  mutate(mean_rate = mean(salary))
+
+salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
+  geom_density(alpha = 0.25) +
+  scale_color_manual(values = c("#868686FF","#EFC000FF"),
+                     name = "Salary Type",
+                    labels = c("Max", "Min")) +
+  scale_fill_manual(values = c("#868686FF","#EFC000FF"), 
+                    name = "Salary Type",
+                    labels = c("Max", "Min")) +
+  geom_vline(aes(xintercept=mean_salary$mean_rate, color = type), linetype = "dashed", show.legend = FALSE) +
+  labs(
+    title = "The Minimum and Maximum Salary for Data Science Jobs",
+    subtitle = "",
+    x = "Salary",
+    y = "Density") +
+  scale_x_continuous(
+    breaks = seq(15000,390000,50000),
+    labels = function(x){paste0('$', x/1000, 'K')})+ 
+  annotate("text",y = 12e-06, x = 65000, label = "$82.5K", size = 3, color = "#868686FF") +
+  annotate("text",y = 12e-06, x = 140000, label = "$120.6K", size = 3, color = "#868686FF") +
+  theme_classic()
+```
+
+As expected the distribution of maximum salaries is shifted to the right or above the distribution of minimum salaries. This graph accounts for all job types but I think it might be beneficial for our analysis to take this further and either only look at full time positions or look at full time, part time, intern, etc. separately depending on the spread of that data. 
+
+## Scaled Salary
+
+Now that we understand the distribution of the salary data and the range between the minimum and maximum salary, we want to scale the salaries based on cost of living for the metro area in which the job is located in. With this new variable we will be able to analyze salary differences across different metro areas. The new variable is calculated as follows:
+
+*`Min_Salary/(COI/100) = Min_Scaled_Salary`
+
+*`Max_Salary/(COI/100) = Max_Scaled_Salary`
+
+```{r}
+#creating the new variables
+ds_jobs <- ds_jobs %>% mutate(Min_Scaled_Salary = Min_Salary/(COI/100), Max_Scaled_Salary = Max_Salary/(COI/100))
+```
+
+We will graph the new scaled salary variables to understand how they are distributed. 
+
+```{r}
+#wrangling the data to fit both salaries on the same graph
+scaled_salary_data <- ds_jobs %>% select(Min_Scaled_Salary, Max_Scaled_Salary) %>% pivot_longer(
+                cols = c(Min_Scaled_Salary, Max_Scaled_Salary),
+                names_to = "type",
+                values_to = "salary",
+                values_drop_na = TRUE
+)
+
+#calculating the means
+mean_scaled_salary <- scaled_salary_data %>% group_by(type) %>% 
+  mutate(mean_rate = mean(salary))
+
+scaled_salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
+  geom_density(alpha = 0.25) +
+  scale_color_manual(values = c("#868686FF","#EFC000FF"),
+                     name = "Salary Type",
+                    labels = c("Max", "Min")) +
+  scale_fill_manual(values = c("#868686FF","#EFC000FF"), 
+                    name = "Salary Type",
+                    labels = c("Max", "Min")) +
+  geom_vline(aes(xintercept=mean_scaled_salary$mean_rate, color = type), linetype = "dashed", show.legend = FALSE) +
+  labs(
+    title = "The Scaled Minimum and Maximum Salary for Data Science Jobs",
+    subtitle = "",
+    x = "Scaled Salary",
+    y = "Density") +
+  scale_x_continuous(
+    breaks = seq(15000,400000,50000),
+    labels = function(x){paste0('$', x/1000, 'K')})+ 
+  annotate("text",y = 1.8e-05, x = 44500, label = "$60.7K", size = 3, color = "#868686FF") +
+  annotate("text",y = 1.5e-05, x = 109000, label = "$89.6K", size = 3, color = "#868686FF") +
+  theme_classic()
+```
+
+The spread of both the scaled minimum and maximum salaries is smaller with the exception of the right tails which seem to be a bit longer. 
+
+```{r}
+scaled_salary_range <- ds_jobs$Max_Scaled_Salary - ds_jobs$Min_Scaled_Salary
+
+summary(scaled_salary_range)
+```
+
+The range between the scaled minimum and maximum salary for data science jobs ranges from \$0 to \$193,600. 
+
+```{r}
+scaled_salary_range <- data.frame(scaled_salary_range)
+
+ggplot(data = scaled_salary_range, aes(x = scaled_salary_range)) +
+  geom_density(alpha = 0.25) +
+  labs(
+    title = "Range of Scaled Salaries for Data Science Jobs \n Posted on Glassdoor",
+    x = "Scaled Salary Range",
+    y = "Density"
+  ) + scale_x_continuous(
+    breaks = seq(0,200000,50000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+  theme_classic()
+```
+The distribution of the range of the scaled salaries is very similar to the non-scaled salaries just shifted slightly more to the left with a slightly longer right tail. 
 
