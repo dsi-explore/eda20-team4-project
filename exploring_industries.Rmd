@@ -36,21 +36,17 @@ Now that we have seen which industries are hiring for jobs, let's look at how ma
 ## Engineering, analyst, and data scientist
 
 ```{r}
-jobs <- ds_jobs %>%
-  group_by(Job_title) %>%
-  summarise(count = n()) 
-
-data <- grep("data", jobs$Job_title, ignore.case = TRUE, value = TRUE)
+data <- grep("data", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 
 engineer <- grep("engineer", data, ignore.case = TRUE, value = TRUE)
 analyst <- grep("anal", data, ignore.case = TRUE, value = TRUE)
 ds <- grep("scient", data, ignore.case = TRUE, value = TRUE)
 ```
 
-There are 878 jobs (26% of total jobs in ds_jobs data set) that have "data" in their title
-* 293 (33% of the data jobs) have "engineer" in the title
-* 215 (24% of the data jobs) have "analyst" in the title
-* 345 (39% of the data jobs) have "scientist" in the title
+There are 1562 jobs (26% of total jobs in ds_jobs data set) that have "data" in their title
+* 553 (35% of the data jobs) have "engineer" in the title
+* 342 (22% of the data jobs) have "analyst" in the title
+* 634 (41% of the data jobs) have "scientist" in the title
 
 This does not add up to be all of the jobs so I want to subtract these jobs from the data jobs. There are 87 jobs without these in their title.
 
@@ -69,11 +65,52 @@ sum(as.integer((engineer %in% analyst)))
 Now that I have found data engineering, data analyst, and data scientist jobs, I want to see if there are any machine learning or stats jobs in the data set.
 
 ```{r}
-ml <- grep("machine", jobs$Job_title, ignore.case = TRUE, value = TRUE)
+ml <- grep("machine", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 
-stats <- grep("stat", jobs$Job_title, ignore.case = TRUE, value = TRUE)
+stats <- grep("stat", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 ```
 
-There are 74 ML jobs within the ds_jobs data set. Some of these jobs include 'data scientist' so we can look into that for the bucketing. 
+There are 14 ML jobs within the ds_jobs data set. Some of these jobs include 'data scientist' so we can look into that for the bucketing. 
 
-There are 23 stats jobs within the ds_jobs data set. Same problem. Someone of these jobs contain 'data scientist'/'data analyst'.
+There are 26 stats jobs within the ds_jobs data set. Same problem. Someone of these jobs contain 'data scientist'/'data analyst'.
+
+# Add variable bucketing job titles
+
+The job titles varying so we want to bucket the job titles in larger categories. For example, 'Data Scientist' and 'Sr Data Scientist' will be bucketed into the same 'Data Scientist' category.
+
+```{r}
+ds_jobs_bucket <- ds_jobs %>%
+  mutate(job_category = NA)
+  
+  
+for (i in seq_along(ds_jobs$Job_title)) {
+  if ((ds_jobs$Job_title[[i]] %in% engineer) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+    ds_jobs_bucket$job_category[[i]] = "Data Engineer"
+  } else if ((ds_jobs$Job_title[[i]] %in% analyst) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+    ds_jobs_bucket$job_category[[i]] = "Data Analyst"
+  } else if ((ds_jobs$Job_title[[i]] %in% ds) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+    ds_jobs_bucket$job_category[[i]] = "Data Scientist"
+  } else if ((ds_jobs$Job_title[[i]] %in% ml) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+    ds_jobs_bucket$job_category[[i]] = "Machine Learning"
+  } else if ((ds_jobs$Job_title[[i]] %in% stats) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+    ds_jobs_bucket$job_category[[i]] = "Statistics"
+  } 
+}
+```
+
+Then we want to see how many NA values there are and what thejob titles of the NA values are.
+
+```{r}
+ds_jobs_bucket %>%
+  group_by(job_category) %>%
+  summarise(count = n())
+
+ds_jobs_bucket %>%
+  filter(is.na(job_category)) %>%
+  group_by(Job_title) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1:20)
+```
+
+There are 1802 NA values in the job_category column and it looks like none of theses jobs have any relation to data science.
