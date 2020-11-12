@@ -34,3 +34,7 @@ When is the best time to look for jobs?
 
 * Data was scraped right after the pandemic started so how does this affect our analysis?
 
+# Next Steps following 11/11 meeting
+* Logan and Sarah come up with metro area variable
+* Matt look ito job description/title/category further
+* Meena research time series for job postings, look in to job categories/types
