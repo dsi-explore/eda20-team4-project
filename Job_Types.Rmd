@@ -44,10 +44,17 @@ ds_jobs %>%
   filter(Job_Type %in% c("FULL_TIME"))
 ```
 
+Viewing the number of job types in each state as a table for further analysis
+
+```{r}
+table(ds_jobs$State, ds_jobs$Job_Type)
+```
+
+
+
 Plotting states with types of jobs to find the dsitribution spread across each state
 
 ```{r}
-
 ggplot(ds_jobs, aes(x=State, y=Job_Type))+
   geom_jitter(alpha = 0.7) + labs(title ="Relationship between states and types of jobs available",
   y = "Type Of Job", 
