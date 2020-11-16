@@ -114,3 +114,46 @@ ds_jobs_bucket %>%
 ```
 
 There are 1802 NA values in the job_category column and it looks like none of theses jobs have any relation to data science.
+
+# Analysing the number of jobs in every category by taking the ds_jobs_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these data science job categories.
+
+```{R}
+table(ds_jobs_bucket$Industry,ds_jobs_bucket$job_category)
+```
+
+Let's plot the above
+
+```{R}
+
+```
+
+
+# Time series analysis
+
+There are two columns Date_Posted and Valid_Until which denotes the time frame until which the job applications are open and denoting the recruitment time frame for candidates. On trying to plot the availabiloty of new jobs while considering the date posted, we find that it doesn't increase exponentially neither does it hits the bottom but it reaches it's peak after mid May denoting the max job availability.
+
+
+```{R}
+table_date_posted <- data.frame(table(ds_jobs$Date_Posted))
+table_date_posted$Var1 <- as.Date(table_date_posted$Var1, format = "%Y-%m-%d") 
+class(table_date_posted$Var1)
+ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
+  geom_line() +
+  labs(title = "Job availability vs Date posted",
+       x = "Date",
+       y = "Number of jobs")
+
+```
+
+
+
+```{R}
+library(ggplot2)
+library(scales)
+ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
+  geom_line(color = "black", 
+            size=1 ) +
+  geom_smooth() +
+  theme_minimal()
+
+```
