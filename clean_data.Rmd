@@ -6,6 +6,7 @@ output: github_document
 ```{r, message = FALSE}
 library(tidyverse)
 library(ggplot2)
+library(janitor)
 ```
 
 # Read in Data
@@ -133,75 +134,6 @@ ds_jobs <- ds_jobs %>%
   mutate(State = ifelse(City == 'Crystal City' & is.na(State), 'VA', State))
 ```
 
-This chunk creates a csv with locations of cities and distance from state group centers
-```{r}
-#Find unique cities
-city_counts <- ds_jobs %>% 
-  mutate(Location = paste0(City, ', ', State)) %>% 
-  group_by(City, State, Location) %>% 
-  summarise(count = n()) %>% arrange(-count)
-
-#Remove observations with no city (there are only 6 such postings)
-city_counts <- city_counts[city_counts$Location != 'NA, TX',]
-
-#load package to generate locations for each city
-library(ggmap)
-register_google('Your API Code')
-locations_df <- mutate_geocode(city_counts, Location)
-
-#join location data back to main city dataframe
-city_locations <- city_counts %>% 
-  left_join(locations_df[,-2], by = 'Location')
-
-#remove observations that cannot possibly be part of our relevant metro areas
-city_locations <- city_locations[!city_locations$State %in% c('TN', 'KY', 'NC'),]
-
-#create groups for nearby states
-city_locations <- city_locations %>% 
-  mutate(state_group = case_when(
-    State %in% 'CA' ~ 'CA',
-    State %in% c('NY','NJ') ~ 'NY',
-    State %in% c('DC','VA','MD') ~ 'DC',
-    State %in% 'TX' ~ 'TX'
-  )) 
-
-#find weighted average longitude and latitude for each state group, weight determined by job concentration in given city
-#weighted is more appropriate than regular average, but hardly changes overall numbers (tenths of a decimal)
-group_con_loc <- city_locations %>% 
-  group_by(state_group) %>% 
-  summarise(count,
-            job_concentration = count/sum(count),
-            #avg_lon = mean(lon),
-            #avg_lat = mean(lat),
-            avg_lon_weighted = sum(job_concentration*lon),
-            avg_lat_weighted = sum(job_concentration*lat)) %>% unique()
-
-#join job concentration/average location data back into main city df
-city_locations <- city_locations %>% left_join(group_con_loc, by = c('state_group', 'count'))
-
-#create new column to determine distance from average for each city
-library(geosphere)
-city_locations <- city_locations %>% 
-  mutate(dist = distm(c(lon, lat), c(avg_lon_weighted, avg_lat_weighted), fun = distHaversine)/1609)
-
-#create csv for city job concentration and location data
-#write.csv(city_locations, 'city_locations.csv')
-
-```
-
-Research state group city spreads
-```{r}
-city_locations <- read.csv('city_locations.csv')
-
-city_locations %>% 
-  group_by(state_group) %>% 
-  summarise(max_dist = max(dist),
-            min_dist = min(dist),
-            avg_dist = mean(dist))
-```
-
-From the above, we see that California, DC, and New York all seem to be reliable metro areas, all with less than 30 miles maximum from the average location. Texas on the other hand does not seem to be represented by a single metro area. Further inspection of the cities in Texas indicates several large concentrated cities that are not close to each other. 
-
 # Data Wrangling
 
 ##Metro Area
@@ -247,6 +179,87 @@ The following values remain:
 
 `KY`, `TN` and `NC` are not close to the other regions of the data and `Paris, TX` was not near any metro areas in the cost of living data set. We might need to remove these values from the data set.
 
+This chunk creates a csv with locations of cities and distance from state group centers
+```{r}
+#Find unique cities
+city_counts <- ds_jobs %>% 
+  mutate(Location = paste0(City, ', ', State),
+         metro_location = case_when(metro_area == 'Washington' ~ 'Washington, DC',
+                                    metro_area == 'New York' ~ 'New York, NY',
+                                    T ~ paste0(metro_area, ', ', State))) %>% 
+  group_by(City, State, Location, metro_area, metro_location) %>% 
+  summarise(count = n()) %>% arrange(-count)
+
+#Remove observations with no city (there are only 6 such postings)
+city_counts <- city_counts[!is.na(city_counts$metro_area),]
+city_counts <- city_counts[,-4]
+
+#load package to generate locations for each city
+library(ggmap)
+register_google('YOUR CODE HERE')
+locations_city <- mutate_geocode(city_counts, Location)
+locations_metro <- mutate_geocode(city_counts, metro_location)
+
+city_locations <- cbind(locations_city, locations_metro[, c(6,7)])
+
+names(city_locations)[6:9] <- c('lon_city', 'lat_city', 'lon_metro', 'lat_metro')
+
+
+
+
+
+job_concentrations <- city_locations %>% 
+  group_by(metro_location) %>% 
+  summarise(count, 
+            job_concentration = count/sum(count))
+
+city_data <- city_locations %>% left_join(job_concentrations, by = c('metro_location', 'count')) %>% unique()
+
+weighted_locations <- city_data %>% 
+  group_by(metro_location) %>% 
+  summarise(avg_lon_metro_weighted = sum(job_concentration*lon_city),
+            avg_lat_metro_weighted = sum(job_concentration*lat_city))
+
+city_data <- city_data %>% left_join(weighted_locations, by = 'metro_location')
+
+#join job concentration/average location data back into main city df
+city_locations <- cbind(city_locations, group_con_loc)
+
+#create new column to determine distance from average for each city
+library(geosphere)
+city_data <- city_data %>% 
+  mutate(reg_dist = distm(c(lon_city, lat_city), c(lon_metro, lat_metro), fun = distHaversine)/1609,
+         weight_dist = distm(c(lon_city, lat_city), 
+                             c(avg_lon_metro_weighted, avg_lat_metro_weighted), fun = distHaversine)/1609)
+
+city_data %>%
+  group_by(metro_location) %>%
+  summarise(max_dist = max(weight_dist),
+            min_dist = min(weight_dist),
+            avg_dist = mean(weight_dist)) %>% View()
+
+city_data <- city_data %>% 
+  filter(!metro_location %in% c('Brownsville, TX', 
+                                'College Station, TX', 
+                                'Corpus Christi, TX',
+                                'El Paso, TX',
+                                'Huntsville, TX',
+                                'Killeen, TX',
+                                'Lubbock, TX',
+                                'Lufkin, TX',
+                                'Marshall, TX'),
+         weight_dist <= 50)
+
+ds_jobs <- ds_jobs %>% 
+  filter(paste0(City, ', ', State) %in% unique(city_data$Location)) %>% 
+  left_join(city_data, by = c('City', 'State')) %>% 
+  select(-Region, -metro_area)
+
+```
+ 
+#edit
+From the above, we see that California, DC, and New York all seem to be reliable metro areas, all with less than 30 miles maximum from the average location. Texas on the other hand does not seem to be represented by a single metro area. Further inspection of the cities in Texas indicates several large concentrated cities that are not close to each other. 
+
 ## Cost of Living Index
 
 Now we want to add the cost of living index for each observation based on metro area.
@@ -261,5 +274,3 @@ col_index <- read.csv("advisorsmith_cost_of_living_index.csv")
 ds_jobs <- left_join(ds_jobs, col_index, by = c("metro_area" = "City"))
 ds_jobs <- ds_jobs %>% select(-State.y) %>% select(COI = Cost.of.Living.Index, State = State.x, everything())
 ```
-
-
