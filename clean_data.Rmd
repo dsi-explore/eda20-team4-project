@@ -199,7 +199,7 @@ city_counts <- city_counts[,-4]
 
 #load package to generate locations for each city
 library(ggmap)
-register_google('YOUR CODE HERE')
+register_google('AIzaSyBeQYYzjNlu9_jtzIm2VfIb12-po3GxMQ0')
 locations_city <- mutate_geocode(city_counts, Location)
 locations_metro <- mutate_geocode(city_counts, metro_location)
 
@@ -285,6 +285,6 @@ Here we will save the final cleaned and merged data set to use for our analysis.
 #clean all the variable names for consistency
 ds_jobs <- clean_names(ds_jobs)
 
-write.csv(ds_jobs, "ds_jobs.csv")
+write.csv(ds_jobs, "ds_jobs.csv", row.names = F)
 ```
 
