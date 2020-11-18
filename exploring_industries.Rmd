@@ -206,6 +206,8 @@ not_ds <- ds_jobs_bucket %>%
 
 There are 894 NA values in the job_category column and it looks like none of theses jobs have any relation to data science.
 
+I think that this is as good as we will be able to get, keeping in mind that our motivating question is about data science related jobs available in the market and where these jobs will be located. I took a quick look at the 894 NA values, they are broken up into 184 different job titles and none of them are related to data science.
+
 # Analysing the number of jobs in every category by taking the ds_jobs_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these data science job categories.
 
 ```{R}
