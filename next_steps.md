@@ -38,3 +38,20 @@ When is the best time to look for jobs?
 * Logan and Sarah come up with metro area variable
 * Matt look ito job description/title/category further
 * Meena research time series for job postings, look in to job categories/types
+
+# Next Steps Following 11/18 meeting
+* Each look into different methods of analysis, eda/visualizations be complete by the time we return from break
+  -Matt: text analysis, job categories/industry by location, industry types
+  -Logan: companies & job categories, glassdoor rating (it is by company)
+  -Meena: salary by location, job type
+  -Sarah: cost of living, salary by job category, salary by industry
+* Other Project Stuff
+  -Meena: organizing github, will provide date
+  -Logan: begin writing metro data methodology
+  -Sarah: outline writeup
+  -Matt: write about job category feature
+* Accomplished: 
+  -Logan:
+  -Matt:
+  -Meena: 
+  -Sarah:
