@@ -1,62 +1,87 @@
----
-title: "Cost of Living Analysis"
-output: github_document
----
-```{r, include = FALSE}
-library(tidyverse)
-library(ggplot2)
-
-ds_jobs <- read.csv("ds_jobs.csv")[-1]
-```
-
+Cost of Living Analysis
+================
 
 [Cost of Living Index](https://advisorsmith.com/data/coli/)
 
-The cost of living index (COI) came from AdvisorSmith and is calculated for 509 metropolitan areas in the United States. This gives us an easier way to compare cities against one another and scale the salary ranges to be able to compare across regions. The COI is modeled on national average household budgets and has weights assigned to the follow 6 major categories of household expenses (weights as percentages list below):
+The cost of living index (COI) came from AdvisorSmith and is calculated
+for 509 metropolitan areas in the United States. This gives us an easier
+way to compare cities against one another and scale the salary ranges to
+be able to compare across regions. The COI is modeled on national
+average household budgets and has weights assigned to the follow 6 major
+categories of household expenses (weights as percentages list below):
 
-* Food: 16.1%
-* Housing: 23.2%
-* Utilities: 10.1%
-* Transportation: 18.6%
-* Healthcare: 9.6%
-* Consumer Discretionary Spending: 22.3%
+  - Food: 16.1%
+  - Housing: 23.2%
+  - Utilities: 10.1%
+  - Transportation: 18.6%
+  - Healthcare: 9.6%
+  - Consumer Discretionary Spending: 22.3%
 
-A COI of 100 is the average cost of living for the United States. If a city's COI is above 100, then it has an above average cost of living and if it has a COI below 100 it has an average cost of living below the average. For example, a city with a 130 COI has a 30% higher cost of living than the national average. 
+A COI of 100 is the average cost of living for the United States. If a
+city’s COI is above 100, then it has an above average cost of living and
+if it has a COI below 100 it has an average cost of living below the
+average. For example, a city with a 130 COI has a 30% higher cost of
+living than the national average.
 
 This data is from June 5, 2020.
 
-```{r}
+``` r
 summary(ds_jobs$coi)
 ```
 
-The COI for our data ranges from 88.3 to 183.0. 
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##    93.7   123.8   131.0   137.6   183.0   183.0
 
-```{r, message = FALSE}
+The COI for our data ranges from 88.3 to 183.0.
+
+``` r
 area_COI <- ds_jobs %>% group_by(metro_location, coi) %>% 
   summarise(count = n()) %>%  arrange(-coi)
 
 area_COI
 ```
 
+    ## # A tibble: 7 x 3
+    ## # Groups:   metro_location [7]
+    ##   metro_location      coi count
+    ##   <chr>             <dbl> <int>
+    ## 1 San Francisco, CA 183     888
+    ## 2 New York, NY      131     900
+    ## 3 Washington, DC    124.    890
+    ## 4 Austin, TX        108.    181
+    ## 5 Dallas, TX        100.    261
+    ## 6 Houston, TX        96.9   110
+    ## 7 San Antonio, TX    93.7    57
+
 # Salary
 
-```{r}
+``` r
 summary(ds_jobs$min_salary)
 ```
 
-The minimum salary in the data set ranges from \$19,857 to \$205,735 with a mean of \$82,420.
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##   19857   56317   81726   82730  103680  205735    1075
 
-```{r}
+The minimum salary in the data set ranges from $19,857 to $205,735 with
+a mean of $82,420.
+
+``` r
 #checking out the min of Min_Salary
 ds_jobs %>% arrange(min_salary) %>% select(job_type, min_salary, max_salary, industry, metro_location) %>% slice(1)
 ```
 
-```{r}
+    ##    job_type min_salary max_salary  industry metro_location
+    ## 1 FULL_TIME      19857      38127 Education     Dallas, TX
+
+``` r
 #checking out the max of Max_Salary
 ds_jobs %>% arrange(-min_salary) %>% select(job_type, min_salary, max_salary, industry, metro_location) %>% slice(1)
 ```
 
-```{r}
+    ##    job_type min_salary max_salary                  industry    metro_location
+    ## 1 FULL_TIME     205735     233900 Biotech & Pharmaceuticals San Francisco, CA
+
+``` r
 ds_jobs %>% ggplot(aes(x = min_salary)) +
   geom_density(alpha = 0.25) +
   labs(
@@ -70,25 +95,40 @@ ds_jobs %>% ggplot(aes(x = min_salary)) +
   theme_classic()
 ```
 
-The distribution of minimum salaries is slightly skewed right with a few values over $150K. 
+    ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-```{r}
+![](col_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+The distribution of minimum salaries is slightly skewed right with a few
+values over $150K.
+
+``` r
 summary(ds_jobs$max_salary)
 ```
 
-The maximum salary in the data set ranges from \$35,000 to \$383,416 with a mean of \$120,607.
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##   35000   91097  116888  120893  147460  383416    1075
 
-```{r}
+The maximum salary in the data set ranges from $35,000 to $383,416 with
+a mean of $120,607.
+
+``` r
 #checking out the min of Max_Salary
 ds_jobs %>% arrange(max_salary) %>% select(job_type, min_salary, max_salary, industry, metro_location) %>% slice(1)
 ```
 
-```{r}
+    ##    job_type min_salary max_salary industry metro_location
+    ## 1 PART_TIME      20000      35000     <NA>   New York, NY
+
+``` r
 #checking out the max of Max_Salary
 ds_jobs %>% arrange(-max_salary) %>% select(job_type, min_salary, max_salary, industry, metro_location) %>% slice(1)
 ```
 
-```{r}
+    ##    job_type min_salary max_salary industry metro_location
+    ## 1 FULL_TIME     195818     383416  Finance    Houston, TX
+
+``` r
 ds_jobs %>% ggplot(aes(x = max_salary)) +
   geom_density(alpha = 0.25) +
   labs(
@@ -102,17 +142,27 @@ ds_jobs %>% ggplot(aes(x = max_salary)) +
   theme_classic()
 ```
 
-The distribution of Maximum salaries is very right skewed with a long tail with only a few salaries between \$250K and $380K. We  might want to consider some of these values as outliers.
+    ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-```{r}
+![](col_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+The distribution of Maximum salaries is very right skewed with a long
+tail with only a few salaries between $250K and $380K. We might want to
+consider some of these values as outliers.
+
+``` r
 salary_range <- ds_jobs$max_salary - ds_jobs$min_salary
 
 summary(salary_range)
 ```
 
-The range between the minimum and maximum salary for data science jobs ranges from \$0 to \$237,382. 
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##       0   21392   33714   38163   50000  237382    1075
 
-```{r}
+The range between the minimum and maximum salary for data science jobs
+ranges from $0 to $237,382.
+
+``` r
 salary_range <- data.frame(salary_range)
 
 ggplot(data = salary_range, aes(x = salary_range)) +
@@ -128,9 +178,15 @@ ggplot(data = salary_range, aes(x = salary_range)) +
   theme_classic()
 ```
 
-The distribution of the range in salaries between the minimum and maximum salary for each job is extremely skewed right with a few values even above $200K difference for the same job. 
+    ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-```{r}
+![](col_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+The distribution of the range in salaries between the minimum and
+maximum salary for each job is extremely skewed right with a few values
+even above $200K difference for the same job.
+
+``` r
 #wrangling the data to fit both salaries on the same graph
 salary_data <- ds_jobs %>% select(min_salary, max_salary) %>% pivot_longer(
                 cols = c(min_salary, max_salary),
@@ -165,24 +221,36 @@ salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   theme_classic()
 ```
 
-As expected the distribution of maximum salaries is shifted to the right or above the distribution of minimum salaries. This graph accounts for all job types but I think it might be beneficial for our analysis to take this further and either only look at full time positions or look at full time, part time, intern, etc. separately depending on the spread of that data. 
+![](col_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+As expected the distribution of maximum salaries is shifted to the right
+or above the distribution of minimum salaries. This graph accounts for
+all job types but I think it might be beneficial for our analysis to
+take this further and either only look at full time positions or look at
+full time, part time, intern, etc. separately depending on the spread of
+that data.
 
 ## Scaled Salary
 
-Now that we understand the distribution of the salary data and the range between the minimum and maximum salary, we want to scale the salaries based on cost of living for the metro area in which the job is located in. With this new variable we will be able to analyze salary differences across different metro areas. The new variable is calculated as follows:
+Now that we understand the distribution of the salary data and the range
+between the minimum and maximum salary, we want to scale the salaries
+based on cost of living for the metro area in which the job is located
+in. With this new variable we will be able to analyze salary differences
+across different metro areas. The new variable is calculated as follows:
 
-*`Min_Salary/(COI/100) = Min_Scaled_Salary`
+\*`Min_Salary/(COI/100) = Min_Scaled_Salary`
 
-*`Max_Salary/(COI/100) = Max_Scaled_Salary`
+\*`Max_Salary/(COI/100) = Max_Scaled_Salary`
 
-```{r}
+``` r
 #creating the new variables
 ds_jobs <- ds_jobs %>% mutate(min_scaled_salary = min_salary/(coi/100), max_scaled_salary = max_salary/(coi/100))
 ```
 
-We will graph the new scaled salary variables to understand how they are distributed. 
+We will graph the new scaled salary variables to understand how they are
+distributed.
 
-```{r}
+``` r
 #wrangling the data to fit both salaries on the same graph
 scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary) %>% pivot_longer(
                 cols = c(min_scaled_salary, max_scaled_salary),
@@ -217,17 +285,24 @@ scaled_salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   theme_classic()
 ```
 
-The spread of both the scaled minimum and maximum salaries is smaller with the exception of the right tails which seem to be a bit longer. 
+![](col_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
-```{r}
+The spread of both the scaled minimum and maximum salaries is smaller
+with the exception of the right tails which seem to be a bit longer.
+
+``` r
 scaled_salary_range <- ds_jobs$max_scaled_salary - ds_jobs$min_scaled_salary
 
 summary(scaled_salary_range)
 ```
 
-The range between the scaled minimum and maximum salary for data science jobs ranges from \$0 to \$193,600. 
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+    ##       0   15020   24364   28810   39577  193600    1075
 
-```{r}
+The range between the scaled minimum and maximum salary for data science
+jobs ranges from $0 to $193,600.
+
+``` r
 scaled_salary_range <- data.frame(scaled_salary_range)
 
 ggplot(data = scaled_salary_range, aes(x = scaled_salary_range)) +
@@ -243,6 +318,10 @@ ggplot(data = scaled_salary_range, aes(x = scaled_salary_range)) +
   theme_classic()
 ```
 
-The distribution of the range of the scaled salaries is very similar to the non-scaled salaries just shifted slightly more to the left with a slightly longer right tail. 
+    ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
+![](col_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
+The distribution of the range of the scaled salaries is very similar to
+the non-scaled salaries just shifted slightly more to the left with a
+slightly longer right tail.
