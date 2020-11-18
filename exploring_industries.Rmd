@@ -10,7 +10,7 @@ editor_options:
 
 
 ```{r}
-industry <- table(ds_jobs$Industry)
+industry <- table(ds_jobs$industry)
 sorted_industry <- industry[order(-industry)]
 
 ```
@@ -20,7 +20,7 @@ We see that, Information technolody, business services and biotech are the top 3
 
 ```{r}
 NY %>%
-  group_by(Industry) %>%
+  group_by(industry) %>%
   summarize(count = n()) %>%
   arrange(desc(count))
 ```
@@ -37,7 +37,7 @@ Now that we have seen which industries are hiring for jobs, let's look at how ma
 
 From job_title
 ```{r}
-data <- grep("data", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+data <- grep("data", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 
 engineer <- grep("engineer", data, ignore.case = TRUE, value = TRUE)
 analyst <- grep("anal", data, ignore.case = TRUE, value = TRUE)
@@ -46,11 +46,11 @@ ds <- grep("scien", data, ignore.case = TRUE, value = TRUE)
 
 From job_desc
 ```{r}
-data_desc <- grep("data", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+data_desc <- grep("data", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 
-engineer_desc <- grep("data engineer", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
-analyst_desc <- grep("data analy", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
-ds_desc <- grep("data scien", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+engineer_desc <- grep("data engineer", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
+analyst_desc <- grep("data analy", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
+ds_desc <- grep("data scien", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 ```
 
 There are 1562 jobs (26% of total jobs in ds_jobs data set) that have "data" in their title
@@ -76,22 +76,22 @@ Now that I have found data engineering, data analyst, and data scientist jobs, I
 
 from job_title
 ```{r}
-ml <- grep("machine", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+ml <- grep("machine", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 
-stats <- grep("statistic", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+stats <- grep("statistic", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 ```
 
 from job_desc
 ```{r}
-ml_desc <- grep("machine", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+ml_desc <- grep("machine", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 
-stats_desc <- grep("statistic", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+stats_desc <- grep("statistic", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 ```
 
 I also want to include other modeling positions into ML because I feel like machine learning is just another word for modeling.
 
 ```{r}
-model <- grep("model", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+model <- grep("model", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 ```
 
 # Consultant
@@ -99,7 +99,7 @@ model <- grep("model", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 There a few consulting jobs and I feel like consulting is similar to data science and going into consulting is not an unreasonable profession for a data science degree.
 
 ```{r}
-consult <- grep("consult", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+consult <- grep("consult", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 ```
 
 # Bio
@@ -107,9 +107,9 @@ consult <- grep("consult", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 These are the jobs relating to biology
 
 ```{r}
-bio <- grep("bio", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+bio <- grep("bio", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 
-bio_desc <- grep("biology", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+bio_desc <- grep("biology", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 ```
 
 # Computer Science
@@ -117,9 +117,9 @@ bio_desc <- grep("biology", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
 These are the jobs relating to computer science
 
 ```{r}
-comp <- grep("computer scie", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+comp <- grep("computer scie", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 
-comp_desc <- grep("computer science", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+comp_desc <- grep("computer science", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 ```
 
 # Other Analyst 
@@ -127,7 +127,7 @@ comp_desc <- grep("computer science", ds_jobs$Job_Desc, ignore.case = TRUE, valu
 Bucketing other analytical positions because they don't particularly relate to data analytics but if you wanted some kind of analytical position outside of this realm, then you could do this.
 
 ```{r}
-other_analyst <- grep("analy", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+other_analyst <- grep("analy", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 ```
 
 # Research Scientist
@@ -135,7 +135,7 @@ other_analyst <- grep("analy", ds_jobs$Job_title, ignore.case = TRUE, value = TR
 There are a few jobs as well that contain 'research scientist'.
 
 ```{r}
-research_scientist <- grep("research sci", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+research_scientist <- grep("research sci", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
 ```
 
 # Add variable bucketing job titles
@@ -149,42 +149,42 @@ ds_jobs_bucket <- ds_jobs %>%
   mutate(job_category = NA)
   
   
-for (i in seq_along(ds_jobs$Job_title)) {
-  if ((ds_jobs$Job_title[[i]] %in% engineer) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+for (i in seq_along(ds_jobs$job_title)) {
+  if ((ds_jobs$job_title[[i]] %in% engineer) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Data Engineer"
-  } else if ((ds_jobs$Job_title[[i]] %in% analyst) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% analyst) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Data Analyst"
-  } else if ((ds_jobs$Job_title[[i]] %in% ds) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% ds) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Data Scientist"
-  } else if ((ds_jobs$Job_title[[i]] %in% ml) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% ml) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Machine Learning"
-  } else if ((ds_jobs$Job_title[[i]] %in% stats) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% stats) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Statistics"
-  } else if((ds_jobs$Job_Desc[[i]] %in% engineer_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if((ds_jobs$job_desc[[i]] %in% engineer_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Data Engineer"
-  } else if ((ds_jobs$Job_Desc[[i]] %in% analyst_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_desc[[i]] %in% analyst_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Data Analyst"
-  } else if ((ds_jobs$Job_Desc[[i]] %in% ds_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_desc[[i]] %in% ds_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Data Scientist"
-  } else if ((ds_jobs$Job_Desc[[i]] %in% ml_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_desc[[i]] %in% ml_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Machine Learning"
-  } else if ((ds_jobs$Job_Desc[[i]] %in% stats_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_desc[[i]] %in% stats_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Statistics"
-  } else if ((ds_jobs$Job_title[[i]] %in% consult) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% consult) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Consultant"
-  } else if ((ds_jobs$Job_title[[i]] %in% bio) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% bio) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Biology"
-  } else if ((ds_jobs$Job_Desc[[i]] %in% bio_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_desc[[i]] %in% bio_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Biology"
-  } else if ((ds_jobs$Job_title[[i]] %in% comp) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% comp) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Computer Scientist"
-  } else if ((ds_jobs$Job_Desc[[i]] %in% comp_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_desc[[i]] %in% comp_desc) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Computer Scientist"
-  } else if ((ds_jobs$Job_title[[i]] %in% other_analyst) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% other_analyst) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Other Analyst"
-  } else if ((ds_jobs$Job_title[[i]] %in% model) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% model) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Machine Learning"
-  } else if ((ds_jobs$Job_title[[i]] %in% research_scientist) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
+  } else if ((ds_jobs$job_title[[i]] %in% research_scientist) && (is.na(ds_jobs_bucket$job_category[[i]]))) {
     ds_jobs_bucket$job_category[[i]] = "Research Scientist"
   }
 }
@@ -199,7 +199,7 @@ ds_jobs_bucket %>%
 
 not_ds <- ds_jobs_bucket %>%
   filter(is.na(job_category)) %>%
-  group_by(Job_title) %>%
+  group_by(job_title) %>%
   summarise(count = n()) %>%
   arrange(desc(count)) 
 ```
@@ -211,7 +211,7 @@ I think that this is as good as we will be able to get, keeping in mind that our
 # Analysing the number of jobs in every category by taking the ds_jobs_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these data science job categories.
 
 ```{R}
-table(ds_jobs_bucket$Industry,ds_jobs_bucket$job_category)
+table(ds_jobs_bucket$industry,ds_jobs_bucket$job_category)
 ```
 
 Let's plot the above
@@ -227,7 +227,7 @@ There are two columns Date_Posted and Valid_Until which denotes the time frame u
 
 
 ```{R}
-table_date_posted <- data.frame(table(ds_jobs$Date_Posted))
+table_date_posted <- data.frame(table(ds_jobs$date_posted))
 table_date_posted$Var1 <- as.Date(table_date_posted$Var1, format = "%Y-%m-%d") 
 class(table_date_posted$Var1)
 ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
