@@ -1,0 +1,195 @@
+---
+title: "Job Description Text Analysis"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+<details>
+  <summary>Click to expand!</summary>
+# Libraries
+
+```{r}
+loadPkg = function(toLoad){
+  for(lib in toLoad){
+    if(! lib %in% installed.packages()[,1])
+    { install.packages(lib, repos='http://cran.rstudio.com/') }
+    suppressMessages( library(lib, character.only=TRUE) ) }
+}
+packs=c('tidyverse', 'tidytext', 'textdata')
+loadPkg(packs)
+library(readr)
+ds_jobs_bucket <- read_csv("ds_jobs_bucket.csv")
+```
+</details>
+## Word count
+
+I want to use text analysis on the job description to see if there is a skill that is repeated throughout. This would be an important skill if it were repeated.
+<details>
+  <summary>Click to expand!</summary>
+1. Tokenize your corpus and generate a word count.
+```{r}
+job_words <- ds_jobs_bucket %>% select(job_category,Job_Desc) %>% unnest_tokens(word, Job_Desc)
+head(job_words)
+
+job_words %>% count(word, sort = T) %>% slice(1:15) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+2. Using the `TidyText` package, remove stop words and generate a new word count.
+```{r}
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+3. Create a visualization of the word count distribution and interpret your results.
+```{r}
+better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+```{r}
+personal_stop_words <- stop_words %>% select(-lexicon) %>% 
+  bind_rows(data.frame(word = c("â")))
+
+better_line_words <- job_words %>% anti_join(personal_stop_words)
+```
+</details>
+```{r}
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+No skills were mentioned frequently so I will use TF-IDF just to see what the results yield.
+
+# TF-IDF
+<details>
+  <summary>Click to expand</summary>
+1. Generate a tf-idf measure of words in your dataset.
+```{r}
+idf_words <- ds_jobs_bucket %>% select(job_category, Job_Desc) %>% 
+  unnest_tokens(word,Job_Desc) %>% count(job_category, word, sort = T)
+
+better_idf_words <- idf_words %>% anti_join(personal_stop_words)
+
+description_length <- better_idf_words %>% group_by(job_category) %>% summarize(total = sum(n()))
+
+better_idf_words <- left_join(better_idf_words, description_length)
+
+tfidf_words <- better_idf_words %>% bind_tf_idf(word, job_category, n)
+
+tfidf_words <- tfidf_words %>% arrange(desc(tf_idf)) %>% slice(1:15)
+
+tfidf_words %>% arrange(desc(tf_idf)) %>% head()
+```
+
+2. Create a visualization of the tf-idf measure and interpret your results.
+```{r}
+tfidf_words$word <- factor(tfidf_words$word, levels = tfidf_words$word[order(desc(tfidf_words$tf_idf))])
+```
+</details>
+```{r}
+ggplot(tfidf_words, aes(x = word, y = tf_idf))+
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+# Word Frequency by Job Category
+
+## Data Scientist
+<details>
+  <summary>Click to expand</summary>
+1. Tokenize your corpus and generate a word count.
+```{r}
+ds_words <- ds_jobs_bucket%>%
+  filter(job_category == "Data Scientist")
+
+job_words <- ds_words %>% select(job_category,Job_Desc) %>% unnest_tokens(word, Job_Desc)
+head(job_words)
+```
+
+2. Using the `TidyText` package, remove stop words and generate a new word count.
+```{r}
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+3. Create a visualization of the word count distribution and interpret your results.
+```{r}
+better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+```{r}
+personal_stop_words <- stop_words %>% select(-lexicon) %>% 
+  bind_rows(data.frame(word = c("â")))
+
+better_line_words <- job_words %>% anti_join(personal_stop_words)
+```
+</details>
+```{r}
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+## Data Analyst
+<details>
+  <summary>Click to expand!</summary>
+1. Tokenize your corpus and generate a word count.
+```{r}
+analyst_words <- ds_jobs_bucket%>%
+  filter(job_category == "Data Analyst")
+
+job_words <- analyst_words %>% select(job_category,Job_Desc) %>% unnest_tokens(word, Job_Desc)
+head(job_words)
+```
+
+2. Using the `TidyText` package, remove stop words and generate a new word count.
+```{r}
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+3. Create a visualization of the word count distribution and interpret your results.
+```{r}
+better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+```{r}
+personal_stop_words <- stop_words %>% select(-lexicon) %>% 
+  bind_rows(data.frame(word = c("â")))
+
+better_line_words <- job_words %>% anti_join(personal_stop_words)
+```
+</details>
+```{r}
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
