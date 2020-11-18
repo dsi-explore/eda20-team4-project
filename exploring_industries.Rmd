@@ -211,13 +211,12 @@ I think that this is as good as we will be able to get, keeping in mind that our
 # Analysing the number of jobs in every category by taking the ds_jobs_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these data science job categories.
 
 ```{R}
-table(ds_jobs_bucket$industry,ds_jobs_bucket$job_category)
-```
+df <- data.frame(table(ds_jobs_bucket$industry,ds_jobs_bucket$job_category))
 
-Let's plot the above
-
-```{R}
-
+ggplot(data=df, aes(x=Var2, y=Freq, fill=Var1)) + geom_bar(stat="identity") +
+  labs(title = "Job category vs Type of job",
+       x = "Job Category",
+       y = "Count")
 ```
 
 
