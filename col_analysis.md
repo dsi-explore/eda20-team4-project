@@ -233,19 +233,15 @@ that data.
 ## Scaled Salary
 
 Now that we understand the distribution of the salary data and the range
-between the minimum and maximum salary, we want to scale the salaries
-based on cost of living for the metro area in which the job is located
-in. With this new variable we will be able to analyze salary differences
-across different metro areas. The new variable is calculated as follows:
+between the minimum and maximum salary, we want to look at the scale the
+salaries based on cost of living for the metro area in which the job is
+located in. With this variable we will be able to analyze salary
+differences across different metro areas. The variable is calculated as
+follows:
 
 \*`Min_Salary/(COI/100) = Min_Scaled_Salary`
 
 \*`Max_Salary/(COI/100) = Max_Scaled_Salary`
-
-``` r
-#creating the new variables
-ds_jobs <- ds_jobs %>% mutate(min_scaled_salary = min_salary/(coi/100), max_scaled_salary = max_salary/(coi/100))
-```
 
 We will graph the new scaled salary variables to understand how they are
 distributed.
@@ -285,7 +281,7 @@ scaled_salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   theme_classic()
 ```
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 The spread of both the scaled minimum and maximum salaries is smaller
 with the exception of the right tails which seem to be a bit longer.
@@ -320,7 +316,7 @@ ggplot(data = scaled_salary_range, aes(x = scaled_salary_range)) +
 
     ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 The distribution of the range of the scaled salaries is very similar to
 the non-scaled salaries just shifted slightly more to the left with a
