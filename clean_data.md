@@ -374,12 +374,6 @@ city_data <- city_data %>%
          weight_dist = distm(c(lon_city, lat_city), 
                              c(avg_lon_metro_weighted, avg_lat_metro_weighted), fun = distHaversine)/1609)
 
-#city_data %>%
-#  group_by(metro_location) %>%
-#  summarise(max_dist = max(weight_dist),
-#            min_dist = min(weight_dist),
-#            avg_dist = mean(weight_dist)) %>% View()
-
 city_data <- city_data %>% 
   filter(!metro_location %in% c('Brownsville, TX', 
                                 'College Station, TX', 
@@ -425,6 +419,107 @@ ds_jobs <- ds_jobs %>% select(-State.y, -City.y) %>%
   select(COI = Cost.of.Living.Index, State = State.x, City = City.x, everything())
 ```
 
+## Job Category
+
+From Job\_title
+
+``` r
+data <- grep("data", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+engineer <- grep("engineer", data, ignore.case = TRUE, value = TRUE)
+analyst <- grep("anal", data, ignore.case = TRUE, value = TRUE)
+ds <- grep("scien", data, ignore.case = TRUE, value = TRUE)
+ml <- grep("machine", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+stats <- grep("statistic", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+model <- grep("model", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+consult <- grep("consult", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+bio <- grep("bio", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+comp <- grep("computer scie", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+other_analyst <- grep("analy", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+research_scientist <- grep("research sci", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+```
+
+From job\_desc
+
+``` r
+data_desc <- grep("data", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+engineer_desc <- grep("data engineer", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+analyst_desc <- grep("data analy", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+ds_desc <- grep("data scien", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+ml_desc <- grep("machine", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+stats_desc <- grep("statistic", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+bio_desc <- grep("biology", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+comp_desc <- grep("computer science", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+```
+
+``` r
+ds_jobs <- ds_jobs %>%
+  mutate(job_category = NA)
+  
+  
+for (i in seq_along(ds_jobs$Job_title)) {
+  if ((ds_jobs$Job_title[[i]] %in% engineer) && (is.na(ds_jobs$job_category[[i]]))) {
+            ds_jobs$job_category[[i]] = "Data Engineer"
+  } else if ((ds_jobs$Job_title[[i]] %in% analyst) &&
+            (is.na(ds_jobs$job_category[[i]]))) {
+            ds_jobs$job_category[[i]] = "Data Analyst"
+  } else if ((ds_jobs$Job_title[[i]] %in% ds) && (is.na(ds_jobs$job_category[[i]]))) {
+            ds_jobs$job_category[[i]] = "Data Scientist"
+  } else if ((ds_jobs$Job_title[[i]] %in% ml) && (is.na(ds_jobs$job_category[[i]]))) {
+            ds_jobs$job_category[[i]] = "Machine Learning"
+  } else if ((ds_jobs$Job_title[[i]] %in% stats) && (is.na(ds_jobs$job_category[[i]]))){
+            ds_jobs$job_category[[i]] = "Statistics"
+  } else if((ds_jobs$Job_Desc[[i]] %in% engineer_desc) && 
+            (is.na(ds_jobs$job_category[[i]]))) {
+            ds_jobs$job_category[[i]] = "Data Engineer"
+  } else if ((ds_jobs$Job_Desc[[i]] %in% analyst_desc) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
+            ds_jobs$job_category[[i]] = "Data Analyst"
+  } else if ((ds_jobs$Job_Desc[[i]] %in% ds_desc) &&
+             (is.na(ds_jobs$job_category[[i]]))){
+             ds_jobs$job_category[[i]] = "Data Scientist"
+  } else if ((ds_jobs$Job_Desc[[i]] %in% ml_desc) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Machine Learning"
+  } else if ((ds_jobs$Job_Desc[[i]] %in% stats_desc) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Statistics"
+  } else if ((ds_jobs$Job_title[[i]] %in% consult) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Consultant"
+  } else if ((ds_jobs$Job_title[[i]] %in% bio) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Biology"
+  } else if ((ds_jobs$Job_Desc[[i]] %in% bio_desc) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Biology"
+  } else if ((ds_jobs$Job_title[[i]] %in% comp) && (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Computer Scientist"
+  } else if ((ds_jobs$Job_Desc[[i]] %in% comp_desc) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Computer Scientist"
+  } else if ((ds_jobs$Job_title[[i]] %in% other_analyst) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Other Analyst"
+  } else if ((ds_jobs$Job_title[[i]] %in% model) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Machine Learning"
+  } else if ((ds_jobs$Job_title[[i]] %in% research_scientist) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
+             ds_jobs$job_category[[i]] = "Research Scientist"
+  }
+}
+```
+
+## Scaled Salary
+
+We want to create a new variable that scales the salary by the cost of
+living to be able to compare salaries between different metro areas.
+
+``` r
+#creating the new variables
+ds_jobs <- ds_jobs %>% mutate(min_scaled_salary = Min_Salary/(COI/100), max_scaled_salary = Max_Salary/(COI/100))
+```
+
 # Master Data set
 
 Here we will save the final cleaned and merged data set to use for our
@@ -434,5 +529,5 @@ analysis.
 #clean all the variable names for consistency
 ds_jobs <- clean_names(ds_jobs)
 
-write.csv(ds_jobs, "ds_jobs.csv")
+write.csv(ds_jobs, "ds_jobs.csv", row.names = F)
 ```

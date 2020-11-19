@@ -199,7 +199,7 @@ city_counts <- city_counts[,-4]
 
 #load package to generate locations for each city
 library(ggmap)
-register_google('AIzaSyBeQYYzjNlu9_jtzIm2VfIb12-po3GxMQ0')
+register_google('YOUR CODE HERE')
 locations_city <- mutate_geocode(city_counts, Location)
 locations_metro <- mutate_geocode(city_counts, metro_location)
 
@@ -271,34 +271,34 @@ ds_jobs <- ds_jobs %>% select(-State.y, -City.y) %>%
   select(COI = Cost.of.Living.Index, State = State.x, City = City.x, everything())
 ```
 
-# Job Category
+## Job Category
 
 From Job_title
 ```{r}
-data <- grep("data", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
+data <- grep("data", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 engineer <- grep("engineer", data, ignore.case = TRUE, value = TRUE)
 analyst <- grep("anal", data, ignore.case = TRUE, value = TRUE)
 ds <- grep("scien", data, ignore.case = TRUE, value = TRUE)
-ml <- grep("machine", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-stats <- grep("statistic", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-model <- grep("model", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-consult <- grep("consult", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-bio <- grep("bio", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-comp <- grep("computer scie", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-other_analyst <- grep("analy", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
-research_scientist <- grep("research sci", ds_jobs$job_title, ignore.case = TRUE, value = TRUE)
+ml <- grep("machine", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+stats <- grep("statistic", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+model <- grep("model", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+consult <- grep("consult", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+bio <- grep("bio", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+comp <- grep("computer scie", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+other_analyst <- grep("analy", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
+research_scientist <- grep("research sci", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 ```
 
 From job_desc
 ```{r}
-data_desc <- grep("data", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-engineer_desc <- grep("data engineer", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-analyst_desc <- grep("data analy", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-ds_desc <- grep("data scien", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-ml_desc <- grep("machine", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-stats_desc <- grep("statistic", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-bio_desc <- grep("biology", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
-comp_desc <- grep("computer science", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
+data_desc <- grep("data", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+engineer_desc <- grep("data engineer", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+analyst_desc <- grep("data analy", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+ds_desc <- grep("data scien", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+ml_desc <- grep("machine", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+stats_desc <- grep("statistic", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+bio_desc <- grep("biology", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
+comp_desc <- grep("computer science", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
 ```
 
 ```{r}
@@ -306,50 +306,69 @@ ds_jobs <- ds_jobs %>%
   mutate(job_category = NA)
   
   
-for (i in seq_along(ds_jobs$job_title)) {
-  if ((ds_jobs$job_title[[i]] %in% engineer) && (is.na(ds_jobs$job_category[[i]]))) {
+for (i in seq_along(ds_jobs$Job_title)) {
+  if ((ds_jobs$Job_title[[i]] %in% engineer) && (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Engineer"
-  } else if ((ds_jobs$job_title[[i]] %in% analyst) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% analyst) &&
+            (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Analyst"
-  } else if ((ds_jobs$job_title[[i]] %in% ds) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% ds) && (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Scientist"
-  } else if ((ds_jobs$job_title[[i]] %in% ml) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% ml) && (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Machine Learning"
-  } else if ((ds_jobs$job_title[[i]] %in% stats) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% stats) && (is.na(ds_jobs$job_category[[i]]))){
             ds_jobs$job_category[[i]] = "Statistics"
-  } else if((ds_jobs$job_desc[[i]] %in% engineer_desc) && 
+  } else if((ds_jobs$Job_Desc[[i]] %in% engineer_desc) && 
             (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Engineer"
-  } else if ((ds_jobs$job_desc[[i]] %in% analyst_desc) && 
+  } else if ((ds_jobs$Job_Desc[[i]] %in% analyst_desc) && 
              (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Analyst"
-  } else if ((ds_jobs$job_desc[[i]] %in% ds_desc) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_Desc[[i]] %in% ds_desc) &&
+             (is.na(ds_jobs$job_category[[i]]))){
              ds_jobs$job_category[[i]] = "Data Scientist"
-  } else if ((ds_jobs$job_desc[[i]] %in% ml_desc) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_Desc[[i]] %in% ml_desc) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Machine Learning"
-  } else if ((ds_jobs$job_desc[[i]] %in% stats_desc) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_Desc[[i]] %in% stats_desc) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Statistics"
-  } else if ((ds_jobs$job_title[[i]] %in% consult) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% consult) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Consultant"
-  } else if ((ds_jobs$job_title[[i]] %in% bio) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% bio) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Biology"
-  } else if ((ds_jobs$job_desc[[i]] %in% bio_desc) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_Desc[[i]] %in% bio_desc) &&
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Biology"
-  } else if ((ds_jobs$job_title[[i]] %in% comp) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% comp) && (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Computer Scientist"
-  } else if ((ds_jobs$job_desc[[i]] %in% comp_desc) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_Desc[[i]] %in% comp_desc) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Computer Scientist"
-  } else if ((ds_jobs$job_title[[i]] %in% other_analyst) &&
+  } else if ((ds_jobs$Job_title[[i]] %in% other_analyst) &&
              (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Other Analyst"
-  } else if ((ds_jobs$job_title[[i]] %in% model) && (is.na(ds_jobs$job_category[[i]]))) {
+  } else if ((ds_jobs$Job_title[[i]] %in% model) && 
+             (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Machine Learning"
-  } else if ((ds_jobs$job_title[[i]] %in% research_scientist) &&
+  } else if ((ds_jobs$Job_title[[i]] %in% research_scientist) &&
              (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Research Scientist"
   }
 }
 ```
+
+## Scaled Salary
+
+We want to create a new variable that scales the salary by the cost of living to be able to compare salaries between different metro areas.
+
+```{r}
+#creating the new variables
+ds_jobs <- ds_jobs %>% mutate(min_scaled_salary = Min_Salary/(COI/100), max_scaled_salary = Max_Salary/(COI/100))
+```
+
 
 # Master Data set
 
