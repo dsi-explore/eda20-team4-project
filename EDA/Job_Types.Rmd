@@ -1,0 +1,71 @@
+---
+title: "Job_Types"
+output: github_document
+---
+```{r, message = FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+Job types :
+
+Viewwing the job typs from the data set :
+
+```{r}
+jobtypes <- table(ds_jobs$Job_Type)
+jobtypes <- table(ds_jobs$Industry)
+
+ds_jobs
+```
+
+Below are the job types :
+
+* Contractor
+* Fulltime
+* Intern
+* Other
+* Parttime
+* Temporary
+
+FULL TIME JOBS IN STATES 
+
+Each state analysis with types of jobs and roles associated with it. 
+
+```{R}
+ds_jobs %>% 
+  select(State, Job_Type) %>%
+  filter(State == "NY") #750 job types in state NY
+```
+
+```{R}
+
+ds_jobs %>% 
+  select(State, Job_Type) %>%
+  filter(State == "NY") %>%
+  filter(Job_Type %in% c("FULL_TIME"))
+```
+
+Viewing the number of job types in each state as a table for further analysis
+
+```{r}
+table(ds_jobs$State, ds_jobs$Job_Type)
+```
+
+
+
+Plotting states with types of jobs to find the dsitribution spread across each state
+
+```{r}
+ggplot(ds_jobs, aes(x=State, y=Job_Type))+
+  geom_jitter(alpha = 0.7) + labs(title ="Relationship between states and types of jobs available",
+  y = "Type Of Job", 
+  x = "State")+
+theme_classic()
+```
+
+
+From the graph, we can see the distribution of the types of jobs availbale in each state. We see that, KY, NC and TN doesn't have more full time jobs when compared to other states and there are only couple of states which offer temporary positions. 
+
+
+Further, we can explore about the sub categories in full time jobs, by taking data science related jobs from the other rmd file.
+
+
