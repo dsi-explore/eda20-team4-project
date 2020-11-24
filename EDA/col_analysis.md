@@ -53,6 +53,21 @@ area_COI
     ## 6 Houston, TX        96.9   110
     ## 7 San Antonio, TX    93.7    57
 
+``` r
+area_COI %>% ggplot(aes(x = reorder(metro_location, -coi), y = coi)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Cost of Living Index for Metro Areas",
+         x = "Metro Area",
+         y = "Cost of Living Index") +
+  theme_bw()
+```
+
+![](col_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+We can see that the cost of living is much higher in San Francisco than
+any other region followed by New York City, Washington D.C. and then all
+metro areas in Texas.
+
 # Salary
 
 ``` r
@@ -97,7 +112,7 @@ ds_jobs %>% ggplot(aes(x = min_salary)) +
 
     ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 The distribution of minimum salaries is slightly skewed right with a few
 values over $150K.
@@ -144,7 +159,7 @@ ds_jobs %>% ggplot(aes(x = max_salary)) +
 
     ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 The distribution of Maximum salaries is very right skewed with a long
 tail with only a few salaries between $250K and $380K. We might want to
@@ -180,7 +195,7 @@ ggplot(data = salary_range, aes(x = salary_range)) +
 
     ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 The distribution of the range in salaries between the minimum and
 maximum salary for each job is extremely skewed right with a few values
@@ -221,7 +236,7 @@ salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   theme_classic()
 ```
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 As expected the distribution of maximum salaries is shifted to the right
 or above the distribution of minimum salaries. This graph accounts for
@@ -281,7 +296,7 @@ scaled_salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   theme_classic()
 ```
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 The spread of both the scaled minimum and maximum salaries is smaller
 with the exception of the right tails which seem to be a bit longer.
@@ -316,7 +331,7 @@ ggplot(data = scaled_salary_range, aes(x = scaled_salary_range)) +
 
     ## Warning: Removed 1075 rows containing non-finite values (stat_density).
 
-![](col_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](col_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 The distribution of the range of the scaled salaries is very similar to
 the non-scaled salaries just shifted slightly more to the left with a

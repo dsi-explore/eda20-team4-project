@@ -6,7 +6,7 @@ output: github_document
 library(tidyverse)
 library(ggplot2)
 
-ds_jobs <- read.csv("ds_jobs.csv")
+ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
 ```
 
 
@@ -37,6 +37,17 @@ area_COI <- ds_jobs %>% group_by(metro_location, coi) %>%
 
 area_COI
 ```
+
+```{r}
+area_COI %>% ggplot(aes(x = reorder(metro_location, -coi), y = coi)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Cost of Living Index for Metro Areas",
+         x = "Metro Area",
+         y = "Cost of Living Index") +
+  theme_bw()
+```
+
+We can see that the cost of living is much higher in San Francisco than any other region followed by New York City, Washington D.C. and then all metro areas in Texas.
 
 # Salary
 
