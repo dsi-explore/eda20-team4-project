@@ -26,7 +26,7 @@ Filter by only DS jobs. There are a few other scientist jobs right now. Also tak
 ```{r}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Consultant")
 ```
 
 
@@ -47,3 +47,42 @@ ggplot(ds_filter, aes(metro_location)) +
     legend.title = element_text(size = 8))
 ```
 
+## Interpretation
+
+San Fran and DC have the most job postings in this data set for data scientists. Within this, Data Analyst, Data Engineer, and Data Scientist are the job categories that dominate. Thus, if a data science student is looking for a job, then based on this data, the student should look for jobs in the bay area and DC.
+
+# industry vs location
+
+I also want to know which industries are offered in each state. I only want the top 5 industries so that my graph is easier to read.
+
+```{r}
+ds_filter2 <- ds_jobs %>%
+  filter(!is.na(industry))
+
+ds_filter3 <- ds_filter2 %>%
+  group_by(industry) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1:5)%>%
+  ungroup()
+
+ds_filter2 <- ds_filter2 %>%
+  filter(industry == ds_filter3$industry)
+
+ggplot(ds_filter2, aes(metro_location)) +
+  geom_bar(aes(fill = industry)) +
+  labs(
+    title = "Industry by Location",
+    x = "Location",
+    subtitle = "The cities are listed with the total number of jobs and it is colored by the industry"
+  )+
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
+    axis.text = element_text(size =10),
+    plot.subtitle=element_text(size=8, color = "grey"),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8)
+  )
+```
+
+## Interpretation
