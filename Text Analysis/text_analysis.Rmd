@@ -193,3 +193,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   xlab("Words")
 ```
+
+# Conclusions
+
+Going into this exploration, I was interested in finding out if there was a common word among job descriptions. I found that this was not case.

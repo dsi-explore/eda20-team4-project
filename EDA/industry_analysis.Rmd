@@ -1,0 +1,49 @@
+---
+title: "Industry Analysis"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+# Location of job bucket
+
+I want to take the values from the job_category variable and graph it against the location data to see if which jobs are in each location.
+
+# Load Data
+
+```{r}
+library(tidyverse)
+library(readr)
+library(viridis)
+
+ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
+```
+
+# Job Bucket vs location
+
+Filter by only DS jobs. There are a few other scientist jobs right now. Also take out the NAs 
+
+```{r}
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning")
+```
+
+
+```{r}
+ggplot(ds_filter, aes(metro_location)) +
+  geom_bar(aes(fill = job_category))+
+  labs(
+    title = "Data Science Jobs by Location",
+    x = "Locations",
+    subtitle = "This graph shows the number of data science positions available in each city.",
+    fill = "Job Category"
+  )+
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
+    axis.text = element_text(size =10),
+    plot.subtitle=element_text(size=8, color = "grey"),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8))
+```
+
