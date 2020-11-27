@@ -113,4 +113,19 @@ From the graph, we can see the distribution of the types of jobs availbale in ea
 
 Further, we can explore about the sub categories in full time jobs, by taking data science related jobs from the other rmd file.
 
+# Analysing the number of jobs in every category by taking the ds_jobs_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these job categories.
+
+```{R}
+df <- data.frame(table(ds_jobs_bucket$industry,ds_jobs_bucket$job_category))
+
+p <- ggplot(data=df, aes(x=Var2, y=Freq, fill=Var1)) + geom_bar(stat="identity") +
+  labs(title = "Job category vs Industry",
+       x = "Job Category",
+       y = "Count")
+
+p + scale_fill_discrete(name="Industry") +theme(
+  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
+)
+```
+
 
