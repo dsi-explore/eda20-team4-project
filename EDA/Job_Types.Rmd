@@ -28,7 +28,6 @@ Below are the job types :
 
 
 
-
 Viewing the number of job types in each state as a table for further analysis
 
 ```{r}
@@ -127,5 +126,24 @@ p + scale_fill_discrete(name="Industry") +theme(
   plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
 )
 ```
+
+
+# Time series analysis
+
+There are two columns Date_Posted and Valid_Until which denotes the time frame until which the job applications are open and denoting the recruitment time frame for candidates. On trying to plot the availabiloty of new jobs while considering the date posted, we find that it doesn't increase exponentially neither does it hits the bottom but it reaches it's peak after mid May denoting the max job availability.
+
+
+```{R}
+table_date_posted <- data.frame(table(ds_jobs$date_posted))
+table_date_posted$Var1 <- as.Date(table_date_posted$Var1, format = "%Y-%m-%d") 
+class(table_date_posted$Var1)
+ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
+  geom_line() +
+  labs(title = "Job availability vs Date posted",
+       x = "Date",
+       y = "Number of jobs")
+
+```
+
 
 
