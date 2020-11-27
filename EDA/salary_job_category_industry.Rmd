@@ -7,7 +7,7 @@ output: github_document
 library(tidyverse)
 library(ggplot2)
 
-ds_jobs <- read.csv("ds_jobs.csv")
+ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
 ```
 
 ```{r}
@@ -26,6 +26,8 @@ scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
 ```
 
 # Job Category
+
+Is there a difference in salary between the different types of roles within data science?
 
 ```{r}
 #remove NAs from job_category
@@ -50,6 +52,7 @@ scaled_salary_data_jc %>% ggplot(aes(y = salary, x = job_category, col = type, f
    coord_flip()
 ```
 
+Calculating average minimum and maximum salary based on job roles.
 
 ```{r}
 jc_avg_salary <- ds_jobs %>% filter(!is.na(job_category) & !is.na(min_scaled_salary) & !is.na(max_scaled_salary)) %>% 
@@ -72,9 +75,23 @@ jc_avg_salary_long %>% ggplot(aes(x = job_category, y = salary ,fill = type)) +
 
 # Job Industry
 
+Is there a salary difference based on the industry the data science job is in?
+
+We will look at the top 5 industries and compare their salary ranges.
+
 ```{r}
-#remove NAs from job_category
+#remove NAs from industry
 scaled_salary_data_ji <- scaled_salary_data %>% filter(!is.na(industry))
+
+scaled_salary_data_ji_top5 <- scaled_salary_data_ji %>% 
+  group_by(industry) %>% 
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1:5) %>%
+  select(industry)
+
+scaled_salary_data_ji <- scaled_salary_data_ji %>% 
+  filter(industry %in% scaled_salary_data_ji_top5$industry)
 
 scaled_salary_data_ji %>% ggplot(aes(x = salary, col = type, fill = type)) +
   geom_density(alpha = 0.25) +
