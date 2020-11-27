@@ -52,6 +52,6 @@ When is the best time to look for jobs?
   * Matt: write about job category feature
 * Accomplished: 
   * Logan:
-  * Matt: Developed graphs for text analysis and job categories/industry by location. Still need to give a better interpretation than I have thus far, but I have an initial interpretation.
+  * Matt: Developed graphs for text analysis and job categories/industry by location. 
   * Meena: 
   * Sarah:

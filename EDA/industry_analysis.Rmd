@@ -1,6 +1,6 @@
 ---
 title: "Industry Analysis"
-output: html_notebook
+output: github_document
 editor_options: 
   chunk_output_type: console
 ---
@@ -9,13 +9,15 @@ editor_options:
 
 I want to take the values from the job_category variable and graph it against the location data to see if which jobs are in each location.
 
+<details>
+  <summary>Click to expand!</summary>
 # Load Data
 
 ```{r}
 library(tidyverse)
 library(readr)
 library(viridis)
-
+setwd("C:/Users/Matt Flaherty/Documents/Projects/eda20-team4-project")
 ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
 ```
 
@@ -29,22 +31,24 @@ ds_filter <- ds_jobs %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Consultant")
 ```
 
-
+</details>
 ```{r}
-ggplot(ds_filter, aes(metro_location)) +
-  geom_bar(aes(fill = job_category))+
+ggplot(ds_filter, aes(metro_location, fill = job_category)) +
+  geom_bar()+
+  scale_fill_viridis(discrete = TRUE) +
   labs(
     title = "Data Science Jobs by Location",
     x = "Locations",
     subtitle = "This graph shows the number of data science positions available in each city.",
     fill = "Job Category"
   )+
+  theme_classic() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
     axis.text = element_text(size =10),
     plot.subtitle=element_text(size=8, color = "grey"),
     legend.text = element_text(size = 8),
-    legend.title = element_text(size = 8))
+    legend.title = element_text(size = 8)) 
 ```
 
 ## Interpretation
@@ -54,9 +58,10 @@ San Fran and DC have the most job postings in this data set for data scientists.
 # industry vs location
 
 I also want to know which industries are offered in each state. I only want the top 5 industries so that my graph is easier to read.
-
+<details>
+  <summary>Click to expand!</summary>
 ```{r}
-ds_filter2 <- ds_jobs %>%
+ds_filter2 <- ds_filter %>%
   filter(!is.na(industry))
 
 ds_filter3 <- ds_filter2 %>%
@@ -68,14 +73,19 @@ ds_filter3 <- ds_filter2 %>%
 
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry)
+```
 
-ggplot(ds_filter2, aes(metro_location)) +
-  geom_bar(aes(fill = industry)) +
+</details>
+```{r}
+ggplot(ds_filter2, aes(metro_location,fill = industry)) +
+  geom_bar() +
+  scale_fill_viridis(discrete = TRUE)+
   labs(
     title = "Industry by Location",
     x = "Location",
     subtitle = "The cities are listed with the total number of jobs and it is colored by the industry"
   )+
+  theme_classic() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
     axis.text = element_text(size =10),
@@ -86,3 +96,5 @@ ggplot(ds_filter2, aes(metro_location)) +
 ```
 
 ## Interpretation
+
+Using the data science jobs from `job_category`, we can see that San Francisco and DC still hold the majority of data science jobs. Now we can also see in which industries these data science jobs are so applicants can determine good industries for data scientists. Judging by this graph, IT seems to be where most of the jobs in these areas are being posted. I think that this is because companies will put their data science positions with IT.
