@@ -22,29 +22,28 @@ loadPkg(packs)
 
 ``` r
 library(readr)
-ds_jobs_bucket <- read_csv("ds_jobs_bucket.csv")
+setwd("C:/Users/Matt Flaherty/Documents/Projects/eda20-team4-project")
+ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
 ```
-
-    ## Warning: Missing column names filled in: 'X1' [1]
 
     ## Parsed with column specification:
     ## cols(
-    ##   X1 = col_double(),
-    ##   Job_title = col_character(),
-    ##   Company = col_character(),
-    ##   State = col_character(),
-    ##   City = col_character(),
-    ##   Min_Salary = col_double(),
-    ##   Max_Salary = col_double(),
-    ##   Job_Desc = col_character(),
-    ##   Industry = col_character(),
-    ##   Rating = col_double(),
-    ##   Date_Posted = col_date(format = ""),
-    ##   Valid_until = col_date(format = ""),
-    ##   Job_Type = col_character(),
-    ##   Region = col_character(),
+    ##   .default = col_double(),
+    ##   state = col_character(),
+    ##   city = col_character(),
+    ##   job_title = col_character(),
+    ##   company = col_character(),
+    ##   job_desc = col_character(),
+    ##   industry = col_character(),
+    ##   date_posted = col_date(format = ""),
+    ##   valid_until = col_date(format = ""),
+    ##   job_type = col_character(),
+    ##   location = col_character(),
+    ##   metro_location = col_character(),
     ##   job_category = col_character()
     ## )
+
+    ## See spec(...) for full column specifications.
 
 </details>
 
@@ -52,16 +51,20 @@ ds_jobs_bucket <- read_csv("ds_jobs_bucket.csv")
 
 I want to use text analysis on the job description to see if there is a
 skill that is repeated throughout. This would be an important skill if
-it were repeated.
+it were repeated that applicants should attempt to improve if they are
+interested in the jobs.
 
 <details>
 
-<summary>Click to expand\!</summary> 1. Tokenize your corpus and
-generate a word
+<summary>Click to expand\!</summary>
+
+1.  Tokenize your corpus and generate a word
 count.
 
+<!-- end list -->
+
 ``` r
-job_words <- ds_jobs_bucket %>% select(job_category,Job_Desc) %>% unnest_tokens(word, Job_Desc)
+job_words <- ds_jobs %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 head(job_words)
 ```
 
@@ -136,7 +139,8 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
 ![](text_analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 No skills were mentioned frequently so I will use TF-IDF just to see
-what the results yield.
+what the results yield. Keep in mind that this is for all of the jobs in
+the data set. I will filter by DS jobs later in the report.
 
 # TF-IDF
 
@@ -146,8 +150,8 @@ what the results yield.
 in your dataset.
 
 ``` r
-idf_words <- ds_jobs_bucket %>% select(job_category, Job_Desc) %>% 
-  unnest_tokens(word,Job_Desc) %>% count(job_category, word, sort = T)
+idf_words <- ds_jobs %>% select(job_category, job_desc) %>% 
+  unnest_tokens(word,job_desc) %>% count(job_category, word, sort = T)
 
 better_idf_words <- idf_words %>% anti_join(personal_stop_words)
 ```
@@ -220,10 +224,10 @@ ggplot(tfidf_words, aes(x = word, y = tf_idf))+
 a word count.
 
 ``` r
-ds_words <- ds_jobs_bucket%>%
+ds_words <- ds_jobs%>%
   filter(job_category == "Data Scientist")
 
-job_words <- ds_words %>% select(job_category,Job_Desc) %>% unnest_tokens(word, Job_Desc)
+job_words <- ds_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 head(job_words)
 ```
 
@@ -286,6 +290,11 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
 
 ![](text_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
+After filtering by “Data Scientist,” it looks like employees should have
+some kind of analytical skills as well as machine learning skills.
+“Models” is also in the top 15 so this could augment the machine
+learning skill that data scientists need.
+
 ## Data Analyst
 
 <details>
@@ -294,10 +303,10 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
 generate a word count.
 
 ``` r
-analyst_words <- ds_jobs_bucket%>%
+analyst_words <- ds_jobs%>%
   filter(job_category == "Data Analyst")
 
-job_words <- analyst_words %>% select(job_category,Job_Desc) %>% unnest_tokens(word, Job_Desc)
+job_words <- analyst_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 head(job_words)
 ```
 
@@ -359,3 +368,48 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
 ```
 
 ![](text_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+We don’t learn as much from this graph as we did for the data scientist
+graph. However, we see soft skills such as “team”, “analysis”,
+“research” so the employee should be equipped with the ability to
+work with others and look at previous data.
+
+# All DS jobs
+
+<details>
+
+<summary>Click to expand\!</summary>
+
+``` r
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Consultant")
+
+job_words <- ds_filter %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
+```
+
+``` r
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+    ## Joining, by = "word"
+
+</details>
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+
+# Conclusions
+
+Going into this exploration, I was interested in finding out if there
+was a common word among job descriptions. I found that this was not
+case. There were soft skills that applicants should look to hone before
+applying such as analytical skills.
