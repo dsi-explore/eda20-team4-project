@@ -11,7 +11,7 @@ Job types :
 Viewwing the job typs from the data set :
 
 ```{r}
-jobtypes <- table(ds_jobs$Job_Type)
+jobtypes <- table(ds_jobs$job_type)
 jobtypes <- table(ds_jobs$Industry)
 
 ds_jobs
@@ -26,39 +26,84 @@ Below are the job types :
 * Parttime
 * Temporary
 
-FULL TIME JOBS IN STATES 
 
-Each state analysis with types of jobs and roles associated with it. 
 
-```{R}
-ds_jobs %>% 
-  select(State, Job_Type) %>%
-  filter(State == "NY") #750 job types in state NY
-```
-
-```{R}
-
-ds_jobs %>% 
-  select(State, Job_Type) %>%
-  filter(State == "NY") %>%
-  filter(Job_Type %in% c("FULL_TIME"))
-```
 
 Viewing the number of job types in each state as a table for further analysis
 
 ```{r}
-table(ds_jobs$State, ds_jobs$Job_Type)
+table(ds_jobs$metro_location, ds_jobs$job_type)
 ```
 
 
 
-Plotting states with types of jobs to find the dsitribution spread across each state
+Plotting states with types of jobs to find the distribution spread across each state
 
 ```{r}
-ggplot(ds_jobs, aes(x=State, y=Job_Type))+
+df <- ds_jobs %>%
+  filter(job_type == "FULL_TIME")
+
+df <- data.frame(table(df$metro_location)) 
+df
+```
+
+
+```{r}
+dff <- ds_jobs %>%
+  filter(job_type == "PART_TIME")
+
+dff <- data.frame(table(dff$metro_location)) 
+dff
+```
+
+```{r}
+ds_SF <- ds_SF %>%  mutate(percentage = round((ds_SF$Freq / sum(ds_SF$Freq)) * 100))
+
+ds_SF <- ds_SF %>%
+  mutate(lab.ypos = cumsum(percentage) - 0.5*percentage) #to get position to print percentage
+
+ds_SF
+
+```
+
+
+# Plotting full time and part time jobs according to metro location
+
+```{r}
+par(mfrow = c(1, 2))
+p <- ggplot(transform(transform(df, Freq=Freq/sum(Freq)), labPos=cumsum(Freq)-Freq/2), 
+       aes(x="", y = Freq, fill = Var1)) +
+  geom_bar(width = 1, stat = "identity")+
+  scale_fill_manual(values = c("red", "yellow","blue", "green", "cyan", "grey","orange")) +
+  coord_polar(theta = "y") +
+  labs(title = "Full time jobs according to state")
+ # geom_text(aes(y=labPos, label=scales::percent(Freq)),size=3)
+
+p + scale_fill_discrete(name="State") + theme(
+  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
+)
+
+
+q <- ggplot(transform(transform(dff, Freq=Freq/sum(Freq)), labPos=cumsum(Freq)-Freq/2), 
+       aes(x="", y = Freq, fill = Var1)) +
+  geom_bar(width = 1, stat = "identity")+
+  scale_fill_manual(values = c("red", "yellow","purple", "green", "cyan", "grey","orange")) +
+  coord_polar(theta = "y") +
+  labs(title = "Part time jobs according to state")
+
+q + scale_fill_discrete(name="State") +theme(
+  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
+)
+```
+
+
+# Relationship between states and types of jobs available
+
+```{r}
+ggplot(ds_jobs, aes(x=metro_location, y=job_type))+
   geom_jitter(alpha = 0.7) + labs(title ="Relationship between states and types of jobs available",
   y = "Type Of Job", 
-  x = "State")+
+  x = "state")+
 theme_classic()
 ```
 
