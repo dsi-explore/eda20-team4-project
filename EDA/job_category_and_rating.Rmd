@@ -1,0 +1,125 @@
+---
+title: "R Notebook"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+setwd('C:/Users/kingl/Desktop/Projects/eda_fall20/final_project/eda20-team4-project/')
+ds_jobs <- read.csv('Data Cleaning/ds_jobs.csv')
+```
+
+```{r}
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', NA))
+```
+
+```{r}
+companies <- ds_jobs %>%
+  filter(is.na(job_category) == F) %>% 
+  group_by(company) %>% 
+  summarize(count = n()) %>% 
+  arrange(-count) %>% 
+  filter(count >= 30)
+```
+
+```{r}
+ds_jobs %>% 
+  filter(is.na(job_category) == F,
+         company %in% companies$company) %>% 
+  group_by(company, job_category) %>% 
+  summarize(count = n()) %>% 
+  ggplot(aes(x = company, y = count)) + geom_col(aes(fill = job_category), position = 'dodge2') 
+```
+
+```{r}
+data_companies <- ds_jobs %>%
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(company) %>% 
+  summarize(count = n()) %>% 
+  arrange(-count) %>% 
+  filter(count >= 20)
+```
+
+```{r}
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category,
+         company %in% data_companies$company) %>% 
+  group_by(company, job_category) %>% 
+  summarize(count = n()) %>% 
+  ggplot(aes(x = company, y = count)) + 
+  geom_col(aes(fill = job_category)) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Job Category Breakdown of Top Data Science Companies',
+       subtitle = 'Companies with at least 20 DS job postings',
+       x = 'Company',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Job Category')
+```
+
+```{r}
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category,
+         company %in% data_companies$company) %>% 
+  group_by(company, metro_location) %>% 
+  summarize(count = n()) %>% 
+  ggplot(aes(x = company, y = count)) + 
+  geom_col(aes(fill = metro_location)) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Metro Area Breakdown of Top Data Science Companies',
+       subtitle = 'Companies with at least 20 DS job postings',
+       x = 'Company',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Metro Area')
+```
+
+```{r}
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(metro_location, job_category) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_category), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Metro Area Breakdown of Data Science Job Categories',
+       x = 'Metro Area',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Job Category')
+```
+
+```{r}
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  ggplot(aes(x = metro_location, y = rating)) + 
+  geom_boxplot()
+```
+
+```{r}
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  ggplot(aes(x = rating)) + 
+  geom_density(aes(fill = metro_location), alpha = .5) +
+  labs(title = 'Glassdoor Rating Density Plot by Metro Area',
+       x = 'Rating',
+       y = 'Density') +
+  scale_fill_discrete(name = 'Metro Area')
+```
+
+```{r}
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  ggplot(aes(x = rating)) + 
+  geom_density(aes(fill = job_category), alpha = .5) +
+  labs(title = 'Glassdoor Rating Density Plot by Job Category',
+       x = 'Rating',
+       y = 'Density') +
+  scale_fill_discrete(name = 'Job Category')  
+```
+
