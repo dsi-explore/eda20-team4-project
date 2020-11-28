@@ -146,4 +146,36 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
 ```
 
 
+# Salary by location
 
+
+```{R}
+
+df <- ds_jobs %>%
+             group_by(metro_location) %>%
+             summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
+             #filter(ds_jobs$min_scaled_salary == min(ds_jobs$min_scaled_salary))
+
+
+salary_data_loc <- df %>% pivot_longer(
+                cols = c(min, max),
+                names_to = "type",
+                values_to = "salary",
+                values_drop_na = TRUE
+)
+
+
+p <-ggplot(salary_data_loc, aes(metro_location, salary))
+p +geom_bar(stat = "identity", aes(fill = type))+
+  scale_y_continuous(
+    breaks = seq(0,11000000,20000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+  labs(title = "Salary vs location",
+       x = "Location",
+       y = "Salary") 
+  
+```
+
+
+# Salary by job type
