@@ -53,23 +53,6 @@ analyst_desc <- grep("data analy", ds_jobs$job_desc, ignore.case = TRUE, value =
 ds_desc <- grep("data scien", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 ```
 
-There are 1562 jobs (26% of total jobs in ds_jobs data set) that have "data" in their title
-* 553 (35% of the data jobs) have "engineer" in the title
-* 342 (22% of the data jobs) have "analyst" in the title
-* 634 (41% of the data jobs) have "scientist" in the title
-
-This does not add up to be all of the jobs so I want to subtract these jobs from the data jobs. There are 87 jobs without these in their title.
-
-Some jobs fall into multiple categories.
-
-```{r}
-data2 <- data[!data %in% engineer]
-data3 <- data2[!data2 %in% analyst]
-data4 <- data3[!data3 %in% ds]
-
-sum(as.integer((engineer %in% analyst)))
-```
-
 ## ML and stats jobs
 
 Now that I have found data engineering, data analyst, and data scientist jobs, I want to see if there are any machine learning or stats jobs in the data set.
