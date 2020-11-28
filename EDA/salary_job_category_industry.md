@@ -25,12 +25,14 @@ within data science?
 #remove NAs from job_category
 scaled_salary_data_jc <- scaled_salary_data %>% filter(!is.na(job_category))
 
-scaled_salary_data_jc %>% ggplot(aes(x = salary, col = type, fill = type)) +
-  geom_density(alpha = 0.25) +
+scaled_salary_data_jc %>% ggplot(aes(x = salary, fill = type)) +
+  geom_density(alpha = 0.8) +
   labs(
     title = "Salary by Job Category",
     x = "Scaled Salary",
     y = "Density") +
+  scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) +
   facet_wrap(~job_category) + 
   theme_classic()
 ```
@@ -38,10 +40,12 @@ scaled_salary_data_jc %>% ggplot(aes(x = salary, col = type, fill = type)) +
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 ``` r
-scaled_salary_data_jc %>% ggplot(aes(y = salary, x = job_category, col = type, fill = type)) +
-  geom_boxplot(alpha = 0.25) +
+scaled_salary_data_jc %>% ggplot(aes(y = salary, x = job_category, fill = type)) +
+  geom_boxplot(alpha = 0.85) +
   labs(
     title = "Salary by Job Category") +
+  scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) +
   theme_classic() +
    coord_flip()
 ```
@@ -74,11 +78,20 @@ jc_avg_salary_long <- jc_avg_salary %>% pivot_longer(cols = c(avg_max_salary, av
 ```
 
 ``` r
-jc_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type)) +
+jc_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type))+
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Salary by Job Category") +
-  theme_classic()
+    title = "Salary by Job Category",
+    x = "",
+    y = "Scaled Salary") +
+  scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
+  scale_y_continuous(
+    breaks = seq(0,110000,25000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+  theme_classic() +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
@@ -87,16 +100,16 @@ jc_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary
 
 ``` r
 #closely related to data science
-ds_related <- c("Data Scientist", "Data Analyst", "Data Engineer", "Machine Learning", "Statistics")
+ds_related <- c("Data Scientist", "Data Analyst", "Data Engineer", "Machine Learning", "Statistics", "Other Analyst")
 
-scaled_salary_data_jc_top5 <- scaled_salary_data_jc %>% 
+scaled_salary_data_jc_related <- scaled_salary_data_jc %>% 
   filter(job_category %in% ds_related)
 
-mean_salary_jc <- scaled_salary_data_jc_top5 %>% group_by(type, job_category) %>% 
+mean_salary_jc <- scaled_salary_data_jc_related %>% group_by(type, job_category) %>% 
   mutate(mean_rate = mean(salary))
 
-scaled_salary_data_jc_top5 %>% ggplot(aes(x = salary, col = type, fill = type)) +
-  geom_density(alpha = 0.50) +
+scaled_salary_data_jc_related %>% ggplot(aes(x = salary, fill = type)) +
+  geom_density(alpha = 0.80) +
   labs(
     title = "Salary by Job Category",
     x = "Scaled Salary",
@@ -105,44 +118,37 @@ scaled_salary_data_jc_top5 %>% ggplot(aes(x = salary, col = type, fill = type)) 
     breaks = seq(15000,260000,75000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-  scale_color_manual(values = c("#009E73","#9999CC"),
-                     name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  scale_fill_manual(values = c("#009E73","#9999CC"), 
-                    name = "Salary Type",
-                    labels = c("Max", "Min")) +
-   geom_vline(aes(xintercept=mean_salary_jc$mean_rate, color = type, group = job_category), linetype = "dashed", show.legend = FALSE) +
-#  annotate("text",y = 12e-06, x = 65000, label = mean_salary_jc$mean_rate, size = 3, color = "#868686FF", group = job_category) +
-#  annotate("text",y = 12e-06, x = 140000, label = , size = 3, color = "#868686FF") +
+   geom_vline(aes(xintercept=mean_salary_jc$mean_rate, fill = type, group = job_category), linetype = "dashed", show.legend = FALSE) +
+scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
   geom_text(data = mean_salary_jc, aes(x = mean_rate+25000, y = 2.2e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category), size = 2) +
   facet_wrap(~job_category) + 
   theme_classic()
 ```
 
+    ## Warning: Ignoring unknown aesthetics: fill
+
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
-jc_avg_salary_top5 <- jc_avg_salary_long %>% 
+jc_avg_salary_related <- jc_avg_salary_long %>% 
   filter(job_category %in% ds_related)
 
-jc_avg_salary_top5 %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type)) +
+jc_avg_salary_related %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
     title = "Average Salary by Job Category",
     subtitle = "Data Science Related Job Openings",
     x = "",
     y = "Average Salary") +
-  scale_color_manual(values = c("#009E73","#9999CC"),
-                     name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  scale_fill_manual(values = c("#009E73","#9999CC"), 
-                    name = "Salary Type",
-                    labels = c("Max", "Min")) +
+scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
   scale_y_continuous(
     breaks = seq(0,110000,20000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-  theme_classic()
+  theme_classic() +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
@@ -160,7 +166,7 @@ scaled_salary_data_ji <- scaled_salary_data %>% filter(!is.na(industry))
 
 scaled_salary_data_ji <- scaled_salary_data_ji %>% filter(job_type != "PART_TIME")
 
-scaled_salary_data_ji_top5 <- scaled_salary_data_ji %>% 
+scaled_salary_data_ji_related <- scaled_salary_data_ji %>% 
   group_by(industry) %>% 
   summarise(count = n()) %>%
   arrange(desc(count)) %>%
@@ -173,13 +179,13 @@ scaled_salary_data_ji_top5 <- scaled_salary_data_ji %>%
 
 ``` r
 scaled_salary_data_ji <- scaled_salary_data_ji %>% 
-  filter(industry %in% scaled_salary_data_ji_top5$industry)
+  filter(industry %in% scaled_salary_data_ji_related$industry)
 
 mean_salary_ji <- scaled_salary_data_ji %>% group_by(type, industry) %>% 
   mutate(mean_rate = mean(salary))
 
-scaled_salary_data_ji %>% ggplot(aes(x = salary, col = type, fill = type)) +
-  geom_density(alpha = 0.25) +
+scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
+  geom_density(alpha = 0.8) +
   labs(
     title = "Salary by Job Industry",
     x = "Scaled Salary",
@@ -188,17 +194,15 @@ scaled_salary_data_ji %>% ggplot(aes(x = salary, col = type, fill = type)) +
     breaks = seq(15000,400000,100000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-  geom_vline(aes(xintercept=mean_salary_ji$mean_rate, color = type, group = industry), linetype = "dashed", show.legend = FALSE) +
-  scale_color_manual(values = c("#009E73","#9999CC"),
-                     name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  scale_fill_manual(values = c("#009E73","#9999CC"), 
-                    name = "Salary Type",
-                    labels = c("Max", "Min")) +
+  geom_vline(aes(xintercept=mean_salary_ji$mean_rate, fill = type, group = industry), linetype = "dashed", show.legend = FALSE) +
+scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
   geom_text(data = mean_salary_ji, aes(x = mean_rate+25000, y = 2.5e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = industry), size = 2) +
   facet_wrap(~industry) + 
   theme_classic()
 ```
+
+    ## Warning: Ignoring unknown aesthetics: fill
 
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -217,27 +221,24 @@ ji_avg_salary_long <- ji_avg_salary %>% pivot_longer(cols = c(avg_max_salary, av
                 values_to = "salary",
                 values_drop_na = TRUE)
 
-ji_avg_salary_long_top5 <- ji_avg_salary_long %>% 
-  filter(industry %in% scaled_salary_data_ji_top5$industry)
+ji_avg_salary_long_related <- ji_avg_salary_long %>% 
+  filter(industry %in% scaled_salary_data_ji_related$industry)
 
-ji_avg_salary_long_top5 %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
+ji_avg_salary_long_related %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
     title = "Average Salary by Industry",
     subtitle = "Data Science Related Job Openings",
     x = "",
     y = "Average Salary") +
-  scale_color_manual(values = c("#009E73","#9999CC"),
-                     name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  scale_fill_manual(values = c("#009E73","#9999CC"), 
-                    name = "Salary Type",
-                    labels = c("Max", "Min")) +
+scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
   scale_y_continuous(
     breaks = seq(0,100000,20000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-  theme_classic()
+  theme_classic() +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
