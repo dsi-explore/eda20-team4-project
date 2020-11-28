@@ -55,3 +55,18 @@ When is the best time to look for jobs?
   * Matt: Developed graphs for text analysis and job categories/industry by location. Also wrote about the job category feature in the google doc.
   * Meena: Interpreted industry vs job category, Ty of job vs metro area(for full time and part time), organized github
   * Sarah: Created outline in google docs for the final report, created visualization for salary by job category and salary by industry
+  
+# Next Steps Following 11/28 meeting
+* Anaylsis - fix color scheme/consistency, comment code and add intrepretations/explanation throughout analysis
+  * Matt: text analysis on other job categories, updated eda for established job categories
+  * Logan: ratings by industry, updated eda for established job categories
+  * Meena: updated eda for established job categories, alluvial diagram, switch to bar plot
+  * Sarah: updated eda for established job categories, linear regression
+* Other Project Stuff
+  * Matt: continue writing about job category feature
+  * Logan: begin writing metro data methodology
+  * Meena: begin introduction
+  * Sarah: COI, scaling salary, data section
+
+Next meeting is Wednesday 12/2 @12:30:
+https://vanderbilt.zoom.us/j/96604027898?pwd=NDhLZXZoOGpvdEZzYXJlU3VOR0M0QT09
