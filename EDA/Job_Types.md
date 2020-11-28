@@ -76,8 +76,6 @@ dff
     ## 5 San Francisco, CA   10
     ## 6    Washington, DC   32
 
-# `{r} # ds_SF <- ds_SF %>%  mutate(percentage = round((ds_SF$Freq / sum(ds_SF$Freq)) * 100)) #  # ds_SF <- ds_SF %>% #   mutate(lab.ypos = cumsum(percentage) - 0.5*percentage) #to get position to print percentage #  # ds_SF #  #`
-
 # Plotting full time and part time jobs according to metro location
 
 ``` r
