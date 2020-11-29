@@ -57,9 +57,10 @@ area_COI
 area_COI %>% ggplot(aes(x = reorder(metro_location, -coi), y = coi)) +
   geom_bar(stat = "identity") +
   labs(title = "Cost of Living Index for Metro Areas",
-         x = "Metro Area",
+         x = "",
          y = "Cost of Living Index") +
-  theme_bw()
+  theme_bw() +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ![](col_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
@@ -214,15 +215,11 @@ salary_data <- ds_jobs %>% select(min_salary, max_salary) %>% pivot_longer(
 mean_salary <- salary_data %>% group_by(type) %>% 
   mutate(mean_rate = mean(salary))
 
-salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
-  geom_density(alpha = 0.25) +
-  scale_color_manual(values = c("#868686FF","#EFC000FF"),
-                     name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  scale_fill_manual(values = c("#868686FF","#EFC000FF"), 
-                    name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  geom_vline(aes(xintercept=mean_salary$mean_rate, color = type), linetype = "dashed", show.legend = FALSE) +
+salary_data %>% ggplot(aes(x = salary, fill = type)) +
+  geom_density(alpha = 0.6) +
+   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) +
+  geom_vline(aes(xintercept=mean_salary$mean_rate, fill = type), linetype = "dashed", show.legend = FALSE) +
   labs(
     title = "The Minimum and Maximum Salary for Data Science Jobs",
     subtitle = "",
@@ -231,10 +228,12 @@ salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   scale_x_continuous(
     breaks = seq(15000,390000,50000),
     labels = function(x){paste0('$', x/1000, 'K')})+ 
-  annotate("text",y = 12e-06, x = 65000, label = "$82.5K", size = 3, color = "#868686FF") +
-  annotate("text",y = 12e-06, x = 140000, label = "$120.6K", size = 3, color = "#868686FF") +
+  annotate("text",y = 12e-06, x = 65000, label = "$82.5K", size = 3) +
+  annotate("text",y = 11.2e-06, x = 140000, label = "$120.6K", size = 3) +
   theme_classic()
 ```
+
+    ## Warning: Ignoring unknown aesthetics: fill
 
 ![](col_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
@@ -274,15 +273,11 @@ scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary) %
 mean_scaled_salary <- scaled_salary_data %>% group_by(type) %>% 
   mutate(mean_rate = mean(salary))
 
-scaled_salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
-  geom_density(alpha = 0.25) +
-  scale_color_manual(values = c("#868686FF","#EFC000FF"),
-                     name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  scale_fill_manual(values = c("#868686FF","#EFC000FF"), 
-                    name = "Salary Type",
-                    labels = c("Max", "Min")) +
-  geom_vline(aes(xintercept=mean_scaled_salary$mean_rate, color = type), linetype = "dashed", show.legend = FALSE) +
+scaled_salary_data %>% ggplot(aes(x = salary, fill = type)) +
+  geom_density(alpha = 0.6) +
+   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) +
+  geom_vline(aes(xintercept=mean_scaled_salary$mean_rate, fill = type), linetype = "dashed", show.legend = FALSE) +
   labs(
     title = "The Scaled Minimum and Maximum Salary for Data Science Jobs",
     subtitle = "",
@@ -291,10 +286,12 @@ scaled_salary_data %>% ggplot(aes(x = salary, color = type, fill = type)) +
   scale_x_continuous(
     breaks = seq(15000,400000,50000),
     labels = function(x){paste0('$', x/1000, 'K')})+ 
-  annotate("text",y = 1.8e-05, x = 44500, label = "$60.7K", size = 3, color = "#868686FF") +
-  annotate("text",y = 1.5e-05, x = 109000, label = "$89.6K", size = 3, color = "#868686FF") +
+  annotate("text",y = 1.8e-05, x = 43000, label = "$60.7K", size = 3) +
+  annotate("text",y = 1.5e-05, x = 109000, label = "$89.6K", size = 3) +
   theme_classic()
 ```
+
+    ## Warning: Ignoring unknown aesthetics: fill
 
 ![](col_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
