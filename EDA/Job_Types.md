@@ -140,7 +140,7 @@ file.
 # Analysing the number of jobs in every category by taking the ds\_jobs\_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these job categories.
 
 ``` r
-df <- data.frame(table(ds_jobs$industry,ds_jobs$job_category))
+df <- data.frame(table(ds_jobs$industry,ds_jobs$job_category,ds_jobs$job_type))
 
 p <- ggplot(data=df, aes(x=Var2, y=Freq, fill=Var1)) + geom_bar(stat="identity") +
   labs(title = "Job category vs Industry",
@@ -184,6 +184,12 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
 # Salary by location
 
 ``` r
+library(viridis)
+```
+
+    ## Loading required package: viridisLite
+
+``` r
 df <- ds_jobs %>%
              group_by(metro_location) %>%
              summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
@@ -192,9 +198,6 @@ df <- ds_jobs %>%
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
-             #filter(ds_jobs$min_scaled_salary == min(ds_jobs$min_scaled_salary))
-
-
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
                 names_to = "type",
@@ -203,15 +206,19 @@ salary_data_loc <- df %>% pivot_longer(
 )
 
 
-p <-ggplot(salary_data_loc, aes(metro_location, salary))
-p +geom_bar(stat = "identity", aes(fill = type))+
-  scale_y_continuous(
-    breaks = seq(0,11000000,20000),
+p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
+  p + geom_bar(stat = "identity", position = 'dodge')+
+    labs(title = "Salary by location",
+       x = "Location",
+       y = "Scaled Salary") +
+    scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
+    scale_y_continuous(
+    breaks = seq(0,1100000,50000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-  labs(title = "Salary vs location",
-       x = "Location",
-       y = "Salary") 
+    theme_classic() +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ![](Job_Types_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
