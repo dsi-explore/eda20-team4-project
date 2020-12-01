@@ -8,7 +8,7 @@ against the location data to see if which jobs are in each location.
 
 <details>
 
-<summary>Click to expand\!</summary> \# Load
+<summary>Click to expand</summary> \# Load
     Data
 
 ``` r
@@ -65,7 +65,7 @@ Also take out the NAs
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Consultant")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
 ```
 
 </details>
@@ -99,14 +99,14 @@ are the job categories that dominate. Thus, if a data science student is
 looking for a job, then based on this data, the student should look for
 jobs in the bay area and DC.
 
-# industry vs location
+# Industry vs Location
 
 I also want to know which industries are offered in each state. I only
 want the top 5 industries so that my graph is easier to read.
 
 <details>
 
-<summary>Click to expand\!</summary>
+<summary>Click to expand</summary>
 
 ``` r
 ds_filter2 <- ds_filter %>%
