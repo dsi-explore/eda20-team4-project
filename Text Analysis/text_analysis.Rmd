@@ -56,13 +56,6 @@ better_line_words %>% count(word, sort = T) %>% slice(1:15) %>%
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   xlab("Words")
 ```
-
-```{r}
-personal_stop_words <- stop_words %>% select(-lexicon) %>% 
-  bind_rows(data.frame(word = c("â")))
-
-better_line_words <- job_words %>% anti_join(personal_stop_words)
-```
 </details>
 ```{r}
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
@@ -70,20 +63,23 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Word Frequency for All Jobs in the Data")
 ```
 
 No skills were mentioned frequently so I will use TF-IDF just to see what the results yield. Keep in mind that this is for all of the jobs in the data set. I will filter by DS jobs later in the report.
 
-# TF-IDF
 <details>
   <summary>Click to expand</summary>
+# TF-IDF
+
 1. Generate a tf-idf measure of words in your dataset.
 ```{r}
 idf_words <- ds_jobs %>% select(job_category, job_desc) %>% 
   unnest_tokens(word,job_desc) %>% count(job_category, word, sort = T)
 
-better_idf_words <- idf_words %>% anti_join(personal_stop_words)
+better_idf_words <- idf_words %>% anti_join(stop_words)
 
 description_length <- better_idf_words %>% group_by(job_category) %>% summarize(total = sum(n()))
 
@@ -100,7 +96,7 @@ tfidf_words %>% arrange(desc(tf_idf)) %>% head()
 ```{r}
 tfidf_words$word <- factor(tfidf_words$word, levels = tfidf_words$word[order(desc(tfidf_words$tf_idf))])
 ```
-</details>
+
 ```{r}
 ggplot(tfidf_words, aes(x = word, y = tf_idf))+
   geom_bar(stat = "identity") + 
@@ -108,10 +104,11 @@ ggplot(tfidf_words, aes(x = word, y = tf_idf))+
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   xlab("Words")
 ```
-
+</details>
 # Word Frequency by Job Category
 
 ## Data Scientist
+
 <details>
   <summary>Click to expand</summary>
 1. Tokenize your corpus and generate a word count.
@@ -129,21 +126,6 @@ better_line_words <- job_words %>% anti_join(stop_words)
 ```
 
 3. Create a visualization of the word count distribution and interpret your results.
-```{r}
-better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
-  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
-  geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
-```
-
-```{r}
-personal_stop_words <- stop_words %>% select(-lexicon) %>% 
-  bind_rows(data.frame(word = c("â")))
-
-better_line_words <- job_words %>% anti_join(personal_stop_words)
-```
 </details>
 ```{r}
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
@@ -151,12 +133,19 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words in the Data Scientist Category")
 ```
+
+### Interpretation
 
 After filtering by "Data Scientist," it looks like employees should have some kind of analytical skills as well as machine learning skills. "Models" is also in the top 15 so this could augment the machine learning skill that data scientists need. 
 
 ## Data Analyst
+
+Now I'll check to see if there are any skills for data analyst
+
 <details>
   <summary>Click to expand!</summary>
 1. Tokenize your corpus and generate a word count.
@@ -174,21 +163,6 @@ better_line_words <- job_words %>% anti_join(stop_words)
 ```
 
 3. Create a visualization of the word count distribution and interpret your results.
-```{r}
-better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
-  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
-  geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
-```
-
-```{r}
-personal_stop_words <- stop_words %>% select(-lexicon) %>% 
-  bind_rows(data.frame(word = c("â")))
-
-better_line_words <- job_words %>% anti_join(personal_stop_words)
-```
 </details>
 ```{r}
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
@@ -196,12 +170,16 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words in the Data Analyst Category")
 ```
 
-We don't learn as much from this graph as we did for the data scientist graph. However, we see soft skills such as "team", "analysis", "research" so the employee should be equipped with the ability to work with others and look at previous data.
+### Interpretation
 
-# Data Engineer
+We don't learn as much from this graph as we did for the data scientist graph. However, we see soft skills such as "team", "analysis", "research" so the employee should be equipped with the ability to work with others and look at previous data to draw conclusions.
+
+## Data Engineer
 
 <details>
   <summary>Click to expand!</summary>
@@ -220,14 +198,6 @@ better_line_words <- job_words %>% anti_join(stop_words)
 ```
 
 3. Create a visualization of the word count distribution and interpret your results.
-```{r}
-better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
-  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
-  geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
-```
 </details>
 ```{r}
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
@@ -235,21 +205,23 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words in the Data Engineer Category")
 ```
 
-## Interpretation
+### Interpretation
 
-Python is listed as a commonly used word for data engineering. Cloud is also a commonly used word so I assume this would be some type of google storage.
+Python is listed as a commonly used word for data engineering so a data engineer ought to learn Python if they wish to be a successful applicant. Cloud is also a commonly used word so I assume this would be some type of google storage.
 
-# Machine Learning
+## Machine Learning
 
 <details>
   <summary>Click to expand!</summary>
 1. Tokenize your corpus and generate a word count.
 ```{r}
 ml_words <- ds_jobs%>%
-  filter(job_category == "Machine Learning")
+  filter(job_category == "Machine Learning Engineer")
 
 job_words <- ml_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 head(job_words)
@@ -261,14 +233,6 @@ better_line_words <- job_words %>% anti_join(stop_words)
 ```
 
 3. Create a visualization of the word count distribution and interpret your results.
-```{r}
-better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
-  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
-  geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
-```
 </details>
 ```{r}
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
@@ -276,21 +240,23 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words in the Machine Learning Engineer\nCategory")
 ```
 
-## Interpretation
+### Interpretation
 
-No hard skills are commonly used in the descriptions. 
+No hard skills are commonly used in the descriptions. Commonly used words such as "team" and "decisions" could suggest that a machine learning engineer must work with other to make decisions. This makes sense because the machine learning engineer will be making the predictive models for the company.
 
-# Statistics
+## Statistics
 
 <details>
   <summary>Click to expand!</summary>
 1. Tokenize your corpus and generate a word count.
 ```{r}
 stats_words <- ds_jobs%>%
-  filter(job_category == "Statistics")
+  filter(job_category == "Statistician")
 
 job_words <- stats_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 head(job_words)
@@ -309,14 +275,16 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words in the Statistician Category")
 ```
 
-## Interpretation
+### Interpretation
 
-No hard skills in the job descriptions
+No hard skills in the job descriptions. It would be difficult to determine much from commonly used words in the job description.
 
-# Other Analyst
+## Other Analyst
 
 <details>
   <summary>Click to expand!</summary>
@@ -342,12 +310,14 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words in the Other Analyst Category")
 ```
 
-## Interpretation
+### Interpretation
 
-Nothing to learn from.
+Nothing to learn from. Only 28 jobs in this category so not much to choose from. There are soft skills that were seen in other data science positions such as analytical skills.
 
 # All DS jobs
 <details>
@@ -355,7 +325,7 @@ Nothing to learn from.
 ```{r}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Other Analyst" | job_category == "Statistics")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Other Analyst" | job_category == "Statistician")
 
 job_words <- ds_filter %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 ```
@@ -370,9 +340,11 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(
+    x = "Words",
+    title = "Frequency of Words for all of the Data Science Related\nPositions")
 ```
 
 # Conclusions
 
-Going into this exploration, I was interested in finding out if there was a common word among job descriptions such as a hard skill that applicants would need to learn (R, Python) that would help them get a data science related job. I found that this was not case. There were soft skills that applicants should look to hone before applying such as analytical skills.
+Going into this exploration, I was interested in finding out if there was a common word among job descriptions such as a hard skill that applicants would need to learn (R, Python) that would help them get a data science related job. I found that this was not case. There were soft skills that applicants should look to hone before applying such as analytical skills and getting experience working in teams.

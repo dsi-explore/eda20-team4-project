@@ -28,7 +28,7 @@ Filter by only DS jobs. There are a few other scientist jobs right now. Also tak
 ```{r}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ```
 
 </details>
@@ -98,4 +98,4 @@ ggplot(ds_filter2, aes(metro_location,fill = industry)) +
 
 ## Interpretation
 
-Using the data science jobs from `job_category`, we can see that San Francisco and DC still hold the majority of data science jobs. Now we can also see in which industries these data science jobs are so applicants can determine good industries for data scientists. Judging by this graph, IT seems to be where most of the jobs in these areas are being posted. I think that this is because companies will put their data science positions with IT.
+Filtering by the 6 data science categories from `job_category`, we can see that San Francisco and DC still hold the majority of data science jobs. Now we can also see in which industries these data science jobs are so applicants can determine good industries for data scientists. Judging by this graph, IT seems to be where most of the jobs in these areas are being posted. I think that this is because companies will put their data science positions with IT.
