@@ -23,64 +23,54 @@ Below are the job types :
 * Parttime
 * Temporary
 
+```{R}
+
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_type), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Location',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Job type")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = job_type, y = pct)) + 
+  geom_col(aes(fill = metro_location), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Job Type',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Location")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+```
 
 
-Viewing the number of job types in each state as a table for further analysis
+Viewing the number of job types in each state as a table
 
 ```{r}
 table(ds_jobs$metro_location, ds_jobs$job_type)
 ```
 
 
-
-Plotting states with types of jobs to find the distribution spread across each state
-
-```{r}
-df <- ds_jobs %>%
-  filter(job_type == "FULL_TIME")
-
-df <- data.frame(table(df$metro_location)) 
-df
-```
-
-
-```{r}
-dff <- ds_jobs %>%
-  filter(job_type == "PART_TIME")
-
-dff <- data.frame(table(dff$metro_location)) 
-dff
-```
-
-
-# Plotting full time and part time jobs according to metro location
-
-```{r}
-par(mfrow = c(1, 2))
-p <- ggplot(transform(transform(df, Freq=Freq/sum(Freq)), labPos=cumsum(Freq)-Freq/2), 
-       aes(x="", y = Freq, fill = Var1)) +
-  geom_bar(width = 1, stat = "identity")+
-  scale_fill_manual(values = c("red", "yellow","blue", "green", "cyan", "grey","orange")) +
-  coord_polar(theta = "y") +
-  labs(title = "Full time jobs according to state")
- # geom_text(aes(y=labPos, label=scales::percent(Freq)),size=3)
-
-p + scale_fill_discrete(name="State") + theme(
-  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
-)
-
-
-q <- ggplot(transform(transform(dff, Freq=Freq/sum(Freq)), labPos=cumsum(Freq)-Freq/2), 
-       aes(x="", y = Freq, fill = Var1)) +
-  geom_bar(width = 1, stat = "identity")+
-  scale_fill_manual(values = c("red", "yellow","purple", "green", "cyan", "grey","orange")) +
-  coord_polar(theta = "y") +
-  labs(title = "Part time jobs according to state")
-
-q + scale_fill_discrete(name="State") +theme(
-  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
-)
-```
 
 
 # Relationship between states and types of jobs available
