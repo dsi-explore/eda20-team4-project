@@ -10,6 +10,7 @@ scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary, j
                 values_drop_na = TRUE
 )
 
+#cleaning up the salary type
 scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
   type == "min_scaled_salary" ~ "min",
   type == "max_scaled_salary" ~ "max"
@@ -21,10 +22,18 @@ scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
 Is there a difference in salary between the different types of roles
 within data science?
 
+We want to look at different types of jobs within the data science field
+to see if there is a difference in salary between different roles. First
+we will look at the distribution of the minimum and maximum salary for
+each job category to understand their distributions. We used the scaled
+salary variables in this instance because we are looking at comparing
+salaries of jobs across all metro areas.
+
 ``` r
 #remove NAs from job_category
 scaled_salary_data_jc <- scaled_salary_data %>% filter(!is.na(job_category))
 
+#density graph by job category
 scaled_salary_data_jc %>% ggplot(aes(x = salary, fill = type)) +
   geom_density(alpha = 0.8) +
   labs(
@@ -33,55 +42,80 @@ scaled_salary_data_jc %>% ggplot(aes(x = salary, fill = type)) +
     y = "Density") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) +
+  scale_x_continuous(
+    breaks = seq(15000,400000,100000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
   facet_wrap(~job_category) + 
-  theme_classic()
+  theme_classic() +
+  theme(strip.text = element_text(face = "bold", size = 7),
+        axis.text.x = element_text(size = 6))
 ```
 
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
+At first glance all the distributions seem similar. They are
+approximately normally distributed, but are all a bit right skewed. We
+can look at boxplots of the same data to see the summary statistics a
+bit better.
+
 ``` r
+#boxplots for each job category
 scaled_salary_data_jc %>% ggplot(aes(y = salary, x = job_category, fill = type)) +
   geom_boxplot(alpha = 0.85) +
   labs(
-    title = "Salary by Job Category") +
+    title = "Salary by Job Category",
+    y = "Salary",
+    x = "") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) +
+  scale_y_continuous(
+    breaks = seq(15000,400000,75000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
   theme_classic() +
    coord_flip()
 ```
 
 ![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
-It does not make sense to compare the salary ranges of certain job types
-such as full time versus part time so we will look at only jobs that are
-typically a full 40 hours a week.
+
+We can see in most instances there are outliers on the upper end of the
+distribution. Even with the outliers, there does not seem to be too much
+difference in salary distribution for different job categories.
+
+This data contains observations for several different job types such as
+full time, part time, contractor, etc. It does not make sense to compare
+the salary ranges of certain job types such as full time versus part
+time so we will look at only jobs that are typically a full 40 hours a
+week.
 
 ``` r
+#remove part time jobs 
 scaled_salary_data_jc <- scaled_salary_data_jc %>% filter(job_type != "PART_TIME")
 ```
 
-Calculating average minimum and maximum salary based on job roles.
+To get a better a understanding of a comparison of salaries between
+different roles within data science, we want to look at the average for
+maximum and minimum scaled salaries based on job roles.
 
 ``` r
+#find average min and max salary for each job category
 jc_avg_salary <- ds_jobs %>% filter(!is.na(job_category) & !is.na(min_scaled_salary) & !is.na(max_scaled_salary)) %>% 
   group_by(job_category) %>% 
   summarise(avg_max_salary = mean(max_scaled_salary), 
             avg_min_salary = mean(min_scaled_salary)) %>% ungroup()
-```
 
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
+#pivot data for ease of graphing
 jc_avg_salary_long <- jc_avg_salary %>% pivot_longer(cols = c(avg_max_salary, avg_min_salary),
                 names_to = "type",
                 values_to = "salary",
                 values_drop_na = TRUE)
-```
 
-``` r
+#bar plot of salary by job category
 jc_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type))+
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Salary by Job Category",
+    title = "Average Salary by Job Category",
     x = "",
     y = "Scaled Salary") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
@@ -89,27 +123,45 @@ jc_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary
   scale_y_continuous(
     breaks = seq(0,110000,25000),
     labels = function(x){paste0('$', x/1000, 'K')}
-  ) +
+  ) + 
+  geom_text(aes(label=paste0('$', round(salary/1000,1), 'K')), position=position_dodge(width=0.9), vjust=-0.25, size = 2) +
   theme_classic() +
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+Here we can see that the highest paying role is Data Scientist based on
+both minimum and maximum salary and the lowest is Data Analyst based on
+the maximum salary and Computer Scientist based on the minimum of the
+salary range.
+
+So far the analysis has been for all job roles, but since there are so
+many we wanted to narrow the analysis to just those job roles that are
+most closely related to data science.
 
 ## Most Related to Data Science
 
-``` r
-#closely related to data science
-ds_related <- c("Data Scientist", "Data Analyst", "Data Engineer", "Machine Learning", "Statistics", "Other Analyst")
+The roles most related to the field of data science are Data Scientist,
+Data Analyst, Data Engineer, Machine Learning Engineer, Statistician and
+Other Analyst. We can look at the distribution of salary for only these
+roles.
 
+``` r
+#create vector of jobs closely related to data science
+ds_related <- c("Data Scientist", "Data Analyst", "Data Engineer", "Machine Learning Engineer", "Statistician", "Other Analyst")
+
+#filter for jobs in ds related jobs vector
 scaled_salary_data_jc_related <- scaled_salary_data_jc %>% 
   filter(job_category %in% ds_related)
 
+#calculate mean salary by job category to use in graph
 mean_salary_jc <- scaled_salary_data_jc_related %>% group_by(type, job_category) %>% 
   mutate(mean_rate = mean(salary))
 
+#density graph for ds related jobs
 scaled_salary_data_jc_related %>% ggplot(aes(x = salary, fill = type)) +
-  geom_density(alpha = 0.80) +
+  geom_density(alpha = 0.60) +
   labs(
     title = "Salary by Job Category",
     x = "Scaled Salary",
@@ -118,22 +170,30 @@ scaled_salary_data_jc_related %>% ggplot(aes(x = salary, fill = type)) +
     breaks = seq(15000,260000,75000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-   geom_vline(aes(xintercept=mean_salary_jc$mean_rate, fill = type, group = job_category), linetype = "dashed", show.legend = FALSE) +
+   geom_vline(aes(xintercept=mean_salary_jc$mean_rate, col = type, group = job_category), linetype = "dashed", show.legend = FALSE) +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
-  geom_text(data = mean_salary_jc, aes(x = mean_rate+25000, y = 2.2e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category), size = 2) +
+scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
+  geom_text(data = mean_salary_jc, aes(x = ifelse(type == "max", mean_rate+25000, mean_rate-25000), y = 2.4e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category, col = type), size = 2) +
   facet_wrap(~job_category) + 
-  theme_classic()
+  theme_classic() +
+  theme(strip.text = element_text(face = "bold", size = 7),
+        axis.text.x = element_text(size = 6))
 ```
 
-    ## Warning: Ignoring unknown aesthetics: fill
+![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
-![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+The distribution of both minimum and maximum salary is pretty similar
+for all of the different jobs roles. In addition, the ratio or
+proportion of minimum salaries overlapping with maximum salaries is
+fairly similar between the different job categories.
 
 ``` r
+#filter for jobs in ds related jobs vector
 jc_avg_salary_related <- jc_avg_salary_long %>% 
   filter(job_category %in% ds_related)
 
+#bar plot of salary by job category for ds jobs
 jc_avg_salary_related %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
@@ -147,25 +207,39 @@ scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type
     breaks = seq(0,110000,20000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
+  geom_text(aes(label=paste0('$', round(salary/1000,1), 'K')), position=position_dodge(width=0.9), vjust=-0.25, size = 2.5) +
   theme_classic() +
-  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+In looking at the average minimum and maximum salary for each job
+category we can see a distinct pattern. The minimum and maximum have the
+same levels per job category with Data Scientist having the highest
+average maximum and minimum salary then Data Engineer and so on until
+Data Analyst which has the lowest average maximum and minimum salary
+compared to other data science related jobs. For those looking for the
+highest paying jobs in data science, they should look at Data Scientist
+and Data Engineer roles first.
 
 # Job Industry
 
 Is there a salary difference based on the industry the data science job
 is in?
 
-We will look at the top 5 industries and compare their salary ranges.
+We will look at the top 5 industries and compare their scaled minimum
+and maximum salary ranges to see if there is a difference in salaries
+based on the type of industry a job is in.
 
 ``` r
 #remove NAs from industry
 scaled_salary_data_ji <- scaled_salary_data %>% filter(!is.na(industry))
 
+#filter out part time jobs
 scaled_salary_data_ji <- scaled_salary_data_ji %>% filter(job_type != "PART_TIME")
 
+#find top 5 industries for ds jobs by count of ds jobs in each industry
 scaled_salary_data_ji_related <- scaled_salary_data_ji %>% 
   group_by(industry) %>% 
   summarise(count = n()) %>%
@@ -178,12 +252,15 @@ scaled_salary_data_ji_related <- scaled_salary_data_ji %>%
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
+#filter for jobs in top 5 industries
 scaled_salary_data_ji <- scaled_salary_data_ji %>% 
   filter(industry %in% scaled_salary_data_ji_related$industry)
 
+#calculate mean salary by job category to use in graph
 mean_salary_ji <- scaled_salary_data_ji %>% group_by(type, industry) %>% 
   mutate(mean_rate = mean(salary))
 
+#density plot of salary for top 5 industries
 scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
   geom_density(alpha = 0.8) +
   labs(
@@ -194,19 +271,27 @@ scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
     breaks = seq(15000,400000,100000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
-  geom_vline(aes(xintercept=mean_salary_ji$mean_rate, fill = type, group = industry), linetype = "dashed", show.legend = FALSE) +
+  geom_vline(aes(xintercept=mean_salary_ji$mean_rate, col = type, group = industry), linetype = "dashed", show.legend = FALSE) +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
-  geom_text(data = mean_salary_ji, aes(x = mean_rate+25000, y = 2.5e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = industry), size = 2) +
+  scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
+  geom_text(data = mean_salary_ji, aes(x = ifelse(type == "max", mean_rate+35000, mean_rate-35000), y = 2.5e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = industry, col = type), size = 2) +
   facet_wrap(~industry) + 
-  theme_classic()
+  theme_classic() +
+  theme(strip.text = element_text(face = "bold", size = 7),
+    axis.text.x = element_text(size = 6))
 ```
 
-    ## Warning: Ignoring unknown aesthetics: fill
+![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+At first glance, it does not look like there is much of a difference in
+distribution of minimum or maximum salary ranges between different
+industries. Again just like with job categories it seems like the
+salarly distributions are approximately normally distributed with a
+right skew.
 
 ``` r
+#calculate average min and max salary for each industry
 ji_avg_salary <- ds_jobs %>% filter(!is.na(industry) & !is.na(min_scaled_salary & job_type != "PART_TIME") & !is.na(max_scaled_salary)) %>% 
   group_by(industry) %>% 
   summarise(avg_max_salary = mean(max_scaled_salary), 
@@ -216,14 +301,17 @@ ji_avg_salary <- ds_jobs %>% filter(!is.na(industry) & !is.na(min_scaled_salary 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
+#pivot data for ease of graphing
 ji_avg_salary_long <- ji_avg_salary %>% pivot_longer(cols = c(avg_max_salary, avg_min_salary),
                 names_to = "type",
                 values_to = "salary",
                 values_drop_na = TRUE)
 
+#filter for top 5 industries
 ji_avg_salary_long_related <- ji_avg_salary_long %>% 
   filter(industry %in% scaled_salary_data_ji_related$industry)
 
+#barplot of avg min and max salary by industry
 ji_avg_salary_long_related %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
@@ -237,8 +325,17 @@ scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type
     breaks = seq(0,100000,20000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
+  geom_text(aes(label=paste0('$', round(salary/1000,1), 'K')), position=position_dodge(width=0.9), vjust=-0.25, size = 2.5) +
   theme_classic() +
-  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](salary_job_category_industry_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+There does seem to be a trend in the average minimum and maximum
+salaries for the top 5 industries. Information Technology has the
+highest average minimum salary followed by Finance with a slightly
+higher average maximum salary, then Business Services, Biotech &
+Pharmaceuticals and lastly Health Care. If an individual is looking for
+a high paying job in the data science field, they should look at these 5
+industries that have the highest average salaries.
