@@ -465,9 +465,9 @@ for (i in seq_along(ds_jobs$Job_title)) {
   } else if ((ds_jobs$Job_title[[i]] %in% ds) && (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Scientist"
   } else if ((ds_jobs$Job_title[[i]] %in% ml) && (is.na(ds_jobs$job_category[[i]]))) {
-            ds_jobs$job_category[[i]] = "Machine Learning"
+            ds_jobs$job_category[[i]] = "Machine Learning Engineer"
   } else if ((ds_jobs$Job_title[[i]] %in% stats) && (is.na(ds_jobs$job_category[[i]]))){
-            ds_jobs$job_category[[i]] = "Statistics"
+            ds_jobs$job_category[[i]] = "Statistician"
   } else if((ds_jobs$Job_Desc[[i]] %in% engineer_desc) && 
             (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Engineer"
@@ -479,19 +479,19 @@ for (i in seq_along(ds_jobs$Job_title)) {
              ds_jobs$job_category[[i]] = "Data Scientist"
   } else if ((ds_jobs$Job_Desc[[i]] %in% ml_desc) && 
              (is.na(ds_jobs$job_category[[i]]))) {
-             ds_jobs$job_category[[i]] = "Machine Learning"
+             ds_jobs$job_category[[i]] = "Machine Learning Engineer"
   } else if ((ds_jobs$Job_Desc[[i]] %in% stats_desc) &&
              (is.na(ds_jobs$job_category[[i]]))) {
-             ds_jobs$job_category[[i]] = "Statistics"
+             ds_jobs$job_category[[i]] = "Statistician"
   } else if ((ds_jobs$Job_title[[i]] %in% consult) &&
              (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Consultant"
   } else if ((ds_jobs$Job_title[[i]] %in% bio) &&
              (is.na(ds_jobs$job_category[[i]]))) {
-             ds_jobs$job_category[[i]] = "Biology"
+             ds_jobs$job_category[[i]] = "Biologist"
   } else if ((ds_jobs$Job_Desc[[i]] %in% bio_desc) &&
              (is.na(ds_jobs$job_category[[i]]))) {
-             ds_jobs$job_category[[i]] = "Biology"
+             ds_jobs$job_category[[i]] = "Biologist"
   } else if ((ds_jobs$Job_title[[i]] %in% comp) && (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Computer Scientist"
   } else if ((ds_jobs$Job_Desc[[i]] %in% comp_desc) && 
@@ -502,7 +502,7 @@ for (i in seq_along(ds_jobs$Job_title)) {
              ds_jobs$job_category[[i]] = "Other Analyst"
   } else if ((ds_jobs$Job_title[[i]] %in% model) && 
              (is.na(ds_jobs$job_category[[i]]))) {
-             ds_jobs$job_category[[i]] = "Machine Learning"
+             ds_jobs$job_category[[i]] = "Machine Learning Engineer"
   } else if ((ds_jobs$Job_title[[i]] %in% research_scientist) &&
              (is.na(ds_jobs$job_category[[i]]))) {
              ds_jobs$job_category[[i]] = "Research Scientist"
