@@ -5,6 +5,7 @@ output: github_document
 ```{r, message = FALSE}
 library(tidyverse)
 library(ggplot2)
+library(viridis)
 ```
 Job types :
 
@@ -24,7 +25,6 @@ Below are the job types :
 * Temporary
 
 ```{R}
-
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 

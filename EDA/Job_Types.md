@@ -4,6 +4,7 @@ Job\_Types
 ``` r
 library(tidyverse)
 library(ggplot2)
+library(viridis)
 ```
 
 Job types :
@@ -23,8 +24,67 @@ Below are the job types :
   - Parttime
   - Temporary
 
-Viewing the number of job types in each state as a table for further
-analysis
+<!-- end list -->
+
+``` r
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_type), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Location',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Job type")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+```
+
+    ## `summarise()` regrouping output by 'job_type' (override with `.groups` argument)
+
+    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
+    ## will replace the existing scale.
+
+![](Job_Types_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = job_type, y = pct)) + 
+  geom_col(aes(fill = metro_location), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Job Type',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Location")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+```
+
+    ## `summarise()` regrouping output by 'job_type' (override with `.groups` argument)
+    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
+    ## will replace the existing scale.
+
+![](Job_Types_files/figure-gfm/unnamed-chunk-3-2.png)<!-- -->
+
+Viewing the number of job types in each state as a table
 
 ``` r
 table(ds_jobs$metro_location, ds_jobs$job_type)
@@ -40,82 +100,6 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
     ##   San Francisco, CA          7       854     12     4        10         1
     ##   Washington, DC             0       855      2     1        32         0
 
-Plotting states with types of jobs to find the distribution spread
-across each state
-
-``` r
-df <- ds_jobs %>%
-  filter(job_type == "FULL_TIME")
-
-df <- data.frame(table(df$metro_location)) 
-df
-```
-
-    ##                Var1 Freq
-    ## 1        Austin, TX  175
-    ## 2        Dallas, TX  247
-    ## 3       Houston, TX  106
-    ## 4      New York, NY  755
-    ## 5   San Antonio, TX   51
-    ## 6 San Francisco, CA  854
-    ## 7    Washington, DC  855
-
-``` r
-dff <- ds_jobs %>%
-  filter(job_type == "PART_TIME")
-
-dff <- data.frame(table(dff$metro_location)) 
-dff
-```
-
-    ##                Var1 Freq
-    ## 1        Austin, TX    4
-    ## 2        Dallas, TX    3
-    ## 3      New York, NY  120
-    ## 4   San Antonio, TX    3
-    ## 5 San Francisco, CA   10
-    ## 6    Washington, DC   32
-
-# Plotting full time and part time jobs according to metro location
-
-``` r
-par(mfrow = c(1, 2))
-p <- ggplot(transform(transform(df, Freq=Freq/sum(Freq)), labPos=cumsum(Freq)-Freq/2), 
-       aes(x="", y = Freq, fill = Var1)) +
-  geom_bar(width = 1, stat = "identity")+
-  scale_fill_manual(values = c("red", "yellow","blue", "green", "cyan", "grey","orange")) +
-  coord_polar(theta = "y") +
-  labs(title = "Full time jobs according to state")
- # geom_text(aes(y=labPos, label=scales::percent(Freq)),size=3)
-
-p + scale_fill_discrete(name="State") + theme(
-  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
-)
-```
-
-    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
-    ## will replace the existing scale.
-
-![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
-``` r
-q <- ggplot(transform(transform(dff, Freq=Freq/sum(Freq)), labPos=cumsum(Freq)-Freq/2), 
-       aes(x="", y = Freq, fill = Var1)) +
-  geom_bar(width = 1, stat = "identity")+
-  scale_fill_manual(values = c("red", "yellow","purple", "green", "cyan", "grey","orange")) +
-  coord_polar(theta = "y") +
-  labs(title = "Part time jobs according to state")
-
-q + scale_fill_discrete(name="State") +theme(
-  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
-)
-```
-
-    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
-    ## will replace the existing scale.
-
-![](Job_Types_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
-
 # Relationship between states and types of jobs available
 
 ``` r
@@ -126,7 +110,7 @@ ggplot(ds_jobs, aes(x=metro_location, y=job_type))+
 theme_classic()
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 From the graph, we can see the distribution of the types of jobs
 availbale in each state. We see that, KY, NC and TN doesn’t have more
@@ -152,7 +136,7 @@ p + scale_fill_discrete(name="Industry") +theme(
 )
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Time series analysis
 
@@ -179,17 +163,12 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
        y = "Number of jobs")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 # Salary by location
 
 ``` r
 library(viridis)
-```
-
-    ## Loading required package: viridisLite
-
-``` r
 df <- ds_jobs %>%
              group_by(metro_location) %>%
              summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
@@ -221,6 +200,6 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 # Salary by job type
