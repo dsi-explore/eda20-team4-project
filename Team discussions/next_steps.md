@@ -51,7 +51,7 @@ When is the best time to look for jobs?
   * Sarah: outline writeup
   * Matt: write about job category feature
 * Accomplished: 
-  * Logan:
+  * Logan: created graphs for analysis of companies and job categories, also began analysis on glassdoor rating
   * Matt: Developed graphs for text analysis and job categories/industry by location. Also wrote about the job category feature in the google doc.
   * Meena: Interpreted industry vs job category, Ty of job vs metro area(for full time and part time), organized github
   * Sarah: Created outline in google docs for the final report, created visualization for salary by job category and salary by industry
