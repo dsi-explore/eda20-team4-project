@@ -374,6 +374,258 @@ graph. However, we see soft skills such as “team”, “analysis”,
 “research” so the employee should be equipped with the ability to
 work with others and look at previous data.
 
+# Data Engineer
+
+<details>
+
+<summary>Click to expand\!</summary> 1. Tokenize your corpus and
+generate a word count.
+
+``` r
+engineer_words <- ds_jobs%>%
+  filter(job_category == "Data Engineer")
+
+job_words <- engineer_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
+head(job_words)
+```
+
+    ## # A tibble: 6 x 2
+    ##   job_category  word     
+    ##   <chr>         <chr>    
+    ## 1 Data Engineer addepar  
+    ## 2 Data Engineer has      
+    ## 3 Data Engineer the      
+    ## 4 Data Engineer potential
+    ## 5 Data Engineer to       
+    ## 6 Data Engineer make
+
+2.  Using the `TidyText` package, remove stop words and generate a new
+    word count.
+
+<!-- end list -->
+
+``` r
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+    ## Joining, by = "word"
+
+3.  Create a visualization of the word count distribution and interpret
+    your results.
+
+<!-- end list -->
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+
+</details>
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+
+## Interpretation
+
+Python is listed as a commonly used word for data engineering. Cloud is
+also a commonly used word so I assume this would be some type of google
+storage.
+
+# Machine Learning
+
+<details>
+
+<summary>Click to expand\!</summary> 1. Tokenize your corpus and
+generate a word count.
+
+``` r
+ml_words <- ds_jobs%>%
+  filter(job_category == "Machine Learning")
+
+job_words <- ml_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
+head(job_words)
+```
+
+    ## # A tibble: 6 x 2
+    ##   job_category     word      
+    ##   <chr>            <chr>     
+    ## 1 Machine Learning excavation
+    ## 2 Machine Learning contractor
+    ## 3 Machine Learning looking   
+    ## 4 Machine Learning for       
+    ## 5 Machine Learning a         
+    ## 6 Machine Learning self
+
+2.  Using the `TidyText` package, remove stop words and generate a new
+    word count.
+
+<!-- end list -->
+
+``` r
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+    ## Joining, by = "word"
+
+3.  Create a visualization of the word count distribution and interpret
+    your results.
+
+<!-- end list -->
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+</details>
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+## Interpretation
+
+No hard skills are commonly used in the descriptions.
+
+# Statistics
+
+<details>
+
+<summary>Click to expand\!</summary> 1. Tokenize your corpus and
+generate a word count.
+
+``` r
+stats_words <- ds_jobs%>%
+  filter(job_category == "Statistics")
+
+job_words <- stats_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
+head(job_words)
+```
+
+    ## # A tibble: 6 x 2
+    ##   job_category word     
+    ##   <chr>        <chr>    
+    ## 1 Statistics   sr       
+    ## 2 Statistics   scientist
+    ## 3 Statistics   ii       
+    ## 4 Statistics   location 
+    ## 5 Statistics   san      
+    ## 6 Statistics   francisco
+
+2.  Using the `TidyText` package, remove stop words and generate a new
+    word count.
+
+<!-- end list -->
+
+``` r
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+    ## Joining, by = "word"
+
+3.  Create a visualization of the word count distribution and interpret
+    your results.
+
+</details>
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+
+## Interpretation
+
+No hard skills in the job descriptions
+
+# Other Analyst
+
+<details>
+
+<summary>Click to expand\!</summary> 1. Tokenize your corpus and
+generate a word count.
+
+``` r
+other_analyst_words <- ds_jobs%>%
+  filter(job_category == "Other Analyst")
+
+job_words <- other_analyst_words %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
+head(job_words)
+```
+
+    ## # A tibble: 6 x 2
+    ##   job_category  word       
+    ##   <chr>         <chr>      
+    ## 1 Other Analyst the        
+    ## 2 Other Analyst positionwe 
+    ## 3 Other Analyst are        
+    ## 4 Other Analyst seeking    
+    ## 5 Other Analyst an         
+    ## 6 Other Analyst experienced
+
+2.  Using the `TidyText` package, remove stop words and generate a new
+    word count.
+
+<!-- end list -->
+
+``` r
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+    ## Joining, by = "word"
+
+3.  Create a visualization of the word count distribution and interpret
+    your results.
+
+</details>
+
+``` r
+better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  xlab("Words")
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
+
+## Interpretation
+
+Nothing to learn from.
+
 # All DS jobs
 
 <details>
@@ -383,7 +635,7 @@ work with others and look at previous data.
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Consultant")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Other Analyst" | job_category == "Statistics")
 
 job_words <- ds_filter %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
 ```
@@ -405,11 +657,13 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
   xlab("Words")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
 
 # Conclusions
 
 Going into this exploration, I was interested in finding out if there
-was a common word among job descriptions. I found that this was not
-case. There were soft skills that applicants should look to hone before
-applying such as analytical skills.
+was a common word among job descriptions such as a hard skill that
+applicants would need to learn (R, Python) that would help them get a
+data science related job. I found that this was not case. There were
+soft skills that applicants should look to hone before applying such as
+analytical skills.

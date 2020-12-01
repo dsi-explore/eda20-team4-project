@@ -5,6 +5,11 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r}
+library(tidyverse)
+library(readr)
+ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
+```
 
 # Exploring  around different industries in the data set ad sorting to find out which industry has the highest number of jobs
 
@@ -232,3 +237,11 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
   theme_minimal()
 
 ```
+
+# job titles for categories
+
+```{r}
+ml <- ds_jobs %>%
+  filter(job_category == "Machine Learning")
+```
+
