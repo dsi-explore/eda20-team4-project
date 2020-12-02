@@ -71,8 +71,31 @@ Viewing the number of job types in each state as a table
 table(ds_jobs$metro_location, ds_jobs$job_type)
 ```
 
+# Location by job type
 
+```{R}
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
 
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_type), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Location',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Job type")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+
+```
 
 # Relationship between states and types of jobs available
 
