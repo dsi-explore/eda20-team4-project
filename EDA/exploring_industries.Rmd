@@ -58,6 +58,8 @@ analyst_desc <- grep("data analy", ds_jobs$job_desc, ignore.case = TRUE, value =
 ds_desc <- grep("data scien", ds_jobs$job_desc, ignore.case = TRUE, value = TRUE)
 ```
 
+1814 NA values for `job_category` at this point. We want to reduce this number so we begin looking at other data science related categories
+
 ## ML and stats jobs
 
 Now that I have found data engineering, data analyst, and data scientist jobs, I want to see if there are any machine learning or stats jobs in the data set.

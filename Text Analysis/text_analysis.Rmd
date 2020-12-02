@@ -48,14 +48,6 @@ better_line_words <- job_words %>% anti_join(stop_words)
 ```
 
 3. Create a visualization of the word count distribution and interpret your results.
-```{r}
-better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
-  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
-  geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
-```
 </details>
 ```{r}
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
@@ -68,7 +60,13 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Word Frequency for All Jobs in the Data")
 ```
 
+## Interpretation
+
 No skills were mentioned frequently so I will use TF-IDF just to see what the results yield. Keep in mind that this is for all of the jobs in the data set. I will filter by DS jobs later in the report.
+
+## Usage
+
+This text analysis should not be included in our final report because we have been emphasizing looking at 6 DS categories and this incorporates all job categories.
 
 <details>
   <summary>Click to expand</summary>
@@ -106,6 +104,8 @@ ggplot(tfidf_words, aes(x = word, y = tf_idf))+
 ```
 </details>
 # Word Frequency by Job Category
+
+Word count for every job category would not be beneficial to the final report so I will begin to do text analysis on each job category and then on all of the categories combined. I am doing this to see if there are any skills that applicants should have experience with before applying. This could help them become more successful applicants.
 
 ## Data Scientist
 
@@ -345,6 +345,14 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words for all of the Data Science Related\nPositions")
 ```
 
+## Interpretation
+
+This graph is all inclusive for the data science related positions. It shows that applicants who are interested in a data science related position should have an analytical mindset. They also should be able to work well in teams.
+
 # Conclusions
 
 Going into this exploration, I was interested in finding out if there was a common word among job descriptions such as a hard skill that applicants would need to learn (R, Python) that would help them get a data science related job. I found that this was not case. There were soft skills that applicants should look to hone before applying such as analytical skills and getting experience working in teams.
+
+# Text Analysis Graphs for final report
+
+I am indifferent on including all of the individual job category graphs. I think it would be beneficial to show our thought process through the text analysis. However, That would be 6 separate graphs and the all inclusive graph on top of our graphs for other analyses. A lot. We can still talk about our thought process through all 6 graphs even if we don't include them.

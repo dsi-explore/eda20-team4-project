@@ -103,19 +103,6 @@ better_line_words <- job_words %>% anti_join(stop_words)
 3.  Create a visualization of the word count distribution and interpret
     your results.
 
-<!-- end list -->
-
-``` r
-better_line_words %>% count(word, sort = T) %>% slice(1:15) %>% 
-  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
-  geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
-```
-
-![](text_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
-
 </details>
 
 ``` r
@@ -129,11 +116,19 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Word Frequency for All Jobs in the Data")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+## Interpretation
 
 No skills were mentioned frequently so I will use TF-IDF just to see
 what the results yield. Keep in mind that this is for all of the jobs in
 the data set. I will filter by DS jobs later in the report.
+
+## Usage
+
+This text analysis should not be included in our final report because we
+have been emphasizing looking at 6 DS categories and this incorporates
+all job categories.
 
 <details>
 
@@ -204,11 +199,17 @@ ggplot(tfidf_words, aes(x = word, y = tf_idf))+
   xlab("Words")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 </details>
 
 # Word Frequency by Job Category
+
+Word count for every job category would not be beneficial to the final
+report so I will begin to do text analysis on each job category and then
+on all of the categories combined. I am doing this to see if there are
+any skills that applicants should have experience with before applying.
+This could help them become more successful applicants.
 
 ## Data Scientist
 
@@ -262,7 +263,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words in the Data Scientist Category")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ### Interpretation
 
@@ -325,7 +326,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words in the Data Analyst Category")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ### Interpretation
 
@@ -386,7 +387,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words in the Data Engineer Category")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ### Interpretation
 
@@ -447,7 +448,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words in the Machine Learning Engineer\nCategory")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 ### Interpretation
 
@@ -509,7 +510,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words in the Statistician Category")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 ### Interpretation
 
@@ -568,7 +569,7 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words in the Other Analyst Category")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
 ### Interpretation
 
@@ -609,7 +610,14 @@ better_line_words %>% count(word, sort = T) %>% slice(1:20) %>%
     title = "Frequency of Words for all of the Data Science Related\nPositions")
 ```
 
-![](text_analysis_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+![](text_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+
+## Interpretation
+
+This graph is all inclusive for the data science related positions. It
+shows that applicants who are interested in a data science related
+position should have an analytical mindset. They also should be able to
+work well in teams.
 
 # Conclusions
 
@@ -619,3 +627,12 @@ applicants would need to learn (R, Python) that would help them get a
 data science related job. I found that this was not case. There were
 soft skills that applicants should look to hone before applying such as
 analytical skills and getting experience working in teams.
+
+# Text Analysis Graphs for final report
+
+I am indifferent on including all of the individual job category graphs.
+I think it would be beneficial to show our thought process through the
+text analysis. However, That would be 6 separate graphs and the all
+inclusive graph on top of our graphs for other analyses. A lot. We can
+still talk about our thought process through all 6 graphs even if we
+don’t include them.
