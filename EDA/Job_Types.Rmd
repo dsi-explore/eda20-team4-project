@@ -6,6 +6,7 @@ output: github_document
 library(tidyverse)
 library(ggplot2)
 library(viridis)
+library(ggalluvial)
 ```
 Job types :
 
@@ -97,44 +98,46 @@ ds_jobs %>%
 
 ```
 
-# Relationship between states and types of jobs available
+# Industry by job category 
 
-```{r}
-ggplot(ds_jobs, aes(x=metro_location, y=job_type))+
-  geom_jitter(alpha = 0.7) + labs(title ="Relationship between states and types of jobs available",
-  y = "Type Of Job", 
-  x = "state")+
-theme_classic()
-```
-
-
-From the graph, we can see the distribution of the types of jobs availbale in each state. We see that, KY, NC and TN doesn't have more full time jobs when compared to other states and there are only couple of states which offer temporary positions. 
-
-
-Further, we can explore about the sub categories in full time jobs, by taking data science related jobs from the other rmd file.
-
-# Analysing the number of jobs in every category by taking the ds_jobs_bucket.So, here we have five categories Data Analyst, Data Engineer, Data Scientist, Machine Learning and Statistics. Finding out how many of these fall into different industries. In our data frame, we have 23 industries for which we can map these job categories.
+This alluvial plot gives us more of a visual explanation/view about the top 5 industries from our data set and how it's mapped to the different data science jobs available. Where does most data scientists fit in? We see clearly that there are data scientists in every industry and the maximum in Business services. Since Machine learning and Statistics are narrowed down to a particular domain, although these are present in various industries, the numbers are pretty low compared to data engineer or data analyst. 
 
 ```{R}
-df <- data.frame(table(ds_jobs$industry,ds_jobs$job_category,ds_jobs$job_type))
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+ds_filter2 <- ds_filter %>%
+  filter(!is.na(industry))
+ds_filter3 <- ds_filter2 %>%
+  group_by(industry) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1:5)%>%
+  ungroup()
+ds_filter2 <- ds_filter2 %>%
+  filter(industry == ds_filter3$industry) %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
 
-p <- ggplot(data=df, aes(x=Var2, y=Freq, fill=Var1)) + geom_bar(stat="identity") +
-  labs(title = "Job category vs Industry",
-       x = "Job Category",
-       y = "Count")
+df <- table(ds_filter2$job_category, ds_filter2$industry)
+dff <- data.frame(df)
 
-p + scale_fill_discrete(name="Industry") +theme(
-  plot.title = element_text(color="black", size=14, face="bold",hjust = 0.5)
-)
+ggplot(data = dff,
+       aes(axis1 = Var1, axis2 = Var2,
+           y = Freq)) +
+  scale_x_discrete(limits = c("Job Category", "Industry"), expand = c(.2, .05)) +
+  ylab("Frequency") +
+  geom_alluvium(aes(fill = Var1)) +
+  geom_stratum() +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  theme_minimal() +
+  ggtitle("Job category by industry")+
+  scale_fill_discrete(name = "Job category")
 ```
-
-
-
 
 # Time series analysis
 
-There are two columns Date_Posted and Valid_Until which denotes the time frame until which the job applications are open and denoting the recruitment time frame for candidates. On trying to plot the availabiloty of new jobs while considering the date posted, we find that it doesn't increase exponentially neither does it hits the bottom but it reaches it's peak after mid May denoting the max job availability.
-
+This data about the job postings are listed from glassdoor scraped during covid time. According to the glassdoor findings, there were very few jobs posted around April end and there's a sudden rise the upcoming week. It's very clear that the job market was not stable during the pandemic.
 
 ```{R}
 table_date_posted <- data.frame(table(ds_jobs$date_posted))
@@ -147,7 +150,6 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
        y = "Number of jobs")
 
 ```
-
 
 # Salary by location
 
@@ -169,6 +171,7 @@ salary_data_loc <- df %>% pivot_longer(
 p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
   p + geom_bar(stat = "identity", position = 'dodge')+
     labs(title = "Salary by location",
+          subtitle = "Salary for all job posting in various locations.",
        x = "Location",
        y = "Scaled Salary") +
     scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
@@ -182,4 +185,84 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
 ```
 
 
-# Salary by job type
+```{R}
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+
+library(viridis)
+df <- ds_filter %>%
+             group_by(metro_location) %>%
+             summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
+
+salary_data_loc <- df %>% pivot_longer(
+                cols = c(min, max),
+                names_to = "type",
+                values_to = "salary",
+                values_drop_na = TRUE
+)
+
+
+p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
+  p + geom_bar(stat = "identity", position = 'dodge')+
+    labs(title = "Salary by location",
+         subtitle = "Salary for data science related job posting in various locations.",
+       x = "Location",
+       y = "Scaled Salary") +
+    scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
+    scale_y_continuous(
+    breaks = seq(0,1100000,50000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+    theme_classic() +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+
+
+
+```
+# Salary by job type - Data science related jobs
+
+```{r}
+scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary, job_category, industry, job_type) %>% pivot_longer(
+                cols = c(min_scaled_salary, max_scaled_salary),
+                names_to = "type",
+                values_to = "salary",
+                values_drop_na = TRUE
+)
+
+scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
+  type == "min_scaled_salary" ~ "min",
+  type == "max_scaled_salary" ~ "max"
+))
+
+scaled_salary_data_jc <- scaled_salary_data %>% filter(!is.na(job_type))
+ds_related <- c("Data Scientist", "Data Analyst", "Data Engineer", "Machine Learning Engineer", "Statistician", "Other Analyst")
+
+scaled_salary_data_jc_related <- scaled_salary_data_jc %>% 
+  filter(job_category %in% ds_related)
+
+mean_salary_jc <- scaled_salary_data_jc_related %>% group_by(type, job_type) %>% 
+  mutate(mean_rate = mean(salary))
+
+scaled_salary_data_jc_related %>% ggplot(aes(x = salary, fill = type)) +
+  geom_density(alpha = 0.60) +
+  labs(
+    title = "Salary by Job Type",
+    x = "Scaled Salary",
+    y = "Density") +
+  scale_x_continuous(
+    breaks = seq(15000,260000,75000),
+    labels = function(x){paste0('$', x/1000, 'K')}
+  ) +
+   geom_vline(aes(xintercept=mean_salary_jc$mean_rate, col = type, group = job_type), linetype = "dashed", show.legend = FALSE) +
+scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
+                     labels = c("Max", "Min")) + 
+scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
+  geom_text(data = mean_salary_jc, aes(x = ifelse(type == "max", mean_rate+25000, mean_rate-25000), y = 2.4e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_type, col = type), size = 2) +
+  facet_wrap(~job_type) + 
+  theme_classic() +
+  theme(strip.text = element_text(face = "bold", size = 7),
+        axis.text.x = element_text(size = 6))
+```
+
