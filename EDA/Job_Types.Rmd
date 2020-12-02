@@ -221,6 +221,9 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
 
 
 ```
+
+
+```
 # Salary by job type - Data science related jobs
 
 ```{r}
@@ -265,4 +268,3 @@ scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
   theme(strip.text = element_text(face = "bold", size = 7),
         axis.text.x = element_text(size = 6))
 ```
-
