@@ -20,7 +20,10 @@ library(tidyverse)
 
 ``` r
 library(ggplot2)
+library(viridis)
 ```
+
+    ## Loading required package: viridisLite
 
 ``` r
 setwd('C:/Users/kingl/Desktop/Projects/eda_fall20/final_project/eda20-team4-project/')
@@ -31,7 +34,8 @@ ds_jobs <- read.csv('Data Cleaning/ds_jobs.csv')
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
-  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', NA))
+  filter(job_category %in% 
+           c('Data Engineer', 'Data Analyst', 'Data Scientist', 'Machine Learning Engineer', 'Statistician'))
 ```
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
@@ -53,7 +57,8 @@ ds_jobs %>%
          company %in% companies$company) %>% 
   group_by(company, job_category) %>% 
   summarize(count = n()) %>% 
-  ggplot(aes(x = company, y = count)) + geom_col(aes(fill = job_category), position = 'dodge2') 
+  ggplot(aes(x = company, y = count)) + geom_col(aes(fill = job_category), position = 'dodge2') +
+  scale_fill_viridis(discrete = TRUE)
 ```
 
     ## `summarise()` regrouping output by 'company' (override with `.groups` argument)
@@ -72,6 +77,18 @@ data_companies <- ds_jobs %>%
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
+data_industries <- ds_jobs %>%
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(industry) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(industry)) %>% 
+  arrange(-count) %>% 
+  filter(count >= 100)
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
          company %in% data_companies$company) %>% 
@@ -84,12 +101,12 @@ ds_jobs %>%
        subtitle = 'Companies with at least 20 DS job postings',
        x = 'Company',
        y = 'Count') +
-  scale_fill_discrete(name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
 ```
 
     ## `summarise()` regrouping output by 'company' (override with `.groups` argument)
 
-![](job_category_and_rating_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -104,12 +121,12 @@ ds_jobs %>%
        subtitle = 'Companies with at least 20 DS job postings',
        x = 'Company',
        y = 'Count') +
-  scale_fill_discrete(name = 'Metro Area')
+  scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
 ```
 
     ## `summarise()` regrouping output by 'company' (override with `.groups` argument)
 
-![](job_category_and_rating_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -122,13 +139,52 @@ ds_jobs %>%
   theme(axis.text.x = element_text(angle = 90)) +
   labs(title = 'Metro Area Breakdown of Data Science Job Categories',
        x = 'Metro Area',
-       y = 'Count') +
-  scale_fill_discrete(name = 'Job Category')
+       y = 'Percent of Jobs') +
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
 ```
 
     ## `summarise()` regrouping output by 'metro_location' (override with `.groups` argument)
 
-![](job_category_and_rating_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(metro_location, job_category) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = count)) + 
+  geom_col(aes(fill = job_category)) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Metro Area Breakdown of Data Science Job Categories',
+       x = 'Metro Area',
+       y = 'Count') +
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+```
+
+    ## `summarise()` regrouping output by 'metro_location' (override with `.groups` argument)
+
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(metro_location) %>% 
+  summarize(count = n())
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 7 x 2
+    ##   metro_location    count
+    ##   <chr>             <int>
+    ## 1 Austin, TX          153
+    ## 2 Dallas, TX          227
+    ## 3 Houston, TX          76
+    ## 4 New York, NY        120
+    ## 5 San Antonio, TX      44
+    ## 6 San Francisco, CA   747
+    ## 7 Washington, DC      724
 
 ``` r
 ds_jobs %>% 
@@ -137,9 +193,9 @@ ds_jobs %>%
   geom_boxplot()
 ```
 
-    ## Warning: Removed 204 rows containing non-finite values (stat_boxplot).
+    ## Warning: Removed 197 rows containing non-finite values (stat_boxplot).
 
-![](job_category_and_rating_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -149,12 +205,12 @@ ds_jobs %>%
   labs(title = 'Glassdoor Rating Density Plot by Metro Area',
        x = 'Rating',
        y = 'Density') +
-  scale_fill_discrete(name = 'Metro Area')
+  scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
 ```
 
-    ## Warning: Removed 204 rows containing non-finite values (stat_density).
+    ## Warning: Removed 197 rows containing non-finite values (stat_density).
 
-![](job_category_and_rating_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -164,9 +220,37 @@ ds_jobs %>%
   labs(title = 'Glassdoor Rating Density Plot by Job Category',
        x = 'Rating',
        y = 'Density') +
-  scale_fill_discrete(name = 'Job Category')  
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
 ```
 
-    ## Warning: Removed 204 rows containing non-finite values (stat_density).
+    ## Warning: Removed 197 rows containing non-finite values (stat_density).
 
-![](job_category_and_rating_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category,
+         industry %in% data_industries$industry) %>% 
+  ggplot(aes(x = rating)) + 
+  geom_density(aes(fill = industry), alpha = .5) +
+  labs(title = 'Glassdoor Rating Density Plot by Industry',
+       x = 'Rating',
+       y = 'Density') +
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+```
+
+    ## Warning: Removed 25 rows containing non-finite values (stat_density).
+
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category,
+         industry %in% data_industries$industry) %>% 
+  ggplot(aes(x = industry, y = rating)) + 
+  geom_violin()
+```
+
+    ## Warning: Removed 25 rows containing non-finite values (stat_ydensity).
+
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-16-2.png)<!-- -->
