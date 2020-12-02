@@ -62,6 +62,7 @@ ds_jobs %>%
   scale_fill_viridis(discrete = TRUE, name = "Location")+
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
+Table interpretation of above visualization plots. From the data set, considering only the full time data science realted job availabilities, we see that San Francisco and Washington have the maximum number of jobs available while San Antonio has the least jobs comparitively.If we also look at the job category by location, we find similarities. Hence, if a person is looking for a job on data science field, then based on this data, it is suggested to for jobs in the bay area and DC.
 
 
 Viewing the number of job types in each state as a table
