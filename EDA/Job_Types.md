@@ -31,7 +31,7 @@ Below are the job types :
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
-  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+  filter(!job_category %in% c('Biologist', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
 ```
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
@@ -108,42 +108,6 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
     ##   San Francisco, CA          7       854     12     4        10         1
     ##   Washington, DC             0       855      2     1        32         0
 
-# Location by job type
-
-``` r
-data_jobs <- ds_jobs %>% 
-  group_by(job_category) %>% 
-  summarize(count = n()) %>% 
-  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
-```
-
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
-ds_jobs %>% 
-  filter(job_category %in% data_jobs$job_category) %>% 
-  group_by(job_type, metro_location) %>% 
-  summarize(count = n()) %>% 
-  mutate(pct = count/sum(count) * 100) %>% 
-  ggplot(aes(x = metro_location, y = pct)) + 
-  geom_col(aes(fill = job_type), position = 'dodge2') +
-  theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Location by type of data science jobs available',
-       x = 'Location',
-       y = 'Count') +
-  scale_fill_discrete(name = 'Location')+
-  theme_classic() +
-  scale_fill_viridis(discrete = TRUE, name = "Job type")+
-  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
-```
-
-    ## `summarise()` regrouping output by 'job_type' (override with `.groups` argument)
-
-    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
-    ## will replace the existing scale.
-
-![](Job_Types_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
 # Industry by job category
 
 This alluvial plot gives us more of a visual explanation/view about the
@@ -158,7 +122,7 @@ or data analyst.
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ds_filter2 <- ds_filter %>%
   filter(!is.na(industry))
 ds_filter3 <- ds_filter2 %>%
@@ -175,7 +139,7 @@ ds_filter3 <- ds_filter2 %>%
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry) %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ```
 
     ## Warning in industry == ds_filter3$industry: longer object length is not a
@@ -198,7 +162,7 @@ ggplot(data = dff,
   scale_fill_discrete(name = "Job category")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 # Time series analysis
 
@@ -224,7 +188,7 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
        y = "Number of jobs")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Salary by location
 
@@ -262,24 +226,18 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 
 library(viridis)
 df <- ds_filter %>%
              group_by(metro_location) %>%
              summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
 ```
-
-    ## Warning in min(min_scaled_salary, na.rm = TRUE): no non-missing arguments to
-    ## min; returning Inf
-
-    ## Warning in max(max_scaled_salary, na.rm = TRUE): no non-missing arguments to
-    ## max; returning -Inf
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
@@ -308,7 +266,7 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 # Salary by job type - Data science related jobs
 
@@ -319,7 +277,6 @@ scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary, j
                 values_to = "salary",
                 values_drop_na = TRUE
 )
-
 scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
   type == "min_scaled_salary" ~ "min",
   type == "max_scaled_salary" ~ "max"
@@ -355,4 +312,4 @@ scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
         axis.text.x = element_text(size = 6))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
