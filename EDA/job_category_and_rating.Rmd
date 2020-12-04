@@ -241,7 +241,7 @@ ds_jobs %>%
   labs(title = 'Glassdoor Rating Density Plot by Industry',
        x = 'Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Industry')
 
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
