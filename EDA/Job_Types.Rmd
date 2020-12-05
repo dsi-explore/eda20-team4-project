@@ -10,7 +10,7 @@ library(ggalluvial)
 ```
 Job types :
 
-Viewwing the job typs from the data set :
+Viewing the job typs from the data set :
 
 ```{r}
 ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
@@ -19,13 +19,13 @@ ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
 Below are the job types :
 
 * Contractor
-* Fulltime
+* Full time
 * Intern
 * Other
-* Parttime
+* Part time
 * Temporary
 
-```{R}
+```{R, message =FALSE}
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
@@ -74,7 +74,7 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
 
 # Location by job type
 
-```{R}
+```{R, message =FALSE}
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
@@ -102,7 +102,7 @@ ds_jobs %>%
 
 This alluvial plot gives us more of a visual explanation/view about the top 5 industries from our data set and how it's mapped to the different data science jobs available. Where does most data scientists fit in? We see clearly that there are data scientists in every industry and the maximum in Business services. Since Machine learning and Statistics are narrowed down to a particular domain, although these are present in various industries, the numbers are pretty low compared to data engineer or data analyst. 
 
-```{R}
+```{R, message = FALSE, warning = FALSE}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
@@ -154,11 +154,10 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
 # Salary by location
 
 
-```{R}
-library(viridis)
+```{R, message = FALSE}
 df <- ds_jobs %>%
              group_by(metro_location) %>%
-             summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
+             summarise(min = mean(min_scaled_salary, na.rm = TRUE),max = mean(max_scaled_salary, na.rm = TRUE))
 
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
@@ -185,15 +184,14 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
 ```
 
 
-```{R}
+```{R, message = FALSE}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
 
-library(viridis)
 df <- ds_filter %>%
              group_by(metro_location) %>%
-             summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
+             summarise(min = mean(min_scaled_salary, na.rm = TRUE),max = mean(max_scaled_salary, na.rm = TRUE))
 
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
@@ -223,7 +221,6 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
 ```
 
 
-```
 # Salary by job type - Data science related jobs
 
 ```{r}
