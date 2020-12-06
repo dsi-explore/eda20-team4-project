@@ -29,7 +29,7 @@ Below are the job types :
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
-  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+  filter(!job_category %in% c('Biologist', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
 
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -72,7 +72,7 @@ Viewing the number of job types in each state as a table
 table(ds_jobs$metro_location, ds_jobs$job_type)
 ```
 
-# Location by job type
+
 
 ```{R, message =FALSE}
 data_jobs <- ds_jobs %>% 
@@ -98,6 +98,7 @@ ds_jobs %>%
 
 ```
 
+
 # Industry by job category 
 
 This alluvial plot gives us more of a visual explanation/view about the top 5 industries from our data set and how it's mapped to the different data science jobs available. Where does most data scientists fit in? We see clearly that there are data scientists in every industry and the maximum in Business services. Since Machine learning and Statistics are narrowed down to a particular domain, although these are present in various industries, the numbers are pretty low compared to data engineer or data analyst. 
@@ -105,7 +106,7 @@ This alluvial plot gives us more of a visual explanation/view about the top 5 in
 ```{R, message = FALSE, warning = FALSE}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ds_filter2 <- ds_filter %>%
   filter(!is.na(industry))
 ds_filter3 <- ds_filter2 %>%
@@ -117,7 +118,7 @@ ds_filter3 <- ds_filter2 %>%
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry) %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 
 df <- table(ds_filter2$job_category, ds_filter2$industry)
 dff <- data.frame(df)
@@ -187,7 +188,7 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
 ```{R, message = FALSE}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 
 df <- ds_filter %>%
              group_by(metro_location) %>%
@@ -230,7 +231,6 @@ scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary, j
                 values_to = "salary",
                 values_drop_na = TRUE
 )
-
 scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
   type == "min_scaled_salary" ~ "min",
   type == "max_scaled_salary" ~ "max"

@@ -70,3 +70,15 @@ When is the best time to look for jobs?
 
 Next meeting is Wednesday 12/2 @12:30:
 https://vanderbilt.zoom.us/j/96604027898?pwd=NDhLZXZoOGpvdEZzYXJlU3VOR0M0QT09
+
+# Next Steps 12/4:
+1. Data - Sarah
+2. Data Science Roles - Matt
+3. Industry - Meena
+4. Company - Logan
+5. Salary - Sarah
+6. Text Analysis - Matt
+7. San fran vs. DC - Meena
+8. limitations/conclusions - Logan
+
+Next Meeting Monday 12/7 @7pm

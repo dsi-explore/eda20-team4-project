@@ -31,7 +31,11 @@ Below are the job types :
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
-  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+  filter(!job_category %in% c('Biologist', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
 
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -95,6 +99,7 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
     ##   San Francisco, CA          7       854     12     4        10         1
     ##   Washington, DC             0       855      2     1        32         0
 
+
 # Location by job type
 
 ``` r
@@ -136,7 +141,7 @@ or data analyst.
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ds_filter2 <- ds_filter %>%
   filter(!is.na(industry))
 ds_filter3 <- ds_filter2 %>%
@@ -148,7 +153,8 @@ ds_filter3 <- ds_filter2 %>%
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry) %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
+```
 
 df <- table(ds_filter2$job_category, ds_filter2$industry)
 dff <- data.frame(df)
@@ -166,7 +172,7 @@ ggplot(data = dff,
   scale_fill_discrete(name = "Job category")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 # Time series analysis
 
@@ -192,7 +198,7 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
        y = "Number of jobs")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Salary by location
 
@@ -225,17 +231,24 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 
 df <- ds_filter %>%
              group_by(metro_location) %>%
              summarise(min = mean(min_scaled_salary, na.rm = TRUE),max = mean(max_scaled_salary, na.rm = TRUE))
 
+
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+``` r
+>>>>>>> main
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
                 names_to = "type",
@@ -260,7 +273,7 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 # Salary by job type - Data science related jobs
 
@@ -271,7 +284,6 @@ scaled_salary_data <- ds_jobs %>% select(min_scaled_salary, max_scaled_salary, j
                 values_to = "salary",
                 values_drop_na = TRUE
 )
-
 scaled_salary_data <- scaled_salary_data %>% mutate(type = case_when(
   type == "min_scaled_salary" ~ "min",
   type == "max_scaled_salary" ~ "max"
@@ -307,4 +319,4 @@ scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
         axis.text.x = element_text(size = 6))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
