@@ -1,0 +1,30 @@
+# Data Dictionary
+
+1. coi: Cost of living index for the metro location.
+2. state: State in which the companies job posting is listed.
+3. city: City in which the companies job posting is listed.
+4. job_title: The title of job which you are applying to
+5. company: Company name
+4. min_salary: Minimum yearly salary in USD.
+5. max_salary: Maximum yearly salary in USD.
+6. job_desc: The job description which included skills,requirements,etc
+7. industry: The industry in which the company works.
+8. rating: Rating of the company
+9. date_posted: The date on which the job was posted on glassdoor
+10. valid_until: The last date of applying to the job. 
+11. job_type: Type of job full-time , part-time,etc. 
+12. location:
+13. metro_location:
+14. count:
+15. lon_city:
+16. lat_city:
+17. lon_metro:
+18. lat_metro:
+19. job_concentration:
+20. avg_lon_metro_weighted:
+21. avg_lat_metro_weighted:
+22. reg_dist:
+23. weight_dist:
+24. job_category:
+25. min_scaled_salary:
+26. max_scaled_salary:

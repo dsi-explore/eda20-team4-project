@@ -10,7 +10,7 @@ library(ggalluvial)
 
 Job types :
 
-Viewwing the job typs from the data set :
+Viewing the job typs from the data set :
 
 ``` r
 ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
@@ -19,10 +19,10 @@ ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
 Below are the job types :
 
   - Contractor
-  - Fulltime
+  - Full time
   - Intern
   - Other
-  - Parttime
+  - Part time
   - Temporary
 
 <!-- end list -->
@@ -36,7 +36,7 @@ data_jobs <- ds_jobs %>%
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
-``` r
+
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(job_type, metro_location) %>% 
@@ -53,11 +53,6 @@ ds_jobs %>%
   scale_fill_viridis(discrete = TRUE, name = "Job type")+
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
-
-    ## `summarise()` regrouping output by 'job_type' (override with `.groups` argument)
-
-    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
-    ## will replace the existing scale.
 
 ![](Job_Types_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
@@ -78,10 +73,6 @@ ds_jobs %>%
   scale_fill_viridis(discrete = TRUE, name = "Location")+
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
-
-    ## `summarise()` regrouping output by 'job_type' (override with `.groups` argument)
-    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
-    ## will replace the existing scale.
 
 ![](Job_Types_files/figure-gfm/unnamed-chunk-3-2.png)<!-- --> Table
 interpretation of above visualization plots. From the data set,
@@ -108,6 +99,34 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
     ##   San Francisco, CA          7       854     12     4        10         1
     ##   Washington, DC             0       855      2     1        32         0
 
+
+# Location by job type
+
+``` r
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% c('Biology', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_type), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Location',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Job type")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+```
+
+![](Job_Types_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
 # Industry by job category
 
 This alluvial plot gives us more of a visual explanation/view about the
@@ -131,21 +150,12 @@ ds_filter3 <- ds_filter2 %>%
   arrange(desc(count)) %>%
   slice(1:5)%>%
   ungroup()
-```
-
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry) %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ```
 
-    ## Warning in industry == ds_filter3$industry: longer object length is not a
-    ## multiple of shorter object length
-
-``` r
 df <- table(ds_filter2$job_category, ds_filter2$industry)
 dff <- data.frame(df)
 
@@ -193,15 +203,10 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
 # Salary by location
 
 ``` r
-library(viridis)
 df <- ds_jobs %>%
              group_by(metro_location) %>%
-             summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
-```
+             summarise(min = mean(min_scaled_salary, na.rm = TRUE),max = mean(max_scaled_salary, na.rm = TRUE))
 
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
                 names_to = "type",
@@ -233,15 +238,17 @@ ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 
-library(viridis)
 df <- ds_filter %>%
              group_by(metro_location) %>%
-             summarise(min = min(min_scaled_salary, na.rm = TRUE),max = max(max_scaled_salary, na.rm = TRUE))
+             summarise(min = mean(min_scaled_salary, na.rm = TRUE),max = mean(max_scaled_salary, na.rm = TRUE))
+
+
 ```
 
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
+>>>>>>> main
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
                 names_to = "type",
