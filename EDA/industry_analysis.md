@@ -15,14 +15,14 @@ against the location data to see if which jobs are in each location.
 library(tidyverse)
 ```
 
-    ## -- Attaching packages ------------------------------------------------- tidyverse 1.3.0 --
+    ## -- Attaching packages ---------------------------------------------------- tidyverse 1.3.0 --
 
     ## v ggplot2 3.3.2     v purrr   0.3.4
     ## v tibble  3.0.3     v dplyr   1.0.2
     ## v tidyr   1.1.2     v stringr 1.4.0
     ## v readr   1.3.1     v forcats 0.5.0
 
-    ## -- Conflicts ---------------------------------------------------- tidyverse_conflicts() --
+    ## -- Conflicts ------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -65,7 +65,7 @@ Also take out the NAs
 ``` r
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning" | job_category == "Statistics" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
 ```
 
 </details>
@@ -137,7 +137,7 @@ ggplot(ds_filter2, aes(metro_location,fill = industry)) +
   geom_bar() +
   scale_fill_viridis(discrete = TRUE)+
   labs(
-    title = "Industry by Location",
+    title = "Top 5 Industries by Location",
     x = "Location",
     subtitle = "The cities are listed with the total number of jobs and it is colored by the industry"
   )+
@@ -155,10 +155,10 @@ ggplot(ds_filter2, aes(metro_location,fill = industry)) +
 
 ## Interpretation
 
-Using the data science jobs from `job_category`, we can see that San
-Francisco and DC still hold the majority of data science jobs. Now we
-can also see in which industries these data science jobs are so
-applicants can determine good industries for data scientists. Judging by
-this graph, IT seems to be where most of the jobs in these areas are
-being posted. I think that this is because companies will put their data
-science positions with IT.
+Filtering by the 6 data science categories from `job_category`, we can
+see that San Francisco and DC still hold the majority of data science
+jobs. Now we can also see in which industries these data science jobs
+are so applicants can determine good industries for data scientists.
+Judging by this graph, IT seems to be where most of the jobs in these
+areas are being posted. I think that this is because companies will put
+their data science positions with IT.
