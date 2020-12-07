@@ -12,13 +12,15 @@ loadPkg = function(toLoad){
     { install.packages(lib, repos='http://cran.rstudio.com/') }
     suppressMessages( library(lib, character.only=TRUE) ) }
 }
-packs=c('tidyverse', 'tidytext', 'textdata')
+packs=c('tidyverse', 'tidytext', 'textdata', 'egg')
 loadPkg(packs)
 ```
 
     ## Warning: package 'tidytext' was built under R version 4.0.3
 
     ## Warning: package 'textdata' was built under R version 4.0.3
+
+    ## Warning: package 'egg' was built under R version 4.0.3
 
 ``` r
 library(readr)
@@ -600,14 +602,16 @@ better_line_words <- job_words %>% anti_join(stop_words)
 </details>
 
 ``` r
-better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+one_word <- better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
   theme_light() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words for all of the Data Science Related\nPositions")
+    title = "Frequency of Words for all of the\nData Science Related Positions")
+
+one_word
 ```
 
 ![](text_analysis_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
@@ -618,6 +622,85 @@ This graph is all inclusive for the data science related positions. It
 shows that applicants who are interested in a data science related
 position should have an analytical mindset. They also should be able to
 work well in teams.
+
+# Two Word Text Analysis
+
+Let’s see if we can get better results using two-word phrases for our
+text analysis.
+
+tokenize
+text
+
+``` r
+job_words <- ds_filter %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc,token = "ngrams",format = "text", n =2)
+```
+
+Remove stop words
+
+``` r
+better_line_words <- job_words %>% anti_join(stop_words)
+```
+
+    ## Joining, by = "word"
+
+``` r
+head(better_line_words[,2])
+```
+
+    ## # A tibble: 6 x 1
+    ##   word           
+    ##   <chr>          
+    ## 1 who we're      
+    ## 2 we're looking  
+    ## 3 looking for    
+    ## 4 for the        
+    ## 5 the chief      
+    ## 6 chief marketing
+
+``` r
+# split words b/c two word phrases aren't in stop words
+best <- separate(better_line_words,col = word, into = c("first", "second"), sep = " ")
+
+# now take out stop words from the two created columns
+best_line_words <- best %>% anti_join(stop_words, by = c("first"="word"))
+better_line_words <- best_line_words %>% anti_join(stop_words, by = c("second"="word"))
+
+# join the columns back together
+better_line_words$word <- paste(better_line_words$first,better_line_words$second, sep = " ")
+```
+
+Create
+visualization
+
+``` r
+two_word <- better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
+  ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
+  geom_bar(stat = "identity") + 
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
+  labs(
+    x = "Words",
+    title = "Frequency of Words for all of the\nData Science Related Positions\n(2 words)")
+
+two_word
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
+
+## Interpretation
+
+We did not find anything by doing a text analysis with the the most used
+words so we are now doing a text analysis with the most commonly used
+two-word phrases. Now we can see popular jobs within our data set such
+as machin learning and data scientist.
+
+# Combine Plots
+
+``` r
+ggarrange(one_word,two_word,ncol = 2, nrow = 1)
+```
+
+![](text_analysis_files/figure-gfm/unnamed-chunk-32-1.png)<!-- -->
 
 # Conclusions
 
