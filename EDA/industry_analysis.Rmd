@@ -17,7 +17,6 @@ I want to take the values from the job_category variable and graph it against th
 library(tidyverse)
 library(readr)
 library(viridis)
-setwd("C:/Users/Matt Flaherty/Documents/Projects/eda20-team4-project")
 ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
 ```
 
@@ -82,7 +81,7 @@ ggplot(ds_filter2, aes(metro_location,fill = industry)) +
   geom_bar() +
   scale_fill_viridis(discrete = TRUE)+
   labs(
-    title = "Industry by Location",
+    title = "Top 5 Industries by Location",
     x = "Location",
     subtitle = "The cities are listed with the total number of jobs and it is colored by the industry"
   )+
