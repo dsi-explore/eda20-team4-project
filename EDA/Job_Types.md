@@ -32,10 +32,6 @@ data_jobs <- ds_jobs %>%
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
   filter(!job_category %in% c('Biologist', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
-```
-
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
 
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -99,9 +95,6 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
     ##   San Francisco, CA          7       854     12     4        10         1
     ##   Washington, DC             0       855      2     1        32         0
 
-
-# Location by job type
-
 ``` r
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
@@ -154,7 +147,6 @@ ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry) %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
-```
 
 df <- table(ds_filter2$job_category, ds_filter2$industry)
 dff <- data.frame(df)
@@ -172,7 +164,7 @@ ggplot(data = dff,
   scale_fill_discrete(name = "Job category")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Time series analysis
 
@@ -198,7 +190,7 @@ ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
        y = "Number of jobs")
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 # Salary by location
 
@@ -231,7 +223,7 @@ p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 ds_filter <- ds_jobs %>%
@@ -240,15 +232,9 @@ ds_filter <- ds_jobs %>%
 
 df <- ds_filter %>%
              group_by(metro_location) %>%
-             summarise(min = mean(min_scaled_salary, na.rm = TRUE),max = mean(max_scaled_salary, na.rm = TRUE))
+             summarise(min = mean(min_scaled_salary, na.rm = TRUE),
+                       max = mean(max_scaled_salary, na.rm = TRUE))
 
-
-```
-
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
->>>>>>> main
 salary_data_loc <- df %>% pivot_longer(
                 cols = c(min, max),
                 names_to = "type",
@@ -257,23 +243,24 @@ salary_data_loc <- df %>% pivot_longer(
 )
 
 
-p <-ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
-  p + geom_bar(stat = "identity", position = 'dodge')+
+p <- ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
+p + geom_bar(stat = "identity", position = 'dodge')+
     labs(title = "Salary by location",
          subtitle = "Salary for data science related job posting in various locations.",
-       x = "Location",
-       y = "Scaled Salary") +
+       x = "",
+       y = "Average Scaled Salary") +
     scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
     scale_y_continuous(
     breaks = seq(0,1100000,50000),
     labels = function(x){paste0('$', x/1000, 'K')}
   ) +
+  geom_text(aes(label=paste0('$', round(salary/1000,1), 'K')), position=position_dodge(width=0.9), vjust=-0.25, size = 2.5) +
     theme_classic() +
-  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 9))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 # Salary by job type - Data science related jobs
 
@@ -319,4 +306,4 @@ scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
         axis.text.x = element_text(size = 6))
 ```
 
-![](Job_Types_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](Job_Types_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
