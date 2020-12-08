@@ -192,7 +192,7 @@ scaled_salary_data_jc_related %>% ggplot(aes(x = salary, fill = type)) +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
 scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
-  geom_text(data = mean_salary_jc, aes(x = ifelse(type == "max", mean_rate+25000, mean_rate-25000), y = 2.4e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category, col = type), size = 2) +
+  geom_text(data = mean_salary_jc, aes(x = ifelse(type == "max", mean_rate+30000, mean_rate-28000), y = 2.4e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category, col = type), size = 2.5) +
   facet_wrap(~job_category) + 
   theme_classic() +
   theme(strip.text = element_text(face = "bold", size = 7),
@@ -272,7 +272,8 @@ scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
   scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
-  geom_text(data = mean_salary_ji, aes(x = ifelse(type == "max", mean_rate+35000, mean_rate-35000), y = 2.5e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = industry, col = type), size = 2) +
+  geom_text(data = mean_salary_ji, aes(x = ifelse(type == "max", mean_rate+35000, mean_rate-35000), y = 2.5e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = industry, col = type), size = 2.5,
+            family = "sans") +
   facet_wrap(~industry) + 
   theme_classic() +
   theme(strip.text = element_text(face = "bold", size = 7),
@@ -368,7 +369,7 @@ salary_data_sf %>% ggplot(aes(x = salary, fill = type)) +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
 scale_color_viridis(discrete = TRUE, begin = 0.25, end = 0.5, guide = FALSE) +
-  geom_text(data = mean_salary_sf, aes(x = ifelse(type == "max_salary", mean_rate+35000, mean_rate-35000), y = 1.8e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category, col = type), size = 2) +
+  geom_text(data = mean_salary_sf, aes(x = ifelse(type == "max_salary", mean_rate+35000, mean_rate-35000), y = 1.8e-05, label = paste0('$', round(mean_rate/1000,1), 'K'), group = job_category, col = type), size = 2.5) +
   facet_wrap(~job_category) + 
   theme_classic() +
   theme(strip.text = element_text(face = "bold", size = 7),
