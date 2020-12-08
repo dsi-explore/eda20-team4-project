@@ -6,6 +6,7 @@ library(tidyverse)
 library(ggplot2)
 library(viridis)
 library(ggalluvial)
+library(ggfittext)
 ```
 
 Job types :
@@ -156,12 +157,12 @@ ggplot(data = dff,
            y = Freq)) +
   scale_x_discrete(limits = c("Job Category", "Industry"), expand = c(.2, .05)) +
   ylab("Frequency") +
-  geom_alluvium(aes(fill = Var1)) +
+  geom_alluvium(aes(fill = Var1), alpha = 0.9) +
   geom_stratum() +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_fill_viridis(discrete = TRUE, name = "Data Science Role") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 2) +
   theme_minimal() +
-  ggtitle("Job category by industry")+
-  scale_fill_discrete(name = "Job category")
+  ggtitle("Data Science Job Roles in the Top 5 Industries")
 ```
 
 ![](Job_Types_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
@@ -245,8 +246,8 @@ salary_data_loc <- df %>% pivot_longer(
 
 p <- ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
 p + geom_bar(stat = "identity", position = 'dodge')+
-    labs(title = "Salary by location",
-         subtitle = "Salary for data science related job posting in various locations.",
+    labs(title = "Salary for Data Science Jobs",
+         subtitle = "Glassdoor Job Postings by Metro Area",
        x = "",
        y = "Average Scaled Salary") +
     scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
