@@ -147,7 +147,7 @@ ds_filter3 <- ds_filter2 %>%
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry) %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician")
 
 df <- table(ds_filter2$job_category, ds_filter2$industry)
 dff <- data.frame(df)
