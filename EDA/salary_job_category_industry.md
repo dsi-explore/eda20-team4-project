@@ -27,8 +27,8 @@ salary_data_loc <- df %>% pivot_longer(
 
 p <- ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
 p + geom_bar(stat = "identity", position = 'dodge')+
-    labs(title = "Salary by location",
-         subtitle = "Salary for data science related job posting in various locations.",
+    labs(title = "Average Salary for Data Science Jobs",
+         subtitle = "Glassdoor Job Postings by Metro Area",
        x = "",
        y = "Average Salary") +
     scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
@@ -206,7 +206,7 @@ mean_salary_jc <- scaled_salary_data_jc_related %>% group_by(type, job_category)
 scaled_salary_data_jc_related %>% ggplot(aes(x = salary, fill = type)) +
   geom_density(alpha = 0.60) +
   labs(
-    title = "Salary by Job Category",
+    title = "Distribution of Scaled Salary for Data Science Roles",
     x = "Scaled Salary",
     y = "Density") +
   scale_x_continuous(
@@ -240,10 +240,10 @@ jc_avg_salary_related <- jc_avg_salary_long %>%
 jc_avg_salary_related %>% ggplot(aes(x = reorder(job_category, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Average Salary by Job Category",
-    subtitle = "Data Science Related Job Openings",
+    title = "Salary for Data Science Roles",
+    subtitle = "Glassdoor Job Openings",
     x = "",
-    y = "Average Salary") +
+    y = "Average Scaled Salary") +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
   scale_y_continuous(
@@ -307,7 +307,7 @@ mean_salary_ji <- scaled_salary_data_ji %>% group_by(type, industry) %>%
 scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
   geom_density(alpha = 0.6) +
   labs(
-    title = "Salary by Job Industry",
+    title = "Distribution of Scaled Salary for Top 5 Industries",
     x = "Scaled Salary",
     y = "Density") +
   scale_x_continuous(
@@ -358,10 +358,10 @@ ji_avg_salary_long_related <- ji_avg_salary_long %>%
 ji_avg_salary_long_related %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Average Salary by Industry",
+    title = "Average Salary for the Top 5 Industries",
     subtitle = "Data Science Related Job Openings",
     x = "",
-    y = "Average Salary") +
+    y = "Average Scaled Salary") +
 scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
   scale_y_continuous(
@@ -486,7 +486,7 @@ sf_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary
     title = "Average Salary for Data Science Roles",
     subtitle = "San Francisco Bay Metro Area",
     x = "",
-    y = "Salary") +
+    y = "Average Salary") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
   scale_y_continuous(
@@ -568,7 +568,7 @@ ji_sf_avg_long <- ji_sf_avg %>% pivot_longer(cols = c(avg_max_salary, avg_min_sa
 ji_sf_avg_long %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Average Salary by Industry",
+    title = "Average Salary for the Top 5 Industries",
     subtitle = "San Francisco Bay Metro Area",
     x = "",
     y = "Average Salary") +
@@ -688,7 +688,7 @@ dc_avg_salary_long %>% ggplot(aes(x = reorder(job_category, -salary), y = salary
     title = "Average Salary for Data Science Roles",
     subtitle = "Washington D.C. Metro Area",
     x = "",
-    y = "Salary") +
+    y = "Average Salary") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
                      labels = c("Max", "Min")) + 
   scale_y_continuous(
@@ -773,7 +773,7 @@ ji_dc_avg_long <- ji_dc_avg %>% pivot_longer(cols = c(avg_max_salary, avg_min_sa
 ji_dc_avg_long %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Average Salary by Industry",
+    title = "Average Salary for the Top 5 Industries",
     subtitle = "Washington D.C. Metro Area",
     x = "",
     y = "Average Salary") +
