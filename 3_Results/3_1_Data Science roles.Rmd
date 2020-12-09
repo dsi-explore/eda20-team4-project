@@ -1,0 +1,63 @@
+---
+title: "3_1_Data Science roles"
+output: github_document
+---
+
+```{r, message = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(viridis)
+library(ggalluvial)
+library(ggfittext)
+```
+Job types :
+
+Viewing the job typs from the data set :
+
+```{r}
+ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
+```
+
+Below are the job types :
+
+* Contractor
+* Full time
+* Intern
+* Other
+* Part time
+* Temporary
+
+```{R, message =FALSE}
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% c('Biologist', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(job_type, metro_location) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_type), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Location by type of data science jobs available',
+       x = 'Location',
+       y = 'Count') +
+  scale_fill_discrete(name = 'Location')+
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, name = "Job type")+
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+```
+
+
+## Table interpretation of above visualization plots. 
+
+From the data set, considering only the full time data science realted job availabilities, we see that San Francisco and Washington have the maximum number of jobs available while San Antonio has the least jobs comparitively.If we also look at the job category by location, we find similarities. Hence, if a person is looking for a job on data science field, then based on this data, it is suggested to for jobs in the bay area and DC.
+
+
+Viewing the number of job types in each state as a table
+
+```{r}
+table(ds_jobs$metro_location, ds_jobs$job_type)
+```
