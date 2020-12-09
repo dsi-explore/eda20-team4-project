@@ -25,6 +25,6 @@
 23. avg_lat_metro_weighted:
 24. reg_dist:
 25. weight_dist:
-26. job_category: (categorical) Categroy or role job falls under based on job title
+26. job_category: (categorical) Category or role job falls under based on job title
 27. min_scaled_salary: (numeric) Minimum yearly salary scaled by coi (in USD)
 28. max_scaled_salary: (numeric) Maximum yearly salary scaled by coi (in USD)
