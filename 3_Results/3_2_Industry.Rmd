@@ -20,8 +20,11 @@ library(ggplot2)
 library(viridis)
 library(ggalluvial)
 library(ggfittext)
-#setwd("C:/Users/Matt Flaherty/Documents/Projects/eda20-team4-project")
-#ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
+```
+
+Read data science jobs csv
+```{r}
+ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
 ```
 
 # Job Bucket vs location
@@ -161,3 +164,34 @@ ggplot(data = dff,
   theme_minimal() +
   ggtitle("Data Science Job Roles in the Top 5 Industries")
 ```
+
+# List Counts of Data Science Jobs
+
+```{r}
+# filter by only data science relevant jobs (as discussed in team meeting), generate table of counts
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(job_category %in% 
+           c('Data Engineer', 'Data Analyst', 'Data Scientist', 
+             'Machine Learning Engineer', 'Statistician', 'Other Analyst'))
+
+data_jobs
+```
+
+# Most Popular Industries in terms of Data Science Job Postings
+
+```{r}
+# find the counts of data science job postings within each industry
+data_industries <- ds_jobs %>%
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(industry) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(industry)) %>% 
+  arrange(-count) %>% 
+  filter(count >= 100)
+
+data_industries
+```
+
+The top industries in terms of data science job postings are listed above. Information technology and business services are far ahead of the rest of the top 5: Biotech/Pharmaceuticals, Finance, Aerospace/Defense.

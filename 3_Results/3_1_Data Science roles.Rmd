@@ -51,7 +51,7 @@ ds_jobs %>%
 ```
 
 
-## Table interpretation of above visualization plots. 
+# Table interpretation of above visualization plots. 
 
 From the data set, considering only the full time data science realted job availabilities, we see that San Francisco and Washington have the maximum number of jobs available while San Antonio has the least jobs comparitively.If we also look at the job category by location, we find similarities. Hence, if a person is looking for a job on data science field, then based on this data, it is suggested to for jobs in the bay area and DC.
 
@@ -61,3 +61,95 @@ Viewing the number of job types in each state as a table
 ```{r}
 table(ds_jobs$metro_location, ds_jobs$job_type)
 ```
+
+
+# Top Companies in terms of Overall Job Postings
+
+```{r}
+companies <- ds_jobs %>%
+  #filter out na job categories from all jobs
+  filter(is.na(job_category) == F) %>% 
+  #group by company
+  group_by(company) %>% 
+  #get the count of each company
+  summarize(count = n()) %>% 
+  #sort descending
+  arrange(-count) %>% 
+  #view the largest ones
+  filter(count >= 30)
+
+companies
+```
+
+```{r}
+# filter dataset to only include the top companies and job types that are not na, plot bar chart
+ds_jobs %>% 
+  filter(is.na(job_category) == F,
+         company %in% companies$company) %>% 
+  group_by(company, job_category) %>% 
+  summarize(count = n()) %>% 
+  ggplot(aes(x = company, y = count)) + geom_col(aes(fill = job_category), position = 'dodge2') +
+  scale_fill_viridis(discrete = TRUE)
+```
+
+The above plot displays the job category count of the top 6 overall companies in terms of job postings. From here, we see that we may need to subset our data to only include data science specific jobs. 
+
+# List Counts of Data Science Jobs
+
+```{r}
+# filter by only data science relevant jobs (as discussed in team meeting), generate table of counts
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(job_category %in% 
+           c('Data Engineer', 'Data Analyst', 'Data Scientist', 
+             'Machine Learning Engineer', 'Statistician', 'Other Analyst'))
+
+data_jobs
+```
+
+In our dataset, we see most data science jobs listed under the data scientist role, followed closely by data engineer and data analyst. There are also roles of machine learning engineer, statistician and other analyst - though to a much lesser extent.
+
+# Metro Area Breakdown of Job Categories
+
+```{r}
+# find the counts of data science job postings within each metro area
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(metro_location) %>% 
+  summarize(count = n())
+```
+
+```{r}
+#plot the each job category as the proportion of the total amount of jobs in each city (only focusing on ds jobs)
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(metro_location, job_category) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = pct)) + 
+  geom_col(aes(fill = job_category), position = 'dodge2') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Metro Area Breakdown of Data Science Job Categories',
+       x = 'Metro Area',
+       y = 'Percent of Jobs') +
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+```
+
+```{r}
+# 
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(metro_location, job_category) %>% 
+  summarize(count = n()) %>% 
+  mutate(pct = count/sum(count) * 100) %>% 
+  ggplot(aes(x = metro_location, y = count)) + 
+  geom_col(aes(fill = job_category)) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Metro Area Breakdown of Data Science Job Categories',
+       x = 'Metro Area',
+       y = 'Count') +
+  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+```
+
+The above two plots display the same information, just in different ways. San Francisco and Washington DC clearly have the highest amount of DS job postings. Dallas and Austin surprisingly have a higher amount of job postings than New York. Data analyst is the most popular DS job in Austin and San Francisco. Data Engineer is the most popular job posting in Dallas. Data Scientist is the most popular job posting in both San Antonio and DC. Machine Learning Engineer makes up exactly half of the postings in New York, but in terms of DS roles the city offers the least versatility - only offering Analyst, Engineer, and ML Engineer positions (perhaps mention people leaving area during covid). Statistician is in the minority of available jobs at each location aside from New York.
