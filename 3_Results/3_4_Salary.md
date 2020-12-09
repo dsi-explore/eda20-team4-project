@@ -65,7 +65,7 @@ area_COI %>% ggplot(aes(x = reorder(metro_location, -coi), y = coi)) +
          y = "Cost of Living Index (COI)") +
   geom_text(aes(label=coi), position=position_dodge(width=0.9), vjust=-0.25, size = 3.5) +
   theme_classic() +
-  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ![](3_4_Salary_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
@@ -217,7 +217,7 @@ salary_data %>% ggplot(aes(x = salary, fill = type)) +
   geom_vline(aes(xintercept=mean_salary$mean_rate, fill = type), 
              linetype = "dashed", show.legend = FALSE) +
   labs(
-    title = "The Minimum and Maximum Salary for Data Science Jobs",
+    title = "The Distribution of Minimum and Maximum Salary \n for Data Science Jobs",
     subtitle = "",
     x = "Salary",
     y = "Density") +
@@ -273,7 +273,7 @@ scaled_salary_data %>% ggplot(aes(x = salary, fill = type)) +
   geom_vline(aes(xintercept=mean_scaled_salary$mean_rate, fill = type), 
              linetype = "dashed", show.legend = FALSE) +
   labs(
-    title = "The Scaled Minimum and Maximum Salary for Data Science Jobs",
+    title = "The Distribution of Scaled Minimum and Maximum Salary \n for Data Science Jobs",
     subtitle = "",
     x = "Scaled Salary",
     y = "Density") +
@@ -351,8 +351,7 @@ p <- ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary),
                                  y = salary, fill = type)) 
 
 p + geom_bar(stat = "identity", position = 'dodge')+
-    labs(title = "Average Salary for Data Science Jobs",
-         subtitle = "Glassdoor Job Postings by Metro Area",
+    labs(title = "Average Salary for Data Science Jobs by Metro Area",
          x = "",
          y = "Average Salary") +
     scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
@@ -395,8 +394,7 @@ salary_data_loc <- df %>% pivot_longer(
 p <- ggplot(salary_data_loc, aes(x = reorder(metro_location, -salary), y = salary, fill = type)) 
 
 p + geom_bar(stat = "identity", position = 'dodge')+
-    labs(title = "Salary for Data Science Jobs",
-         subtitle = "Glassdoor Job Postings by Metro Area",
+    labs(title = "Average Scaled Salary for Data Science Jobs by Metro Area",
        x = "",
        y = "Average Scaled Salary") +
     scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
@@ -669,8 +667,7 @@ jc_avg_salary_related %>% ggplot(aes(x = reorder(job_category, -salary), y = sal
                                      fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Salary for Data Science Roles",
-    subtitle = "Glassdoor Job Openings",
+    title = "Average Salary for Data Science Roles",
     x = "",
     y = "Average Scaled Salary") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",
@@ -719,11 +716,7 @@ scaled_salary_data_ji_related <- scaled_salary_data_ji %>%
   slice(1:5) %>%
   select(industry) %>% 
   ungroup()
-```
 
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
 #filter for jobs in top 5 industries
 scaled_salary_data_ji <- scaled_salary_data_ji %>% 
   filter(industry %in% scaled_salary_data_ji_related$industry)
@@ -736,7 +729,7 @@ mean_salary_ji <- scaled_salary_data_ji %>% group_by(type, industry) %>%
 scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
   geom_density(alpha = 0.6) +
   labs(
-    title = "Distribution of Scaled Salary for Top 5 Industries",
+    title = "Distribution of Scaled Salary for Data Science Roles in Top Industries",
     x = "Scaled Salary",
     y = "Density") +
   scale_x_continuous(
@@ -762,9 +755,8 @@ scaled_salary_data_ji %>% ggplot(aes(x = salary, fill = type)) +
 
 At first glance, it does not look like there is much of a difference in
 distribution of minimum or maximum salary ranges between different
-industries. Again just like with job categories it seems like the
-salarly distributions are approximately normally distributed with a
-right skew.
+industries. Again just like with job categories it seems like the salary
+distributions are approximately normally distributed with a right skew.
 
 ``` r
 #calculate average min and max salary for each industry
@@ -773,11 +765,7 @@ ji_avg_salary <- ds_jobs %>% filter(!is.na(industry) & !is.na(min_scaled_salary 
   group_by(industry) %>% 
   summarise(avg_max_salary = mean(max_scaled_salary), 
             avg_min_salary = mean(min_scaled_salary)) %>% ungroup()
-```
 
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
 #pivot data for ease of graphing
 ji_avg_salary_long <- ji_avg_salary %>% pivot_longer(cols = c(avg_max_salary, avg_min_salary),
                 names_to = "type",
@@ -792,8 +780,7 @@ ji_avg_salary_long_related <- ji_avg_salary_long %>%
 ji_avg_salary_long_related %>% ggplot(aes(x = reorder(industry, -salary), y = salary ,fill = type)) +
   geom_bar(stat = "identity", position = 'dodge') +
   labs(
-    title = "Average Salary for the Top 5 Industries",
-    subtitle = "Data Science Related Job Openings",
+    title = "Average Salary for Data Science Roles in Top Industries",
     x = "",
     y = "Average Scaled Salary") +
   scale_fill_viridis(discrete = TRUE, begin = 0.25, end = 0.5, name = "Salary Type",

@@ -31,9 +31,10 @@ head(job_words)
 job_words %>% count(word, sort = T) %>% slice(1:15) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
-  xlab("Words")
+  labs(x= "Words",
+       y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
@@ -50,11 +51,12 @@ Lastly, we created a visualization of the word count distribution.
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Word Frequency for All Jobs in the Data")
+    title = "Word Frequency for All Jobs in the Data",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
@@ -121,7 +123,7 @@ tfidf_words$word <- factor(tfidf_words$word, levels = tfidf_words$word[order(des
 ``` r
 ggplot(tfidf_words, aes(x = word, y = tf_idf))+
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   xlab("Words")
 ```
@@ -168,11 +170,12 @@ Lastly, we created a visualization of the word count distribution.
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words in the Data Scientist Category")
+    title = "Frequency of Words in the Data Scientist Category",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
@@ -213,17 +216,18 @@ Second, we removed stop words and generated a new word count.
 better_line_words <- job_words %>% anti_join(stop_words)
 ```
 
-Lastyl, we created a visualization of the word count distribution.
+Lastly, we created a visualization of the word count distribution.
 
 ``` r
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words in the Data Analyst Category")
+    title = "Frequency of Words in the Data Analyst Category",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
@@ -269,11 +273,12 @@ Lastly, we created a visualization of the word count distribution.
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words in the Data Engineer Category")
+    title = "Frequency of Words in the Data Engineer Category",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
@@ -317,11 +322,12 @@ Lastly, we created a visualization of the word count distribution.
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words in the Machine Learning Engineer\nCategory")
+    title = "Frequency of Words in the Machine Learning Engineer\nCategory",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
@@ -368,11 +374,12 @@ Lastly, we created a visualization of the word count distribution.
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words in the Statistician Category")
+    title = "Frequency of Words in the Statistician Category",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
@@ -418,11 +425,12 @@ Lastly, we created a visualization of the word count distribution.
 better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
     x = "Words",
-    title = "Frequency of Words in the Other Analyst Category")
+    title = "Frequency of Words in the Other Analyst Category",
+    y = "Frequency")
 ```
 
 ![](3_5_Text-Analysis_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
@@ -444,7 +452,8 @@ descriptions for data science roles as a whole.
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | 
-         job_category == "Data Scientist" | job_category == "Machine Learning Engineer" |
+         job_category == "Data Scientist" | 
+         job_category == "Machine Learning Engineer" |
          job_category == "Other Analyst" | job_category == "Statistician")
 
 job_words <- ds_filter %>% select(job_category,job_desc) %>% unnest_tokens(word, job_desc)
@@ -458,11 +467,13 @@ better_line_words <- job_words %>% anti_join(stop_words)
 one_word <- better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
-    x = "Words",
-    title = "Frequency of Words for all of the\nData Science Related Positions")
+    x = "",
+    title = "Frequency of Words \n for Data Science Roles",
+    y = "Frequency") +
+  scale_y_continuous(labels = comma) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 one_word
 ```
@@ -516,11 +527,13 @@ Creating a visualization
 two_word <- better_line_words %>% count(word, sort = T) %>% slice(1:20) %>% 
   ggplot(aes(x = reorder(word, n, function(n) -n), y = n)) + 
   geom_bar(stat = "identity") + 
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) + 
   labs(
-    x = "Words",
-    title = "Frequency of Words for all of the\nData Science Related Positions\n(2 words)")
+    x = "",
+    title = "Frequency of Word Pairs \n for Data Science Roles",
+    y = "Frequency") +
+  scale_y_continuous(labels = comma) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 two_word
 ```

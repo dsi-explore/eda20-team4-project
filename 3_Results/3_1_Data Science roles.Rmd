@@ -52,12 +52,13 @@ ds_jobs %>%
   ggplot(aes(x = metro_location, y = pct)) + 
   geom_col(aes(fill = job_type), position = 'dodge2') +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Location by type of data science jobs available',
-       x = 'Location',
+  labs(title = 'Job Types for Data Science Roles by Metro Area',
+       x = '',
        y = 'Count') +
-  scale_fill_discrete(name = 'Location')+
+  scale_fill_discrete()+
   theme_classic() +
-  scale_fill_viridis(discrete = TRUE, name = "Job type")+
+  scale_fill_viridis(discrete = TRUE, name = "Job Type",labels = c("Contractor", 
+                     "Full Time", "Intern", "Other", "Part Time", "Temporary")) +
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
@@ -76,7 +77,10 @@ table(ds_jobs$metro_location, ds_jobs$job_type)
 ```{r, message = FALSE}
 ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst") %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" |
+           job_category == "Data Scientist" | 
+           job_category == "Machine Learning Engineer" | 
+           job_category == "Statistician" | job_category == "Other Analyst") %>%
   rename(`Job Category` = job_category) %>%
   group_by(`Job Category`) %>%
   summarise(Count = n()) %>%
@@ -120,10 +124,12 @@ ds_jobs %>%
   ggplot(aes(x = metro_location, y = pct)) + 
   geom_col(aes(fill = job_category), position = 'dodge2') +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Metro Area Breakdown of Data Science Job Categories',
-       x = 'Metro Area',
+  labs(title = 'Data Science Roles by Metro Area',
+       x = '',
        y = 'Percent of Jobs') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Data Science Roles') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 ```{r, message = FALSE}
@@ -138,15 +144,14 @@ ggplot(ds_filter, aes(metro_location, fill = job_category)) +
   geom_bar()+
   scale_fill_viridis(discrete = TRUE) +
   labs(
-    title = "Data Science Jobs by Location",
-    x = "Locations",
-    subtitle = "This graph shows the number of data science positions available in each city.",
-    fill = "Job Category")+
+    title = "Data Science Jobs by Metro Area",
+    x = "",
+    y = "Count",
+    fill = "Data Science Roles")+
   theme_classic() +
   theme(
     axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
     axis.text = element_text(size =10),
-    plot.subtitle=element_text(size=8, color = "grey"),
     legend.text = element_text(size = 8),
     legend.title = element_text(size = 8)) 
 ```
@@ -182,10 +187,11 @@ ds_jobs %>%
   summarize(count = n()) %>% 
   ggplot(aes(x = company, y = count)) + 
   geom_col(aes(fill = job_category), position = 'dodge2') +
-  labs(title = 'Job Category Breakdown by Company',
-       x = 'Company',
+  labs(title = 'Data Science Roles at Top Companies',
+       x = '',
        y = 'Count') +
   scale_fill_viridis(discrete = TRUE, name = "Data Science Roles") +
+  theme_classic() +
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 

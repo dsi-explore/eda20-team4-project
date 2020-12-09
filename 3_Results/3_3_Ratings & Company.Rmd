@@ -54,12 +54,13 @@ ds_jobs %>%
   summarize(count = n()) %>% 
   ggplot(aes(x = company, y = count)) + 
   geom_col(aes(fill = job_category)) +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Job Category Breakdown of Top Data Science Companies',
+  labs(title = 'Breakdown of Top Companies for Data Science Roles',
        subtitle = 'Companies with at least 20 DS job postings',
-       x = 'Company',
+       x = '',
        y = 'Count') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Data Science Role')
 ```
 
 From this plot we see that certain companies only have postings for one data science role: Addepar-Data Engineer, Kingdom Associates/TEECOM-Machine Learning Engineer, National Debt Relief-Data Analyst. Genetech not only has the most jobs available of the top companies, but they also have every kind of data science role available. CyberCoders, Booz Allen Hamilton Inc., and Management Decisions Inc. also have a variety of roles available. 
@@ -78,10 +79,11 @@ ds_jobs %>%
   summarize(count = n()) %>% 
   ggplot(aes(x = company, y = count)) + 
   geom_col(aes(fill = metro_location)) +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Metro Area Breakdown of Top Data Science Companies',
+  labs(title = 'Metro Area Breakdown of Top Companies for Data Science Roles',
        subtitle = 'Companies with at least 20 DS job postings',
-       x = 'Company',
+       x = '',
        y = 'Count') +
   scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
 ```
@@ -102,9 +104,10 @@ ds_jobs %>%
   ggplot(aes(x = metro_location, y = rating)) + 
   geom_violin() +
   labs(title = 'Glassdoor Rating Violin Plot by Metro Area',
-       x = 'Metro Area',
-       y = 'Rating') +
-  theme(axis.text.x = element_text(size = 8.5))
+       x = '',
+       y = 'Glassdoor Rating') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 The above violin plot shows the distribution of company ratings across metro area. While most areas look the same, New York has all ratings concentrated between 3.5 and ~4.25. This may signal that applicants can be pretty certain about what life at the company is like in New York as opposed to other metro areas with greater variability in company ratings. 
@@ -116,10 +119,11 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = metro_location), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot by Metro Area',
-       x = 'Rating',
+  labs(title = 'Distribution of Glassdoor Ratings by Metro Area',
+       x = 'Glassdoor Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
+  scale_fill_viridis(discrete = TRUE, name = 'Metro Area') +
+  theme_classic()
 ```
 
 This density plot presents the same information as the above violin plot. We see a high concentration just above 4 for New York.
@@ -133,24 +137,32 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = job_category), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot by Job Category',
-       x = 'Rating',
+  labs(title = 'Distribution of Glassdoor Ratings for Data Science Roles',
+       x = 'Glassdoor Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Data Science Role') +
+  theme_classic()
+```
 
+```{r}
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
   select(company, metro_location, industry, job_category, rating) %>% 
   unique() %>% 
   ggplot(aes(x = job_category, y = rating)) + 
-  geom_violin()
+  geom_violin() +
+  labs(title = 'Glassdoor Rating Violin Plot by Data Science Role',
+       x = '',
+       y = 'Glassdoor Rating') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 The above density and violin plots display the ratings of each company across job category. There does not seem to be much difference in ratings across job categories, however we do see an absence of negative outliers for the other analyst and statistician positions. This may not be a reliable approach because companies can appear across various roles and rating is specific to company.
 
 ## Rating by Industry
 
-```{r}
+```{r, message = FALSE}
 #filtering for relevant industries
 data_industries <- ds_jobs %>%
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -167,10 +179,11 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = industry), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot of Top Data Science Industries',
-       x = 'Rating',
+  labs(title = 'Distribution of Glassdoor Ratings of Top Industries for Data Science Roles',
+       x = 'Glassdoor Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Industry')
+  scale_fill_viridis(discrete = TRUE, name = 'Industry') +
+  theme_classic()
 ```
 
 ```{r}
@@ -180,7 +193,12 @@ ds_jobs %>%
   select(company, metro_location, industry, rating) %>% 
   unique() %>% 
   ggplot(aes(x = industry, y = rating)) + 
-  geom_violin()
+  geom_violin() +
+  labs(title = 'Glassdoor Rating Violin Plot by Top Industry',
+       x = '',
+       y = 'Glassdoor Rating') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
 The above density and violin plots show the rating of each company across industry. The distributions all appear pretty similar with the exception of a high concentration just above 3.5 for Aerospace and Defense. Information Technology has the highest rating peak among the five largest industries, while Biotech and Pharmaceuticals has the highest number of 5 rated companies. 
@@ -198,10 +216,11 @@ ds_jobs %>%
   arrange(company) %>% 
   ggplot(aes(x = company, y = rating)) + 
   geom_col() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Glassdoor Ratings of Top Data Science Companies',
-       x = 'Company',
-       y = 'Rating')
+  labs(title = 'Glassdoor Ratings of Top Companies for Data Science Roles',
+       x = '',
+       y = 'Glassdoor Rating')
 ```
 
 We see that the ratings are all relatively consistent across these companies with the exception of Management Decisions, Inc., which holds a much lower rating. For an applicant in search of a Data Engineer or Data Scientist position, Cybercoders may be a better option.

@@ -71,12 +71,11 @@ ds_filter2 <- ds_filter2 %>%
 
 ggplot(ds_filter2, aes(metro_location,fill = industry)) +
   geom_bar() +
-  scale_fill_viridis(discrete = TRUE)+
+  scale_fill_viridis(discrete = TRUE, name = "Industry")+
   labs(
-    title = "Top 5 Industries by Location",
-    x = "Location",
-    subtitle = "The cities are listed with the total 
-    number of jobs and it is colored by the industry"
+    title = "Top Industries for Data Science Roles by Metro Area",
+    x = "",
+    y = "Count"
   )+
   theme_classic() +
   theme(
@@ -137,9 +136,9 @@ ggplot(data = dff,
   geom_alluvium(aes(fill = Var1), alpha = 0.9) +
   geom_stratum() +
   scale_fill_viridis(discrete = TRUE, name = "Data Science Role") +
-  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 2) +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 1.9) +
   theme_minimal() +
-  ggtitle("Data Science Job Roles in the Top 5 Industries")
+  ggtitle("Data Science Job Roles in the Top Industries")
 ```
 
 ![](3_2_Industry_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->

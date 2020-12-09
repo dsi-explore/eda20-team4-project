@@ -64,12 +64,13 @@ ds_jobs %>%
   summarize(count = n()) %>% 
   ggplot(aes(x = company, y = count)) + 
   geom_col(aes(fill = job_category)) +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Job Category Breakdown of Top Data Science Companies',
+  labs(title = 'Breakdown of Top Companies for Data Science Roles',
        subtitle = 'Companies with at least 20 DS job postings',
-       x = 'Company',
+       x = '',
        y = 'Count') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Data Science Role')
 ```
 
 ![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
@@ -99,10 +100,11 @@ ds_jobs %>%
   summarize(count = n()) %>% 
   ggplot(aes(x = company, y = count)) + 
   geom_col(aes(fill = metro_location)) +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Metro Area Breakdown of Top Data Science Companies',
+  labs(title = 'Metro Area Breakdown of Top Companies for Data Science Roles',
        subtitle = 'Companies with at least 20 DS job postings',
-       x = 'Company',
+       x = '',
        y = 'Count') +
   scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
 ```
@@ -136,9 +138,10 @@ ds_jobs %>%
   ggplot(aes(x = metro_location, y = rating)) + 
   geom_violin() +
   labs(title = 'Glassdoor Rating Violin Plot by Metro Area',
-       x = 'Metro Area',
-       y = 'Rating') +
-  theme(axis.text.x = element_text(size = 8.5))
+       x = '',
+       y = 'Glassdoor Rating') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
     ## Warning: Removed 152 rows containing non-finite values (stat_ydensity).
@@ -159,10 +162,11 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = metro_location), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot by Metro Area',
-       x = 'Rating',
+  labs(title = 'Distribution of Glassdoor Ratings by Metro Area',
+       x = 'Glassdoor Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
+  scale_fill_viridis(discrete = TRUE, name = 'Metro Area') +
+  theme_classic()
 ```
 
     ## Warning: Removed 152 rows containing non-finite values (stat_density).
@@ -181,10 +185,11 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = job_category), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot by Job Category',
-       x = 'Rating',
+  labs(title = 'Distribution of Glassdoor Ratings for Data Science Roles',
+       x = 'Glassdoor Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+  scale_fill_viridis(discrete = TRUE, name = 'Data Science Role') +
+  theme_classic()
 ```
 
     ## Warning: Removed 173 rows containing non-finite values (stat_density).
@@ -197,12 +202,17 @@ ds_jobs %>%
   select(company, metro_location, industry, job_category, rating) %>% 
   unique() %>% 
   ggplot(aes(x = job_category, y = rating)) + 
-  geom_violin()
+  geom_violin() +
+  labs(title = 'Glassdoor Rating Violin Plot by Data Science Role',
+       x = '',
+       y = 'Glassdoor Rating') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
     ## Warning: Removed 173 rows containing non-finite values (stat_ydensity).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 The above density and violin plots display the ratings of each company
 across job category. There does not seem to be much difference in
@@ -222,11 +232,7 @@ data_industries <- ds_jobs %>%
   filter(!is.na(industry)) %>% 
   arrange(-count) %>% 
   filter(count >= 100)
-```
 
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
          industry %in% data_industries$industry) %>% 
@@ -234,15 +240,16 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = industry), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot of Top Data Science Industries',
-       x = 'Rating',
+  labs(title = 'Distribution of Glassdoor Ratings of Top Industries for Data Science Roles',
+       x = 'Glassdoor Rating',
        y = 'Density') +
-  scale_fill_viridis(discrete = TRUE, name = 'Industry')
+  scale_fill_viridis(discrete = TRUE, name = 'Industry') +
+  theme_classic()
 ```
 
     ## Warning: Removed 17 rows containing non-finite values (stat_density).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -251,12 +258,17 @@ ds_jobs %>%
   select(company, metro_location, industry, rating) %>% 
   unique() %>% 
   ggplot(aes(x = industry, y = rating)) + 
-  geom_violin()
+  geom_violin() +
+  labs(title = 'Glassdoor Rating Violin Plot by Top Industry',
+       x = '',
+       y = 'Glassdoor Rating') +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
     ## Warning: Removed 17 rows containing non-finite values (stat_ydensity).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 The above density and violin plots show the rating of each company
 across industry. The distributions all appear pretty similar with the
@@ -278,13 +290,14 @@ ds_jobs %>%
   arrange(company) %>% 
   ggplot(aes(x = company, y = rating)) + 
   geom_col() +
+  theme_classic() +
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Glassdoor Ratings of Top Data Science Companies',
-       x = 'Company',
-       y = 'Rating')
+  labs(title = 'Glassdoor Ratings of Top Companies for Data Science Roles',
+       x = '',
+       y = 'Glassdoor Rating')
 ```
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 We see that the ratings are all relatively consistent across these
 companies with the exception of Management Decisions, Inc., which holds
