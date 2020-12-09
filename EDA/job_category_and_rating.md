@@ -478,6 +478,11 @@ ds_jobs %>%
 
 ![](job_category_and_rating_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
+We see that the ratings are all relatively consistent across these
+companies with the exception of Management Decisions, Inc., which holds
+a much lower rating. For an applicant in search of a Data Engineer or
+Data Scientist position, Cybercoders may be a better option.
+
 ``` r
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
@@ -507,3 +512,8 @@ ds_jobs %>%
     ##  9 Business Services                      3.81   165
     ## 10 Government                             3.80    41
     ## # ... with 13 more rows
+
+The above table displays the number of job postings in each industry and
+the average rating of companies within those industries. Some of the
+highest rated industries also have the smallest sample sizes (and
+likewise for the lowest).

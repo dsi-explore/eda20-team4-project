@@ -291,7 +291,7 @@ ds_jobs %>%
        y = 'Rating')
 ```
 
-
+We see that the ratings are all relatively consistent across these companies with the exception of Management Decisions, Inc., which holds a much lower rating. For an applicant in search of a Data Engineer or Data Scientist position, Cybercoders may be a better option.
 
 ```{r}
 ds_jobs %>% 
@@ -306,3 +306,4 @@ ds_jobs %>%
   arrange(-avg_rating)
 ```
 
+The above table displays the number of job postings in each industry and the average rating of companies within those industries. Some of the highest rated industries also have the smallest sample sizes (and likewise for the lowest). 
