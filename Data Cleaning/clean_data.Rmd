@@ -183,7 +183,7 @@ The following values remain:
 `KY`, `TN` and `NC` are not close to the other regions of the data and `Paris, TX` was not near any metro areas in the cost of living data set. We will remove these values from further analysis based on metro areas.
 
 This chunk creates a csv with locations of cities and distance from state group centers
-```{r, warning= FALSE, message=FALSE, cache = TRUE}
+```{r}
 #Find unique cities
 city_counts <- ds_jobs %>% 
   mutate(Location = paste0(City, ', ', State),
@@ -197,40 +197,61 @@ city_counts <- ds_jobs %>%
 city_counts <- city_counts[!is.na(city_counts$metro_area),]
 city_counts <- city_counts[,-4]
 
+########################################################
 #load package to generate locations for each city
 library(ggmap)
-register_google('YOUR CODE HERE')
+# register_google('redacted')
 locations_city <- mutate_geocode(city_counts, Location)
 locations_metro <- mutate_geocode(city_counts, metro_location)
 
+
+#observe counts for each metro location
+locations_city %>%
+  group_by(metro_location) %>%
+  summarize(count = n()) %>%
+  arrange(-count)
+
+# bind locations of each city with their respective metro area
 city_locations <- cbind(locations_city, locations_metro[, c(6,7)])
 
+# rename location columns
 names(city_locations)[6:9] <- c('lon_city', 'lat_city', 'lon_metro', 'lat_metro')
 
+# calculate the proportion of a metro area's jobs located in each individual city, used for weighted metro location
 job_concentrations <- city_locations %>% 
   group_by(metro_location) %>% 
   summarise(count, 
             job_concentration = count/sum(count))
 
+# join job concentration data and city data
 city_data <- city_locations %>% left_join(job_concentrations, by = c('metro_location', 'count')) %>% unique()
 
+# calculate weighted locations of each metro area based on job concentrations and locations of cities
 weighted_locations <- city_data %>% 
   group_by(metro_location) %>% 
   summarise(avg_lon_metro_weighted = sum(job_concentration*lon_city),
             avg_lat_metro_weighted = sum(job_concentration*lat_city))
 
+# join weighted data to city data
 city_data <- city_data %>% left_join(weighted_locations, by = 'metro_location')
 
-#join job concentration/average location data back into main city df
-city_locations <- cbind(city_locations, job_concentrations)
+# check differences in regular and weighted metro locations, difference is minimal
+city_data %>% 
+  mutate(lat_diff = abs(lat_metro - avg_lat_metro_weighted),
+         lon_diff = abs(lon_metro - avg_lon_metro_weighted)) %>% 
+  select(metro_location, lat_diff, lon_diff) %>% 
+  group_by(metro_location) %>% 
+  summarise(lat_diff=max(lat_diff),
+            lon_diff=max(lon_diff))
 
-#create new column to determine distance from average for each city
+#create new column to determine distance from metro location and weighted metro location for each city
 library(geosphere)
 city_data <- city_data %>% 
   mutate(reg_dist = distm(c(lon_city, lat_city), c(lon_metro, lat_metro), fun = distHaversine)/1609,
          weight_dist = distm(c(lon_city, lat_city), 
                              c(avg_lon_metro_weighted, avg_lat_metro_weighted), fun = distHaversine)/1609)
 
+# filter out small sample size metro areas and cities that are more than 50 miles away from their associated metro area's weighted center
 city_data <- city_data %>% 
   filter(!metro_location %in% c('Brownsville, TX', 
                                 'College Station, TX', 
@@ -243,14 +264,14 @@ city_data <- city_data %>%
                                 'Marshall, TX'),
          weight_dist <= 50)
 
+# filter ds jobs to only contain observations in metro areas that were established by this analysis
 ds_jobs <- ds_jobs %>% 
   filter(paste0(City, ', ', State) %in% unique(city_data$Location)) %>% 
   left_join(city_data, by = c('City', 'State')) %>% 
   select(-Region, -metro_area)
 ```
  
-#edit
-From the above, we see that California, DC, and New York all seem to be reliable metro areas, all with less than 30 miles maximum from the average location. Texas on the other hand does not seem to be represented by a single metro area. Further inspection of the cities in Texas indicates several large concentrated cities that are not close to each other. 
+From the above, we see that California, DC, and New York all seem to be reliable metro areas, all with less than 30 miles maximum from the average location. Texas on the other hand does not seem to be represented by a single metro area. Further inspection of the cities in Texas indicates several large concentrated cities that are not close to each other. We remove metro areas with small sample sizes and cities which were greater than 50 miles outside of their associated metro area. We end with Austin, Dallas, Houston, and San Antonio for Texas; New York, NY; San Francisco, CA; and Washington, DC as our metro areas of interest. 
 
 ## Cost of Living Index
 
