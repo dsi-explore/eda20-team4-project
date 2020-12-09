@@ -417,17 +417,5 @@ ds_jobs <- clean_names(ds_jobs)
 write.csv(ds_jobs, "ds_jobs.csv", row.names = F)
 ```
 
-# Time series analysis
 
-This data about the job postings are listed from glassdoor scraped during covid time. According to the glassdoor findings, there were very few jobs posted around April end and there's a sudden rise the upcoming week. It's very clear that the job market was not stable during the pandemic.
 
-```{R}
-table_date_posted <- data.frame(table(ds_jobs$date_posted))
-table_date_posted$Var1 <- as.Date(table_date_posted$Var1, format = "%Y-%m-%d") 
-class(table_date_posted$Var1)
-ggplot(table_date_posted, aes(x = Var1, y = Freq)) +
-  geom_line() +
-  labs(title = "Job availability vs Date posted",
-       x = "Date",
-       y = "Number of jobs")
-```
