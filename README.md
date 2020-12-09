@@ -1,4 +1,4 @@
-# What are the best options for jobs in the Data Science field?
+# What are the best options or recommendations to find a job in the data science field?
 
 In this project we explored job openings in the data science field that were listed on Glassdoor. We wanted to analyze data science job postings to see what kind of roles were most needed, where and in what industries these jobs were needed, what salary ranges were offered for different positions and what kinds of skills were companies looking for in candidates. 
 
