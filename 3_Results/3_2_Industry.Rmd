@@ -3,17 +3,161 @@ title: "3_2_Industry"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+# Location of job bucket
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+I want to take the values from the job_category variable and graph it against the location data to see if which jobs are in each location.
+
+<details>
+  <summary>Click to expand</summary>
+# Load Data
 
 ```{r}
-plot(cars)
+library(tidyverse)
+library(readr)
+library(viridis)
+library(gt)
+library(ggplot2)
+library(viridis)
+library(ggalluvial)
+library(ggfittext)
+#setwd("C:/Users/Matt Flaherty/Documents/Projects/eda20-team4-project")
+#ds_jobs <- read_csv("Data Cleaning/ds_jobs.csv")
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+# Job Bucket vs location
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+Filter by only DS jobs. There are a few other scientist jobs right now. Also take out the NAs 
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
+```
 
+</details>
+```{r}
+ggplot(ds_filter, aes(metro_location, fill = job_category)) +
+  geom_bar()+
+  scale_fill_viridis(discrete = TRUE) +
+  labs(
+    title = "Data Science Jobs by Location",
+    x = "Locations",
+    subtitle = "This graph shows the number of data science positions available in each city.",
+    fill = "Job Category"
+  )+
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
+    axis.text = element_text(size =10),
+    plot.subtitle=element_text(size=8, color = "grey"),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8)) 
+```
+
+## Interpretation
+
+San Fran and DC have the most job postings in this data set for data scientists. Within this, Data Analyst, Data Engineer, and Data Scientist are the job categories that dominate. Thus, if a data science student is looking for a job, then based on this data, the student should look for jobs in the bay area and DC.
+
+# Industry vs Location
+
+I also want to know which industries are offered in each state. I only want the top 5 industries so that my graph is easier to read.
+
+<details>
+  <summary>Click to expand</summary>
+```{r}
+ds_filter2 <- ds_filter %>%
+  filter(!is.na(industry))
+ds_filter3 <- ds_filter2 %>%
+  group_by(industry) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1:5)%>%
+  ungroup()
+ds_filter2 <- ds_filter2 %>%
+  filter(industry == ds_filter3$industry)
+```
+
+</details>
+```{r}
+ggplot(ds_filter2, aes(metro_location,fill = industry)) +
+  geom_bar() +
+  scale_fill_viridis(discrete = TRUE)+
+  labs(
+    title = "Top 5 Industries by Location",
+    x = "Location",
+    subtitle = "The cities are listed with the total number of jobs and it is colored by the industry"
+  )+
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
+    axis.text = element_text(size =10),
+    plot.subtitle=element_text(size=8, color = "grey"),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8)
+  )
+```
+
+## Interpretation
+
+Filtering by the 6 data science categories from `job_category`, we can see that San Francisco and DC still hold the majority of data science jobs. Now we can also see in which industries these data science jobs are so applicants can determine good industries for data scientists. Judging by this graph, IT seems to be where most of the jobs in these areas are being posted. I think that this is because companies will put their data science positions with IT.
+
+# count of job_category
+
+```{r}
+ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst") %>%
+  rename(`Job Category` = job_category) %>%
+  group_by(`Job Category`) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  gt()
+```
+
+# count of job openings per area
+
+```{r}
+ds_jobs %>%
+  rename(`Metro Location` = metro_location) %>%
+  group_by(`Metro Location`) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))%>%
+  gt()
+```
+
+
+# Industry by job category
+This alluvial plot gives us more of a visual explanation/view about the top 5 industries from our data set and how it’s mapped to the different data science jobs available. Where does most data scientists fit in? We see clearly that there are data scientists in every industry and the maximum in Business services. Since Machine learning and Statistics are narrowed down to a particular domain, although these are present in various industries, the numbers are pretty low compared to data engineer or data analyst.
+
+```{R}
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
+ds_filter2 <- ds_filter %>%
+  filter(!is.na(industry))
+ds_filter3 <- ds_filter2 %>%
+  group_by(industry) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  slice(1:5)%>%
+  ungroup()
+ds_filter2 <- ds_filter2 %>%
+  filter(industry == ds_filter3$industry) %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician")
+
+df <- table(ds_filter2$job_category, ds_filter2$industry)
+dff <- data.frame(df)
+
+ggplot(data = dff,
+       aes(axis1 = Var1, axis2 = Var2,
+           y = Freq)) +
+  scale_x_discrete(limits = c("Job Category", "Industry"), expand = c(.2, .05)) +
+  ylab("Frequency") +
+  geom_alluvium(aes(fill = Var1), alpha = 0.9) +
+  geom_stratum() +
+  scale_fill_viridis(discrete = TRUE, name = "Data Science Role") +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 2) +
+  theme_minimal() +
+  ggtitle("Data Science Job Roles in the Top 5 Industries")
+```
