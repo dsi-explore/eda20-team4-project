@@ -1,6 +1,6 @@
 ---
 title: "3_6_San Fran vs DC"
-output: html_notebook
+output: github_document
 ---
 
 # Metro Area
