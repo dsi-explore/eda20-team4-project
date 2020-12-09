@@ -1,12 +1,18 @@
-# EDA Final Project - Team4
+# What are the best options for jobs in the Data Science field?
 
-Job Cateogries to include for analysis:
-- Data Scientist
-- Data Analyst
-- Machine Learning
-- Data Engineer
-- Statistics
-- Other Analyst
+In this project we explored job openings in the data science field that were listed on Glassdoor. We wanted to analyze data science job postings to see what kind of roles were most needed, where and in what industries these jobs were needed, what salary ranges were offered for different positions and what kinds of skills were companies looking for in candidates. 
+
+Look [here](https://www.kaggle.com/atharvap329/glassdoor-data-science-job-data) for the source of our data and [here](https://github.com/Atharva-Phatak/Glassdoor-Jobs_Data-Analysis) to see the data collection process of scraping the Glassdoor [website](https://www.glassdoor.co.in/index.htm). 
+
+To navigate this project and see our analysis we have outlined the repo as follows:
+
+## [1. Pre-Processing](https://github.com/dsi-explore/eda20-team4-project/tree/main/1_Pre-Processing)
+
+## [2. Data](https://github.com/dsi-explore/eda20-team4-project/tree/main/2_Data)
+
+## [3. Results](https://github.com/dsi-explore/eda20-team4-project/tree/main/3_Results)
+
+## 4. Final Project
 
 **Data :** This folder contains the data set, data dictionary and the cost of living index file. This also has a folder named glassdoor_data which has four csv files which was merged to one master data set for our final project.  
 Data Set for our analysis: https://github.com/dsi-explore/eda20-team4-project/blob/main/Data%20Cleaning/ds_jobs.csv
@@ -27,29 +33,6 @@ https://github.com/dsi-explore/eda20-team4-project/blob/main/Text%20Analysis/tex
 Choosing the data set: https://github.com/dsi-explore/eda20-team4-project/blob/main/Team%20discussions/brainstorm.md  
 Group discussions and tasks : https://github.com/dsi-explore/eda20-team4-project/blob/main/Team%20discussions/next_steps.md  
 
-
-	1_Pre-Processing
-		1_1_Glassdoor_Data
-		1_2_Clean_data
-		1_3_Advisorsmith_cost_of_living_index.csv
-	2_Data
-		2_1_Ds_jobs.csv
-		2_2_Data dictionary
-	3_Results
-		3_1_Data Science Roles
-    3_2_Industry
-    3_3_Ratings/Company
-		3_4_Salary
-		3_5_Text analysis
-		3_6_San fran vs. DC
-  4_Final Report
-    4_1_Final Report
-    4_2_Presentation
-	5_Team Discussion
-		5_1_Brainstorm
-		5_2_Next steps
-	6_Archive
-		6_1_Everything else
     
 
 
