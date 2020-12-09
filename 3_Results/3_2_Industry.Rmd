@@ -1,17 +1,9 @@
 ---
-title: "3_2_Industry"
+title: "Understanding Data Science Jobs in Different Industries"
 output: github_document
 ---
 
-# Location of job bucket
-
-I want to take the values from the job_category variable and graph it against the location data to see if which jobs are in each location.
-
-<details>
-  <summary>Click to expand</summary>
-# Load Data
-
-```{r}
+```{r, include = FALSE}
 library(tidyverse)
 library(readr)
 library(viridis)
@@ -20,54 +12,48 @@ library(ggplot2)
 library(viridis)
 library(ggalluvial)
 library(ggfittext)
+
+ds_jobs <- read.csv("../2_Data/ds_jobs.csv")
 ```
 
-Read data science jobs csv
-```{r}
-ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
+In this file we are looking at the industry in which each job opening is located to understand if certain industries are represented more in certain areas. In addition, we are interested in seeing if there are certain industries that are only looking for certain data science roles or if all roles are needed within all industries in our data.
+
+## Top Industries in terms of Data Science Job Postings
+
+```{r, message = FALSE}
+#filter for data required for graph
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% 
+           c('Biologist', 'Consultant', 'Research Scientist', 
+           'Computer Scientist', NA))
+
+# find the counts of data science job postings within each industry
+data_industries <- ds_jobs %>%
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(industry) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(industry)) %>% 
+  arrange(-count) %>% 
+  filter(count >= 100)
+
+data_industries
 ```
 
-# Job Bucket vs location
+The top industries in terms of data science job postings are listed above. Information Technology and Business Services are far ahead of the rest of the top 5 in terms of the number of data science roles required: Biotech/Pharmaceuticals, Finance, Aerospace/Defense.
 
-Filter by only DS jobs. There are a few other scientist jobs right now. Also take out the NAs 
+## Industry vs Location
 
-```{r}
+We want to know which industries have data science jobs available in each metro area. We will stick to the top 5 industries in terms of the number of data science job openings for this analysis since there are too many industries in our data set to look at them all visually.
+
+```{r, message  = FALSE, warning = FALSE}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
-```
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | 
+         job_category == "Data Scientist" | job_category == "Machine Learning Engineer" |
+         job_category == "Statistician" | job_category == "Other Analyst")
 
-</details>
-```{r}
-ggplot(ds_filter, aes(metro_location, fill = job_category)) +
-  geom_bar()+
-  scale_fill_viridis(discrete = TRUE) +
-  labs(
-    title = "Data Science Jobs by Location",
-    x = "Locations",
-    subtitle = "This graph shows the number of data science positions available in each city.",
-    fill = "Job Category"
-  )+
-  theme_classic() +
-  theme(
-    axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
-    axis.text = element_text(size =10),
-    plot.subtitle=element_text(size=8, color = "grey"),
-    legend.text = element_text(size = 8),
-    legend.title = element_text(size = 8)) 
-```
-
-## Interpretation
-
-San Fran and DC have the most job postings in this data set for data scientists. Within this, Data Analyst, Data Engineer, and Data Scientist are the job categories that dominate. Thus, if a data science student is looking for a job, then based on this data, the student should look for jobs in the bay area and DC.
-
-# Industry vs Location
-
-I also want to know which industries are offered in each state. I only want the top 5 industries so that my graph is easier to read.
-
-<details>
-  <summary>Click to expand</summary>
-```{r}
 ds_filter2 <- ds_filter %>%
   filter(!is.na(industry))
 ds_filter3 <- ds_filter2 %>%
@@ -78,17 +64,15 @@ ds_filter3 <- ds_filter2 %>%
   ungroup()
 ds_filter2 <- ds_filter2 %>%
   filter(industry == ds_filter3$industry)
-```
 
-</details>
-```{r}
 ggplot(ds_filter2, aes(metro_location,fill = industry)) +
   geom_bar() +
   scale_fill_viridis(discrete = TRUE)+
   labs(
     title = "Top 5 Industries by Location",
     x = "Location",
-    subtitle = "The cities are listed with the total number of jobs and it is colored by the industry"
+    subtitle = "The cities are listed with the total 
+    number of jobs and it is colored by the industry"
   )+
   theme_classic() +
   theme(
@@ -100,39 +84,13 @@ ggplot(ds_filter2, aes(metro_location,fill = industry)) +
   )
 ```
 
-## Interpretation
+Filtering by the 6 data science categories from `job_category`, we can see that San Francisco and DC hold the majority of data science jobs. Now we can also see in which industries these data science jobs are so applicants can determine good industries for data scientists. Judging by this graph, IT seems to be where most of the jobs in these areas are being posted. This makes sense because many IT companies have a lot more data and require more roles within the data science field.
 
-Filtering by the 6 data science categories from `job_category`, we can see that San Francisco and DC still hold the majority of data science jobs. Now we can also see in which industries these data science jobs are so applicants can determine good industries for data scientists. Judging by this graph, IT seems to be where most of the jobs in these areas are being posted. I think that this is because companies will put their data science positions with IT.
+## Data Science Roles Breakdown by Industry
 
-# count of job_category
+This alluvial plot gives us more of a visual explanation/view about the top 5 industries from our data set and how they map to the different data science jobs available. Where do most data scientists fit in? We see clearly that there are data scientists in every industry with the most in Business services. Although present in various industries, Machine learning and Statistics are narrowed down to a particular domain and the numbers are pretty low compared to data engineer or data analyst.
 
-```{r}
-ds_jobs %>%
-  filter(!is.na(job_category)) %>%
-  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst") %>%
-  rename(`Job Category` = job_category) %>%
-  group_by(`Job Category`) %>%
-  summarise(count = n()) %>%
-  arrange(desc(count)) %>%
-  gt()
-```
-
-# count of job openings per area
-
-```{r}
-ds_jobs %>%
-  rename(`Metro Location` = metro_location) %>%
-  group_by(`Metro Location`) %>%
-  summarise(count = n()) %>%
-  arrange(desc(count))%>%
-  gt()
-```
-
-
-# Industry by job category
-This alluvial plot gives us more of a visual explanation/view about the top 5 industries from our data set and how it’s mapped to the different data science jobs available. Where does most data scientists fit in? We see clearly that there are data scientists in every industry and the maximum in Business services. Since Machine learning and Statistics are narrowed down to a particular domain, although these are present in various industries, the numbers are pretty low compared to data engineer or data analyst.
-
-```{R}
+```{R, message = FALSE, warning = FALSE}
 ds_filter <- ds_jobs %>%
   filter(!is.na(job_category)) %>%
   filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst")
@@ -164,34 +122,3 @@ ggplot(data = dff,
   theme_minimal() +
   ggtitle("Data Science Job Roles in the Top 5 Industries")
 ```
-
-# List Counts of Data Science Jobs
-
-```{r}
-# filter by only data science relevant jobs (as discussed in team meeting), generate table of counts
-data_jobs <- ds_jobs %>% 
-  group_by(job_category) %>% 
-  summarize(count = n()) %>% 
-  filter(job_category %in% 
-           c('Data Engineer', 'Data Analyst', 'Data Scientist', 
-             'Machine Learning Engineer', 'Statistician', 'Other Analyst'))
-
-data_jobs
-```
-
-# Most Popular Industries in terms of Data Science Job Postings
-
-```{r}
-# find the counts of data science job postings within each industry
-data_industries <- ds_jobs %>%
-  filter(job_category %in% data_jobs$job_category) %>% 
-  group_by(industry) %>% 
-  summarize(count = n()) %>% 
-  filter(!is.na(industry)) %>% 
-  arrange(-count) %>% 
-  filter(count >= 100)
-
-data_industries
-```
-
-The top industries in terms of data science job postings are listed above. Information technology and business services are far ahead of the rest of the top 5: Biotech/Pharmaceuticals, Finance, Aerospace/Defense.

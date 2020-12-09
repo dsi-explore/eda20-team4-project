@@ -1,106 +1,24 @@
-3\_3\_Ratings & Company
+Analyzing Companies & Glassdoor Ratings
 ================
 
-Load in relevant libraries
-
-``` r
-library(tidyverse)
-```
-
-    ## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
-
-    ## v ggplot2 3.3.2     v purrr   0.3.4
-    ## v tibble  3.0.4     v dplyr   1.0.2
-    ## v tidyr   1.1.2     v stringr 1.4.0
-    ## v readr   1.3.1     v forcats 0.5.0
-
-    ## Warning: package 'tibble' was built under R version 4.0.3
-
-    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-    ## x dplyr::filter() masks stats::filter()
-    ## x dplyr::lag()    masks stats::lag()
-
-``` r
-library(ggplot2)
-library(viridis)
-```
-
-    ## Loading required package: viridisLite
-
-Read data science jobs csv
-
-``` r
-ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
-```
-
-# List Counts of Data Science Jobs
-
-``` r
-# filter by only data science relevant jobs (as discussed in team meeting), generate table of counts
-data_jobs <- ds_jobs %>% 
-  group_by(job_category) %>% 
-  summarize(count = n()) %>% 
-  filter(job_category %in% 
-           c('Data Engineer', 'Data Analyst', 'Data Scientist', 
-             'Machine Learning Engineer', 'Statistician', 'Other Analyst'))
-```
-
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
-data_jobs
-```
-
-    ## # A tibble: 6 x 2
-    ##   job_category              count
-    ##   <chr>                     <int>
-    ## 1 Data Analyst                569
-    ## 2 Data Engineer               592
-    ## 3 Data Scientist              660
-    ## 4 Machine Learning Engineer   190
-    ## 5 Other Analyst                28
-    ## 6 Statistician                 80
-
-In our dataset, we see most data science jobs listed under the data
-scientist role, followed closely by data engineer and data analyst.
-There are also roles of machine learning engineer, statistician and
-other analyst - though to a much lesser extent.
-
-# Most Popular Industries in terms of Data Science Job Postings
-
-``` r
-# find the counts of data science job postings within each industry
-data_industries <- ds_jobs %>%
-  filter(job_category %in% data_jobs$job_category) %>% 
-  group_by(industry) %>% 
-  summarize(count = n()) %>% 
-  filter(!is.na(industry)) %>% 
-  arrange(-count) %>% 
-  filter(count >= 100)
-```
-
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
-``` r
-data_industries
-```
-
-    ## # A tibble: 5 x 2
-    ##   industry                  count
-    ##   <chr>                     <int>
-    ## 1 Information Technology      576
-    ## 2 Business Services           401
-    ## 3 Biotech & Pharmaceuticals   171
-    ## 4 Finance                     129
-    ## 5 Aerospace & Defense         121
-
-The top industries in terms of data science job postings are listed
-above. Information technology and business services are far ahead of the
-rest of the top 5: Biotech/Pharmaceuticals, Finance, Aerospace/Defense.
+In this file we look at company Glassdoor Ratings for data science job
+postings and analyze what types are job are offered by the companies
+with the most job openings.
 
 # Top Companies in Terms of Data Science Job Postings
 
+First, we want to look at the companies with the most job openings for
+data science related roles.
+
 ``` r
+#filter for data required for graph
+data_jobs <- ds_jobs %>% 
+  group_by(job_category) %>% 
+  summarize(count = n()) %>% 
+  filter(!job_category %in% 
+           c('Biologist', 'Consultant', 'Research Scientist', 
+           'Computer Scientist', NA))
+
 # generate counts of data science jobs for each top company (also listing industry and rating)
 data_companies <- ds_jobs %>%
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -108,11 +26,7 @@ data_companies <- ds_jobs %>%
   summarize(count = n()) %>% 
   arrange(-count) %>% 
   filter(count >= 20)
-```
 
-    ## `summarise()` regrouping output by 'company', 'industry' (override with `.groups` argument)
-
-``` r
 data_companies
 ```
 
@@ -134,7 +48,10 @@ associated industry in terms of data science job postings. While there
 are various industries represented, Business Services companies appear
 three times above the 20 job cutoff.
 
-# Job Category Breakdown of Top Data Science Companies
+## Job Category Breakdown of Top Data Science Companies
+
+Next, we wanted to look at what types of data science roles these
+companies offered.
 
 ``` r
 #filter by ds jobs and top companies
@@ -155,19 +72,22 @@ ds_jobs %>%
   scale_fill_viridis(discrete = TRUE, name = 'Job Category')
 ```
 
-    ## `summarise()` regrouping output by 'company' (override with `.groups` argument)
-
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 From this plot we see that certain companies only have postings for one
-type of job: Addepar-Data Engineer, Kingdom Associates/TEECOM-Machine
-Learning Engineer, National Debt Relief-Data Analyst. Genetech not only
-has the most jobs available of the top companies, but they also have
-every kind of data science role available. CyberCoders, Booz Allen
-Hamilton Inc., and Management Decisions Inc. also have a variety of
-roles available.
+data science role: Addepar-Data Engineer, Kingdom
+Associates/TEECOM-Machine Learning Engineer, National Debt Relief-Data
+Analyst. Genetech not only has the most jobs available of the top
+companies, but they also have every kind of data science role available.
+CyberCoders, Booz Allen Hamilton Inc., and Management Decisions
+Inc. also have a variety of roles available.
 
-# Metro Area Breakdown of Top Data Science Companies
+## Metro Area Breakdown of Top Data Science Companies
+
+We were interested to see if companies had job openings in more than
+just one metro area. In this way if a candidate is interested in one
+company specifically, it gives them more flexibility in where they can
+find those jobs if they are willing to relocate.
 
 ``` r
 #filter by ds jobs and top companies
@@ -187,9 +107,7 @@ ds_jobs %>%
   scale_fill_viridis(discrete = TRUE, name = 'Metro Area')
 ```
 
-    ## `summarise()` regrouping output by 'company' (override with `.groups` argument)
-
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 When examining the location of the job postings for the top data science
 companies, we see that most of the job postings for a single company are
@@ -201,7 +119,14 @@ locations. CyberCoders has job postings located in a variety of Metro
 Areas, matching their data science role versatility with their location
 versatility.
 
-# Rating by Metro Location
+# Glassdoor Ratings
+
+Now that we have learned more about the companies in our data set and
+what data science roles they are offering, we want to investigate the
+Glassdoor rating and see if any areas or types of companies have better
+ratings.
+
+## Rating by Metro Location
 
 ``` r
 ds_jobs %>% 
@@ -218,7 +143,7 @@ ds_jobs %>%
 
     ## Warning: Removed 152 rows containing non-finite values (stat_ydensity).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 The above violin plot shows the distribution of company ratings across
 metro area. While most areas look the same, New York has all ratings
@@ -242,12 +167,12 @@ ds_jobs %>%
 
     ## Warning: Removed 152 rows containing non-finite values (stat_density).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 This density plot presents the same information as the above violin
 plot. We see a high concentration just above 4 for New York.
 
-# Rating by Job Category
+## Rating by Job Category
 
 ``` r
 ds_jobs %>% 
@@ -264,7 +189,7 @@ ds_jobs %>%
 
     ## Warning: Removed 173 rows containing non-finite values (stat_density).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -277,7 +202,7 @@ ds_jobs %>%
 
     ## Warning: Removed 173 rows containing non-finite values (stat_ydensity).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 The above density and violin plots display the ratings of each company
 across job category. There does not seem to be much difference in
@@ -286,7 +211,20 @@ outliers for the other analyst and statistician positions. This may not
 be a reliable approach because companies can appear across various roles
 and rating is specific to company.
 
-# Rating by Industry
+## Rating by Industry
+
+``` r
+#filtering for relevant industries
+data_industries <- ds_jobs %>%
+  filter(job_category %in% data_jobs$job_category) %>% 
+  group_by(industry) %>% 
+  summarize(count = n()) %>% 
+  filter(!is.na(industry)) %>% 
+  arrange(-count) %>% 
+  filter(count >= 100)
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
 
 ``` r
 ds_jobs %>% 
@@ -304,7 +242,7 @@ ds_jobs %>%
 
     ## Warning: Removed 17 rows containing non-finite values (stat_density).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
 ds_jobs %>% 
@@ -318,7 +256,7 @@ ds_jobs %>%
 
     ## Warning: Removed 17 rows containing non-finite values (stat_ydensity).
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 The above density and violin plots show the rating of each company
 across industry. The distributions all appear pretty similar with the
@@ -327,13 +265,14 @@ Defense. Information Technology has the highest rating peak among the
 five largest industries, while Biotech and Pharmaceuticals has the
 highest number of 5 rated companies.
 
-# Ratings of Top Data Science Companies
+## Ratings of Top Data Science Companies
 
 ``` r
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
-         company %in% c('Addepar', 'Booz Allen Hamilton Inc.', 'CyberCoders', 'Genetech', 'Kingdom Associates',
-                        'Management Decisions, Inc.', 'National Debt Relief', 'TEECOM')) %>% 
+         company %in% c('Addepar', 'Booz Allen Hamilton Inc.', 'CyberCoders', 
+                        'Genetech', 'Kingdom Associates','Management Decisions, Inc.',
+                        'National Debt Relief', 'TEECOM')) %>% 
   select(company, industry, rating) %>% 
   unique() %>% 
   arrange(company) %>% 
@@ -345,14 +284,14 @@ ds_jobs %>%
        y = 'Rating')
 ```
 
-![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](3_3_Ratings---Company_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 We see that the ratings are all relatively consistent across these
 companies with the exception of Management Decisions, Inc., which holds
 a much lower rating. For an applicant in search of a Data Engineer or
 Data Scientist position, Cybercoders may be a better option.
 
-# Average Ratings of Industries
+## Average Ratings of Industries
 
 ``` r
 ds_jobs %>% 
@@ -367,8 +306,6 @@ ds_jobs %>%
   arrange(-avg_rating)
 ```
 
-    ## `summarise()` ungrouping output (override with `.groups` argument)
-
     ## # A tibble: 23 x 3
     ##    industry                         avg_rating count
     ##    <chr>                                 <dbl> <int>
@@ -382,7 +319,7 @@ ds_jobs %>%
     ##  8 Aerospace & Defense                    3.84    44
     ##  9 Business Services                      3.81   165
     ## 10 Government                             3.80    41
-    ## # ... with 13 more rows
+    ## # … with 13 more rows
 
 The above table displays the number of job postings in each industry and
 the average rating of companies within those industries. Some of the

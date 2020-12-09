@@ -1,21 +1,27 @@
 ---
-title: "3_1_Data Science roles"
+title: "Exploring Data Science Roles"
 output: github_document
 ---
 
-```{r, message = FALSE}
+```{r, include = FALSE}
 library(tidyverse)
 library(ggplot2)
 library(viridis)
 library(ggalluvial)
 library(ggfittext)
-```
-Job types :
+library(gt)
 
-Viewing the job typs from the data set :
+ds_jobs <- read.csv("../2_Data/ds_jobs.csv")
+```
+
+In this file we look at job types and Data Science roles and understand their breakdown by metro area and company.
+
+# Analyizing Job types
+
+Viewing the job types from the data set:
 
 ```{r}
-ds_jobs <- read.csv("../Data Cleaning/ds_jobs.csv")
+table(ds_jobs$job_type)
 ```
 
 Below are the job types :
@@ -27,11 +33,16 @@ Below are the job types :
 * Part time
 * Temporary
 
+We would like to see the break down of job types in our data set and understand what types of jobs can be found in different locations. 
+
 ```{R, message =FALSE}
+#filter for data required for graph
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
-  filter(!job_category %in% c('Biologist', 'Consultant', 'Research Scientist', 'Computer Scientist', NA))
+  filter(!job_category %in% 
+           c('Biologist', 'Consultant', 'Research Scientist', 
+           'Computer Scientist', NA))
 
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -50,77 +61,58 @@ ds_jobs %>%
   theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
 ```
 
+## Table of Job Types by Metro Location 
 
-# Table interpretation of above visualization plots. 
+From the data set, considering only the full time data science related job openings, we see that San Francisco and Washington D.C. have the maximum number of jobs available while San Antonio has the least number of jobs comparatively.
 
-From the data set, considering only the full time data science realted job availabilities, we see that San Francisco and Washington have the maximum number of jobs available while San Antonio has the least jobs comparitively.If we also look at the job category by location, we find similarities. Hence, if a person is looking for a job on data science field, then based on this data, it is suggested to for jobs in the bay area and DC.
-
-
-Viewing the number of job types in each state as a table
+Viewing the number of job types in each metro area as a table.
 
 ```{r}
 table(ds_jobs$metro_location, ds_jobs$job_type)
 ```
 
-
-# Top Companies in terms of Overall Job Postings
-
-```{r}
-companies <- ds_jobs %>%
-  #filter out na job categories from all jobs
-  filter(is.na(job_category) == F) %>% 
-  #group by company
-  group_by(company) %>% 
-  #get the count of each company
-  summarize(count = n()) %>% 
-  #sort descending
-  arrange(-count) %>% 
-  #view the largest ones
-  filter(count >= 30)
-
-companies
-```
-
-```{r}
-# filter dataset to only include the top companies and job types that are not na, plot bar chart
-ds_jobs %>% 
-  filter(is.na(job_category) == F,
-         company %in% companies$company) %>% 
-  group_by(company, job_category) %>% 
-  summarize(count = n()) %>% 
-  ggplot(aes(x = company, y = count)) + geom_col(aes(fill = job_category), position = 'dodge2') +
-  scale_fill_viridis(discrete = TRUE)
-```
-
-The above plot displays the job category count of the top 6 overall companies in terms of job postings. From here, we see that we may need to subset our data to only include data science specific jobs. 
-
 # List Counts of Data Science Jobs
 
-```{r}
-# filter by only data science relevant jobs (as discussed in team meeting), generate table of counts
-data_jobs <- ds_jobs %>% 
-  group_by(job_category) %>% 
-  summarize(count = n()) %>% 
-  filter(job_category %in% 
-           c('Data Engineer', 'Data Analyst', 'Data Scientist', 
-             'Machine Learning Engineer', 'Statistician', 'Other Analyst'))
-
-data_jobs
+```{r, message = FALSE}
+ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | job_category == "Data Scientist" | job_category == "Machine Learning Engineer" | job_category == "Statistician" | job_category == "Other Analyst") %>%
+  rename(`Job Category` = job_category) %>%
+  group_by(`Job Category`) %>%
+  summarise(Count = n()) %>%
+  arrange(desc(Count)) %>%
+  gt()
 ```
 
 In our dataset, we see most data science jobs listed under the data scientist role, followed closely by data engineer and data analyst. There are also roles of machine learning engineer, statistician and other analyst - though to a much lesser extent.
 
-# Metro Area Breakdown of Job Categories
+# Metro Area Breakdown of Data Science Roles
 
-```{r}
+Next, we wanted to see if different metro areas had different breakdowns of data science roles and if there is a better location to search for a job if a candidate is looking for a specific role.
+
+```{r, message = FALSE}
+ds_jobs %>%
+  rename(`Metro Location` = metro_location) %>%
+  group_by(`Metro Location`) %>%
+  summarise(Count = n()) %>%
+  arrange(desc(Count))%>%
+  gt()
+```
+
+It looks like New York has the most job openings in our data set. However, many job postings in our data are not actually related to data science roles. For this analysis we are only looking at the data science field, therefore we can look at the break down further of only data science related roles.
+
+```{r, message = FALSE}
 # find the counts of data science job postings within each metro area
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(metro_location) %>% 
-  summarize(count = n())
+  summarize(count = n()) %>% 
+  arrange(desc(count))
 ```
 
-```{r}
+Here we can see that when only looking at data science related roles San Francisco and Washington D.C. have the most roles relevant to our analysis.
+
+```{r, message = FALSE}
 #plot the each job category as the proportion of the total amount of jobs in each city (only focusing on ds jobs)
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
@@ -136,20 +128,67 @@ ds_jobs %>%
   scale_fill_viridis(discrete = TRUE, name = 'Job Category')
 ```
 
-```{r}
-# 
-ds_jobs %>% 
-  filter(job_category %in% data_jobs$job_category) %>% 
-  group_by(metro_location, job_category) %>% 
-  summarize(count = n()) %>% 
-  mutate(pct = count/sum(count) * 100) %>% 
-  ggplot(aes(x = metro_location, y = count)) + 
-  geom_col(aes(fill = job_category)) +
-  theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = 'Metro Area Breakdown of Data Science Job Categories',
-       x = 'Metro Area',
-       y = 'Count') +
-  scale_fill_viridis(discrete = TRUE, name = 'Job Category')
+```{r, message = FALSE}
+ds_filter <- ds_jobs %>%
+  filter(!is.na(job_category)) %>%
+  filter(job_category == "Data Analyst" | job_category == "Data Engineer" | 
+         job_category == "Data Scientist" | job_category == "Machine Learning Engineer" |
+         job_category == "Statistician" | job_category == "Other Analyst")
+
+#another variation of previous graph
+ggplot(ds_filter, aes(metro_location, fill = job_category)) +
+  geom_bar()+
+  scale_fill_viridis(discrete = TRUE) +
+  labs(
+    title = "Data Science Jobs by Location",
+    x = "Locations",
+    subtitle = "This graph shows the number of data science positions available in each city.",
+    fill = "Job Category")+
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8),
+    axis.text = element_text(size =10),
+    plot.subtitle=element_text(size=8, color = "grey"),
+    legend.text = element_text(size = 8),
+    legend.title = element_text(size = 8)) 
 ```
 
-The above two plots display the same information, just in different ways. San Francisco and Washington DC clearly have the highest amount of DS job postings. Dallas and Austin surprisingly have a higher amount of job postings than New York. Data analyst is the most popular DS job in Austin and San Francisco. Data Engineer is the most popular job posting in Dallas. Data Scientist is the most popular job posting in both San Antonio and DC. Machine Learning Engineer makes up exactly half of the postings in New York, but in terms of DS roles the city offers the least versatility - only offering Analyst, Engineer, and ML Engineer positions (perhaps mention people leaving area during covid). Statistician is in the minority of available jobs at each location aside from New York.
+The above two plots display the same information, just in different ways. San Francisco and Washington DC clearly have the highest amount of DS job postings. Dallas and Austin surprisingly have a higher amount of job postings than New York. Data analyst is the most popular DS job in Austin and San Francisco. Data Engineer is the most popular job posting in Dallas. Data Scientist is the most popular job posting in both San Antonio and DC. Machine Learning Engineer makes up exactly half of the postings in New York, but in terms of DS roles the city offers the least versatility - only offering Analyst, Engineer, and ML Engineer positions (perhaps mention people leaving area during covid). Statistician is in the minority of available jobs at each location aside from New York. Based on this data, a candidate should narrow their focus jobs in the San Francisco Bay area and Washington D.C. if they are open to relocating.
+
+# Top Companies in terms of Overall Job Postings
+
+In addition to location, we were curious if different companies had job openings in only one type of data science role or offered various types of roles.
+
+```{r, message = FALSE}
+companies <- ds_jobs %>%
+  #filter out na job categories from all jobs
+  filter(is.na(job_category) == F) %>% 
+  #group by company
+  group_by(company) %>% 
+  #get the count of each company
+  summarize(count = n()) %>% 
+  #sort descending
+  arrange(-count) %>% 
+  #view the largest ones
+  filter(count >= 30)
+
+companies
+```
+
+```{r, message = FALSE}
+# filter dataset to only include the top companies and job types that are not na, plot bar chart
+ds_jobs %>% 
+  filter(is.na(job_category) == F,
+         company %in% companies$company) %>% 
+  group_by(company, job_category) %>% 
+  summarize(count = n()) %>% 
+  ggplot(aes(x = company, y = count)) + 
+  geom_col(aes(fill = job_category), position = 'dodge2') +
+  labs(title = 'Job Category Breakdown by Company',
+       x = 'Company',
+       y = 'Count') +
+  scale_fill_viridis(discrete = TRUE, name = "Data Science Roles") +
+  theme( axis.text.x = element_text(angle = 45, vjust = 1, hjust=0.95, size = 8))
+```
+
+The above plot displays the job category count of the top 6 overall companies in terms of job postings. From here, we see that we may need to subset our data to only include data science specific jobs. 
