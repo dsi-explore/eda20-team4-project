@@ -45,7 +45,7 @@ names(ds_jobs)
 summary(ds_jobs)
 ```
 
-The unit of analysis in the `ds_jobs` data set is a specific job within the field of data science at a company listed on glassdoor.
+The unit of analysis in the `ds_jobs` data set is a specific job opening within the field of data science at a company listed on glassdoor.
 
 # Clean Data
 
@@ -102,6 +102,7 @@ sapply(ds_jobs, class)
 It looks like all the data types are correct except for `Date_Posted` and `Valid_until` which should be dates.
 
 ```{r}
+#changing variables to date format
 ds_jobs$Date_Posted <- as.Date(ds_jobs$Date_Posted, format = "%Y-%m-%d")  
 ds_jobs$Valid_until <- as.Date(ds_jobs$Valid_until, format = "%Y-%m-%d")  
 ```
@@ -112,7 +113,7 @@ ds_jobs$Valid_until <- as.Date(ds_jobs$Valid_until, format = "%Y-%m-%d")
 unique(ds_jobs$State)
 ```
 
-There are some values in which the state value is `Texas` instead of `TX`.
+There are some values in which the state value is `Texas` instead of `TX` and we need to be consistent with abbreviated states throughout the data set. 
 
 ```{r}
 ds_jobs <- ds_jobs %>% mutate(State = case_when(
@@ -121,7 +122,7 @@ ds_jobs <- ds_jobs %>% mutate(State = case_when(
 ))
 ```
 
-There are some misspelled values for `City`.
+There are some misspelled values for `City` that we want to clean up.
 
 ```{r}
 #cleaning some city names
@@ -182,8 +183,8 @@ The following values remain:
 
 `KY`, `TN` and `NC` are not close to the other regions of the data and `Paris, TX` was not near any metro areas in the cost of living data set. We will remove these values from further analysis based on metro areas.
 
-This chunk creates a csv with locations of cities and distance from state group centers
-```{r}
+This chunk creates a csv with locations of cities and distance from state group centers.
+```{r, message = FALSE}
 #Find unique cities
 city_counts <- ds_jobs %>% 
   mutate(Location = paste0(City, ', ', State),
@@ -200,17 +201,20 @@ city_counts <- city_counts[,-4]
 ########################################################
 #load package to generate locations for each city
 library(ggmap)
-# register_google('redacted')
+#register_google('redacted')
 locations_city <- mutate_geocode(city_counts, Location)
 locations_metro <- mutate_geocode(city_counts, metro_location)
+```
 
-
+```{r}
 #observe counts for each metro location
 locations_city %>%
   group_by(metro_location) %>%
   summarize(count = n()) %>%
   arrange(-count)
+```
 
+```{r, message = FALSE}
 # bind locations of each city with their respective metro area
 city_locations <- cbind(locations_city, locations_metro[, c(6,7)])
 
@@ -234,7 +238,9 @@ weighted_locations <- city_data %>%
 
 # join weighted data to city data
 city_data <- city_data %>% left_join(weighted_locations, by = 'metro_location')
+```
 
+```{r}
 # check differences in regular and weighted metro locations, difference is minimal
 city_data %>% 
   mutate(lat_diff = abs(lat_metro - avg_lat_metro_weighted),
@@ -294,8 +300,12 @@ ds_jobs <- ds_jobs %>% select(-State.y, -City.y) %>%
 
 ## Job Category
 
-From Job_title
+We want to create a `job_category` variable that will group different roles within data science. Currently there are only `job_title` and `job_desc` variables that are text. To identify patterns of data science roles and group similar jobs together, we performed text analysis on these two variables.
+
+Here we are finding common data science words or roles within the `job_title` variable. 
+
 ```{r}
+#From Job_title
 data <- grep("data", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 engineer <- grep("engineer", data, ignore.case = TRUE, value = TRUE)
 analyst <- grep("anal", data, ignore.case = TRUE, value = TRUE)
@@ -310,8 +320,10 @@ other_analyst <- grep("analy", ds_jobs$Job_title, ignore.case = TRUE, value = TR
 research_scientist <- grep("research sci", ds_jobs$Job_title, ignore.case = TRUE, value = TRUE)
 ```
 
-From job_desc
+Here we are finding common data science words or roles within the `job_desc` variable.
+
 ```{r}
+#From job_desc
 data_desc <- grep("data", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
 engineer_desc <- grep("data engineer", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
 analyst_desc <- grep("data analy", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
@@ -322,11 +334,14 @@ bio_desc <- grep("biology", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
 comp_desc <- grep("computer science", ds_jobs$Job_Desc, ignore.case = TRUE, value = TRUE)
 ```
 
+Now we are creating a new variable `job_category` that groups job openings into similar roles by the above text analysis.
+
 ```{r}
+#create new job_category variable
 ds_jobs <- ds_jobs %>%
   mutate(job_category = NA)
   
-  
+#fill relevant values into the job_category variable
 for (i in seq_along(ds_jobs$Job_title)) {
   if ((ds_jobs$Job_title[[i]] %in% engineer) && (is.na(ds_jobs$job_category[[i]]))) {
             ds_jobs$job_category[[i]] = "Data Engineer"
