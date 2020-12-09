@@ -36,10 +36,15 @@ ds_jobs <- read.csv('Data Cleaning/ds_jobs.csv')
 
 ``` r
 companies <- ds_jobs %>%
+  #filter out na job categories from all jobs
   filter(is.na(job_category) == F) %>% 
+  #group by company
   group_by(company) %>% 
+  #get the count of each company
   summarize(count = n()) %>% 
+  #sort descending
   arrange(-count) %>% 
+  #view the largest ones
   filter(count >= 30)
 ```
 
@@ -60,6 +65,7 @@ companies
     ## 6 TEECOM                  30
 
 ``` r
+# filter dataset to only include the top companies and job types that are not na, plot bar chart
 ds_jobs %>% 
   filter(is.na(job_category) == F,
          company %in% companies$company) %>% 
@@ -80,6 +86,7 @@ to subset our data to only include data science specific jobs.
 # List Counts of Data Science Jobs
 
 ``` r
+# filter by only data science relevant jobs (as discussed in team meeting), generate table of counts
 data_jobs <- ds_jobs %>% 
   group_by(job_category) %>% 
   summarize(count = n()) %>% 
@@ -114,6 +121,7 @@ other analyst - though to a much lesser extent.
 ## Top Companies in Terms of Data Science Job Postings
 
 ``` r
+# generate counts of data science jobs for each top company (also listing industry and rating)
 data_companies <- ds_jobs %>%
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(company, industry, rating) %>% 
@@ -149,6 +157,9 @@ three times above the 20 job cutoff.
 ## Job Category Breakdown of Top Data Science Companies
 
 ``` r
+#filter by ds jobs and top companies
+#graph the count of each job type displaying the contribution of each to the total amount of jobs posted from company
+
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
          company %in% data_companies$company) %>% 
@@ -179,6 +190,8 @@ roles available.
 ## Metro Area Breakdown of Top Data Science Companies
 
 ``` r
+#filter by ds jobs and top companies
+#graph the count of each location displaying the contribution of each to the total amount of jobs posted from company
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category,
          company %in% data_companies$company) %>% 
@@ -213,6 +226,7 @@ versatility.
 ## Most Popular Industries in terms of Data Science Job Postings
 
 ``` r
+# find the counts of data science job postings within each industry
 data_industries <- ds_jobs %>%
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(industry) %>% 
@@ -246,6 +260,7 @@ rest of the top 5: Biotech/Pharmaceuticals, Finance, Aerospace/Defense.
 ## Metro Area Breakdown of Job Categories
 
 ``` r
+# find the counts of data science job postings within each metro area
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(metro_location) %>% 
@@ -266,6 +281,7 @@ ds_jobs %>%
     ## 7 Washington, DC      725
 
 ``` r
+#plot the each job category as the proportion of the total amount of jobs in each city (only focusing on ds jobs)
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(metro_location, job_category) %>% 
@@ -285,6 +301,7 @@ ds_jobs %>%
 ![](job_category_and_rating_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
+# 
 ds_jobs %>% 
   filter(job_category %in% data_jobs$job_category) %>% 
   group_by(metro_location, job_category) %>% 
@@ -325,7 +342,11 @@ ds_jobs %>%
   select(company, metro_location, industry, rating) %>% 
   unique() %>% 
   ggplot(aes(x = metro_location, y = rating)) + 
-  geom_violin()
+  geom_violin() +
+  labs(title = 'Glassdoor Rating Violin Plot by Metro Area',
+       x = 'Metro Area',
+       y = 'Rating') +
+  theme(axis.text.x = element_text(size = 8.5))
 ```
 
     ## Warning: Removed 152 rows containing non-finite values (stat_ydensity).
@@ -408,7 +429,7 @@ ds_jobs %>%
   unique() %>% 
   ggplot(aes(x = rating)) + 
   geom_density(aes(fill = industry), alpha = .5) +
-  labs(title = 'Glassdoor Rating Density Plot by Industry',
+  labs(title = 'Glassdoor Rating Density Plot of Top Data Science Industries',
        x = 'Rating',
        y = 'Density') +
   scale_fill_viridis(discrete = TRUE, name = 'Industry')
@@ -438,3 +459,51 @@ exception of a high concentration just above 3.5 for Aerospace and
 Defense. Information Technology has the highest rating peak among the
 five largest industries, while Biotech and Pharmaceuticals has the
 highest number of 5 rated companies.
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category,
+         company %in% c('Addepar', 'Booz Allen Hamilton Inc.', 'CyberCoders', 'Genetech', 'Kingdom Associates',
+                        'Management Decisions, Inc.', 'National Debt Relief', 'TEECOM')) %>% 
+  select(company, industry, rating) %>% 
+  unique() %>% 
+  arrange(company) %>% 
+  ggplot(aes(x = company, y = rating)) + 
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = 'Glassdoor Ratings of Top Data Science Companies',
+       x = 'Company',
+       y = 'Rating')
+```
+
+![](job_category_and_rating_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+ds_jobs %>% 
+  filter(job_category %in% data_jobs$job_category,
+         !is.na(industry),
+         !is.na(rating)) %>% 
+  select(company, industry, rating) %>% 
+  unique() %>% 
+  group_by(industry) %>% 
+  summarize(avg_rating = mean(rating),
+            count = n()) %>% 
+  arrange(-avg_rating)
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 23 x 3
+    ##    industry                         avg_rating count
+    ##    <chr>                                 <dbl> <int>
+    ##  1 Agriculture & Forestry                 5        1
+    ##  2 Real Estate                            4.2      4
+    ##  3 Education                              4.06    26
+    ##  4 Arts, Entertainment & Recreation       3.95     2
+    ##  5 Information Technology                 3.94   340
+    ##  6 Consumer Services                      3.94     5
+    ##  7 Telecommunications                     3.84     5
+    ##  8 Aerospace & Defense                    3.84    44
+    ##  9 Business Services                      3.81   165
+    ## 10 Government                             3.80    41
+    ## # ... with 13 more rows
