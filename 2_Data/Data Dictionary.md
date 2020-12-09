@@ -20,11 +20,11 @@
 18. lat_city: (numeric)  the latitude of the city (from google maps api) that in which the job posting is located
 19. lon_metro: (numeric)  the longitude of the metro location (from google maps api) that in which the job posting is located
 20. lat_metro: (numeric)  the latitude of the metro location (from google maps api) that in which the job posting is located
-21. job_concentration: the percentage of jobs located in that job posting's city relative to the metro area
-22. avg_lon_metro_weighted: the weighted (by job concentration) average longitude of the cities located within the metro area in which the job posting is located
-23. avg_lat_metro_weighted: the weighted (by job concentration) average latitude of the cities located within the metro area in which the job posting is located
-24. reg_dist: the distance of the job posting's city from the metro location (in miles)
-25. weight_dist: the distance of the job posting's city from the average weighted metro location (in miles)
+21. job_concentration: (numeric) the percentage of jobs located in that job posting's city relative to the metro area
+22. avg_lon_metro_weighted: (numeric) the weighted (by job concentration) average longitude of cities located within the metro area where the job posting is located
+23. avg_lat_metro_weighted: (numeric) the weighted (by job concentration) average latitude of cities located within the metro area where the job posting is located
+24. reg_dist: (numeric) the distance of the job posting's city from the metro location (in miles)
+25. weight_dist: (numeric) the distance of the job posting's city from the average weighted metro location (in miles)
 26. job_category: (categorical) Category or role job falls under based on job title
 27. min_scaled_salary: (numeric) Minimum yearly salary scaled by coi (in USD)
 28. max_scaled_salary: (numeric) Maximum yearly salary scaled by coi (in USD)
