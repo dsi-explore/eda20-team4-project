@@ -80,8 +80,7 @@ ds_jobs %>%
   rename(`Job Category` = job_category) %>%
   group_by(`Job Category`) %>%
   summarise(Count = n()) %>%
-  arrange(desc(Count)) %>%
-  gt()
+  arrange(desc(Count))
 ```
 
 In our dataset, we see most data science jobs listed under the data scientist role, followed closely by data engineer and data analyst. There are also roles of machine learning engineer, statistician and other analyst - though to a much lesser extent.
@@ -95,8 +94,7 @@ ds_jobs %>%
   rename(`Metro Location` = metro_location) %>%
   group_by(`Metro Location`) %>%
   summarise(Count = n()) %>%
-  arrange(desc(Count))%>%
-  gt()
+  arrange(desc(Count))
 ```
 
 It looks like New York has the most job openings in our data set. However, many job postings in our data are not actually related to data science roles. For this analysis we are only looking at the data science field, therefore we can look at the break down further of only data science related roles.
