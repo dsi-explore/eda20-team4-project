@@ -47,7 +47,7 @@ ds_jobs %>%
   theme(axis.text.x = element_text(angle = 90)) +
   labs(title = 'Job Types for Data Science Roles by Metro Area',
        x = '',
-       y = 'Count') +
+       y = 'Percent') +
   scale_fill_discrete()+
   theme_classic() +
   scale_fill_viridis(discrete = TRUE, name = "Job Type",labels = c("Contractor", 
