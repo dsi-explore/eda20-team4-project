@@ -16,7 +16,7 @@ In this folder we store the tidy [data set](https://github.com/dsi-explore/eda20
 The bulk of our analysis is in this folder. We started our research looking at different [roles](https://github.com/dsi-explore/eda20-team4-project/blob/main/3_Results/3_1_Data-Science-roles.md) within the field of data science. Next, we looked at the 5 [industries](https://github.com/dsi-explore/eda20-team4-project/blob/main/3_Results/3_2_Industry.md) with the most data science roles in our data set and followed with an analysis of [Glassdoor ratings](https://github.com/dsi-explore/eda20-team4-project/blob/main/3_Results/3_3_Ratings---Company.md) and counts for companies with data science roles. We then looked at [salary ranges](https://github.com/dsi-explore/eda20-team4-project/blob/main/3_Results/3_4_Salary.md) for data science roles within different metro areas, for different positions and in the top 5 industries. We peformed [text analysis](https://github.com/dsi-explore/eda20-team4-project/blob/main/3_Results/3_5_Text-Analysis.md) to see what kind of skills a candidate should be improving upon in looking for data science roles. Lastly, we did a comparision between the two metro areas in our data set with the most data science roles: San Francisco Bay area and Washington D.C.
 
 ## [4. Final Project](https://github.com/dsi-explore/eda20-team4-project/tree/main/4_Final%20Project)
-This folder contains our [final report]() and [slide deck](https://github.com/dsi-explore/eda20-team4-project/tree/main/4_Final%20Project) for our presentation.  
+This folder contains our [final report]() and [slide deck](https://github.com/dsi-explore/eda20-team4-project/blob/main/4_Final%20Project/Glassdoor%20Data%20Science%20Job%20Openings.pdf) for our presentation.  
 
     
 
